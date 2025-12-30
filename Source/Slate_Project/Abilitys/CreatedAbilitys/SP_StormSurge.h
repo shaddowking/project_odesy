@@ -12,6 +12,7 @@ class AStormSurge : public AAbilityBase, public IAbilityInterface {
 
 public:
 
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASPVoletileStormProjectile> ProjectileRefrence;
 	ASPVoletileStormProjectile* projectile;
 

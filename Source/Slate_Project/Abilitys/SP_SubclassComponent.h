@@ -4,6 +4,7 @@
 
 class ASPCharacter;
 class ASubclass;
+class AStormWalker;
 
 
 UCLASS(meta = (BlueprintSpawnableComponent))
@@ -20,6 +21,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASubclass> StormsEya_Template;
 	UPROPERTY(BlueprintReadOnly)
-	ASubclass* StormsEya = nullptr;
+	AStormWalker* StormsEya = nullptr;
+
 
 };

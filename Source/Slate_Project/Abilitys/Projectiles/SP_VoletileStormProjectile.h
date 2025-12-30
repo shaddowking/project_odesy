@@ -16,6 +16,7 @@ public:
 
 	ASPVoletileStormProjectile();
 	
+	UPROPERTY(EditDefaultsOnly)
 	USphereComponent* ShockRange = nullptr;
 
 

@@ -10,6 +10,9 @@
 #include "UI/SP_PlayerHud.h"
 #include "UI/SP_HUD.h"
 #include "Abilitys/SP_SubclassComponent.h"
+#include "Abilitys/CreatedAbilitys/SP_StormWalker.h"
+#include "Abilitys/AbilityInterface.h"
+
 
 ASPCharacter::ASPCharacter()
 {
@@ -64,6 +67,8 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		
 		EnhancedInputComponent->BindAction(RelodeAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleRelode);
 
+		EnhancedInputComponent->BindAction(UltimateAciton, ETriggerEvent::Started, this, &ASPCharacter::HandleUltimateTrigger);
+		EnhancedInputComponent->BindAction(UltimateAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandleUltimateRelease);
 
 
 
@@ -202,6 +207,26 @@ void ASPCharacter::HandleRelode()
 
 }
 
+void ASPCharacter::HandleUltimateTrigger()
+{
+	
+	IAbilityInterface* UltimateInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+	if (UltimateInterface)
+	{
+		UltimateInterface->OnAbilityPressed();
+	}
+	
+}
+
+void ASPCharacter::HandleUltimateRelease()
+{
+	IAbilityInterface* UltimateInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+	if (UltimateInterface)
+	{
+		UltimateInterface->OnAbilityReleas();
+	}
+}
+
 void ASPCharacter::OnDeath()
 {
 }
@@ -290,12 +315,15 @@ FVector ASPCharacter::GetAimPoint(float Range)
 	GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
 
 	FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
+	
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
 
-	GetWorld()->LineTraceSingleByChannel(AimHit, ViewOrigin, ViewOrigin + ViewForward * Range, ECollisionChannel::ECC_Visibility);
+	GetWorld()->LineTraceSingleByChannel(AimHit, ViewOrigin, ViewOrigin + ViewForward * Range, ECollisionChannel::ECC_Visibility, QueryParams);
 
 	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
 
-	return FVector();
+	return AimPoint;
 }
 
 void ASPCharacter::Tick(float DeltaTime)

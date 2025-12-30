@@ -7,7 +7,9 @@ AAbilityProjectile::AAbilityProjectile()
 {
 	Sphere = CreateDefaultSubobject<USphereComponent>("sphere");
 	RootComponent = Sphere;
+
 	PrimaryActorTick.bCanEverTick = true;
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAbilityProjectile::OnProjectileHit);
 }
 
 
@@ -17,19 +19,8 @@ void AAbilityProjectile::Tick(float DeltaTime)
 	if (bIsActive)
 	{
 		FHitResult SweepHit;
-		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, true, &SweepHit);
-		AActor* HitActor = SweepHit.GetActor();
-		if (HitActor)
-		{
-
-			UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
-			if (healthComponent)
-			{
-				healthComponent->TakeDamage(Stats.ImpactDamage);
-			}
-
-		}
-		Destroy();
+		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, false);
+		
 	}
 	
 }
@@ -37,6 +28,20 @@ void AAbilityProjectile::Tick(float DeltaTime)
 void AAbilityProjectile::InitialiceProjectile(ASPCharacter* caster)
 {
 	owner = caster;
+}
+
+void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && bIsActive == true)
+	{
+		UHealthComponent* healthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
+		if (healthComponent)
+		{
+			healthComponent->TakeDamage(Stats.ImpactDamage);
+		}
+		bIsActive = false;
+
+	}
 }
 
 

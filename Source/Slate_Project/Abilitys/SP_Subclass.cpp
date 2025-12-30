@@ -8,14 +8,26 @@ void ASubclass::InitializeSubclass(ASPCharacter* Player)
 	FVector Location = FVector::ZeroVector;
 	FRotator Rotation = FRotator::ZeroRotator;
 
+	if (UltimateTemplate)
+	{
+		Ultimate = GetWorld()->SpawnActor<AAbilityBase>(UltimateTemplate);
+		Ultimate->InitialiceAbility(Player);
+	}
+
+	if (Ability1Template)
+	{
+		Ability1 = GetWorld()->SpawnActor<AAbilityBase>(Ability1Template);
+		Ability1->InitialiceAbility(Player);
+	}
+
+	if (Ability2Template)
+	{
+		Ability2 = GetWorld()->SpawnActor<AAbilityBase>(Ability2Template);
+		Ability2->InitialiceAbility(Player);
+	}
 	
-	Ultimate = GetWorld()->SpawnActor<AAbilityBase>(UltimateTemplate);
 	
-	Ability1 = GetWorld()->SpawnActor<AAbilityBase>(Ability1Template);
-	Ability2 = GetWorld()->SpawnActor<AAbilityBase>(Ability2Template);
-	Ultimate->InitialiceAbility(Player);
-	Ability1->InitialiceAbility(Player);
-	Ability2->InitialiceAbility(Player);
+	
 	
 
 	

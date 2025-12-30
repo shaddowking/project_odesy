@@ -17,6 +17,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Speed = 2000.f;
 
+	
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere = nullptr;

@@ -31,6 +31,9 @@ public:
 
 	ASPCharacter* Caster = nullptr;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void spawnDebug(FVector position);
+
 
 	virtual FVector GetUltimateSpawnLocation();
 	

@@ -33,3 +33,5 @@ void AProjectile::Tick(float DeltaTime)
 		Destroy();
 	}
 }
+
+

@@ -9,6 +9,7 @@
 void AStormSurge::OnAbilityPressed()
 {
 	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
+	spawnDebug(Caster->GetAimPoint(5000));
 	projectile = GetWorld()->SpawnActor<ASPVoletileStormProjectile>(ProjectileRefrence, GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 	projectile->bIsActive = true;
 	ActivateCooldown(AbilityBaseStates->AbilityInfo.Cooldown);
@@ -51,8 +52,9 @@ FVector AStormSurge::GetUltimateSpawnLocation()
 
 	FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
 	FVector ViewUp = ViewRotation.Quaternion().GetUpVector();
+	
 
-	FVector Result = Caster->GetActorLocation() + ViewUp * 300 + ViewForward * 500;
+	FVector Result = Caster->GetActorLocation() + ViewUp * 300 + Caster->GetActorForwardVector() * 500;
 
-	return FVector();
+	return Result;
 }

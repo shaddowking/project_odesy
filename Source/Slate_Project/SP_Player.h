@@ -78,12 +78,15 @@ protected:
 	void HandleShoot();
 	void HandleRelode();
 
+	void HandleUltimateTrigger();
+	void HandleUltimateRelease();
+
 	UFUNCTION()
 	void OnDeath();
 
 	UFUNCTION()
 	void OnDamage();
-
+	UPROPERTY(EditDefaultsOnly)
 	USubclassComponent* SCcomponent = nullptr;
 
 public:
