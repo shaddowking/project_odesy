@@ -8,6 +8,8 @@ class ASPCharacter;
 USTRUCT(BlueprintType)
 struct FAbilityprojectileStats 
 {
+	GENERATED_BODY()
+
 	float ImpactDamage = 50;
 	
 };

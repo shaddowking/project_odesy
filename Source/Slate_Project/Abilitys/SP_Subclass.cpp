@@ -5,7 +5,10 @@
 void ASubclass::InitializeSubclass(ASPCharacter* Player)
 {
 	Caster = Player;
+	FVector Location = FVector::ZeroVector;
+	FRotator Rotation = FRotator::ZeroRotator;
 
+	
 	Ultimate = GetWorld()->SpawnActor<AAbilityBase>(UltimateTemplate);
 	
 	Ability1 = GetWorld()->SpawnActor<AAbilityBase>(Ability1Template);
@@ -13,4 +16,7 @@ void ASubclass::InitializeSubclass(ASPCharacter* Player)
 	Ultimate->InitialiceAbility(Player);
 	Ability1->InitialiceAbility(Player);
 	Ability2->InitialiceAbility(Player);
+	
+
+	
 }

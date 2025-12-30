@@ -15,8 +15,9 @@
 class UAbilityDataAsset;
 class ASPCharacter;
 
-UCLASS()
+UCLASS(abstract)
 class AAbilityBase : public AActor {
+
 	GENERATED_BODY()
 
 public:
@@ -26,11 +27,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UAbilityDataAsset* AbilityBaseStates = nullptr;
 
-	void InitialiceAbility(ASPCharacter* player) { Caster = player; }
+	void InitialiceAbility(ASPCharacter* player);
 
 	ASPCharacter* Caster = nullptr;
 
 
-	virtual FVector GetUltimateSpawnLocation() = 0;
+	virtual FVector GetUltimateSpawnLocation();
 	
 };

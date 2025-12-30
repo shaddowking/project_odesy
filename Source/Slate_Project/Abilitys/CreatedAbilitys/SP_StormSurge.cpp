@@ -37,6 +37,8 @@ void AStormSurge::CooldownTimer()
 	}
 }
 
+
+
 FVector AStormSurge::GetUltimateSpawnLocation()
 {
 	

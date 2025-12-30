@@ -1,17 +1,10 @@
 #include "SP_AbilityBase.h"
 
-void AAbilityBase::OnAbilityPressed()
+void AAbilityBase::InitialiceAbility(ASPCharacter* player)
 {
+	Caster = player;
 }
 
-void AAbilityBase::OnAbilityReleas()
-{
-}
-
-void AAbilityBase::ActivateCooldown(float Time)
-{
-}
-
-void AAbilityBase::CooldownTimer(float Value)
-{
+FVector AAbilityBase::GetUltimateSpawnLocation() {
+	return FVector::ZeroVector;
 }
