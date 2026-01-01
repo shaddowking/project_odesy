@@ -70,6 +70,9 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(UltimateAciton, ETriggerEvent::Started, this, &ASPCharacter::HandleUltimateTrigger);
 		EnhancedInputComponent->BindAction(UltimateAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandleUltimateRelease);
 
+		EnhancedInputComponent->BindAction(PrimaryAbilityAciton, ETriggerEvent::Started, this, &ASPCharacter::HandlePrimaryAbilityTrigger);
+		EnhancedInputComponent->BindAction(PrimaryAbilityAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandlePrimaryAbilityRelease);
+
 
 
 
@@ -210,20 +213,38 @@ void ASPCharacter::HandleRelode()
 void ASPCharacter::HandleUltimateTrigger()
 {
 	
-	IAbilityInterface* UltimateInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
-	if (UltimateInterface)
+	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+	if (AbilityInterface)
 	{
-		UltimateInterface->OnAbilityPressed();
+		AbilityInterface->OnAbilityPressed();
 	}
 	
 }
 
 void ASPCharacter::HandleUltimateRelease()
 {
-	IAbilityInterface* UltimateInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
-	if (UltimateInterface)
+	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+	if (AbilityInterface)
 	{
-		UltimateInterface->OnAbilityReleas();
+		AbilityInterface->OnAbilityReleas();
+	}
+}
+
+void ASPCharacter::HandlePrimaryAbilityTrigger()
+{
+	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+	if (AbilityInterface)
+	{
+		AbilityInterface->OnAbilityPressed();
+	}
+}
+
+void ASPCharacter::HandlePrimaryAbilityRelease()
+{
+	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+	if (AbilityInterface)
+	{
+		AbilityInterface->OnAbilityReleas();
 	}
 }
 
@@ -324,6 +345,42 @@ FVector ASPCharacter::GetAimPoint(float Range)
 	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
 
 	return AimPoint;
+}
+
+FVector ASPCharacter::GetPlacablePoint(float Range)
+{
+	FHitResult AimHit;
+	FHitResult AimHit2;
+
+	FVector ViewOrigin;
+	FRotator ViewRotation;
+
+	FVector Result;
+
+
+
+	GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
+
+	FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(AimHit, ViewOrigin, ViewOrigin + ViewForward * Range, ECollisionChannel::ECC_Visibility, QueryParams);
+
+	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
+
+	if (AimHit.bBlockingHit == false)
+	{
+		GetWorld()->LineTraceSingleByChannel(AimHit2, AimHit.TraceEnd, FVector::DownVector * Range, ECollisionChannel::ECC_Visibility, QueryParams);
+		Result = AimHit2.bBlockingHit ? AimHit2.Location : AimHit2.TraceEnd;
+	}
+	else
+	{
+		Result = AimHit.Location;
+	}
+
+	return Result;
 }
 
 void ASPCharacter::Tick(float DeltaTime)

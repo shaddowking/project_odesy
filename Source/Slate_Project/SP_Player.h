@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* UltimateAciton;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* PrimaryAbilityAciton;
+
 	void BeginPlay()override;
 
 	void SetupPlayerInputComponent(UInputComponent* playerInputComponent) override;
@@ -81,6 +84,9 @@ protected:
 	void HandleUltimateTrigger();
 	void HandleUltimateRelease();
 
+	void HandlePrimaryAbilityTrigger();
+	void HandlePrimaryAbilityRelease();
+
 	UFUNCTION()
 	void OnDeath();
 
@@ -92,6 +98,7 @@ protected:
 public:
 
 	FVector GetAimPoint(float Range);
+	FVector GetPlacablePoint(float Range);
 
 	void Tick(float DeltaTime) override;
 	void GroundCheck();

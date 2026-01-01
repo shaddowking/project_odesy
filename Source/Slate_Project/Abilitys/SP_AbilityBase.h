@@ -22,6 +22,8 @@ class AAbilityBase : public AActor {
 
 public:
 
+	bool BIsAbilityActive = false;
+
 	float ActiveCooldown = 0;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
