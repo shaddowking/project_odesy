@@ -1,20 +1,22 @@
-#pragma once
+#pragma once 
 #include "../SP_AbilityBase.h"
 #include "../AbilityInterface.h"
-#include "SP_StormSurge.generated.h"
 
-class ASPVoletileStormProjectile;
+#include "SP_LightningRod.generated.h"
+
+class ALightningRodStrike;
 
 UCLASS()
-class AStormSurge : public AAbilityBase, public IAbilityInterface {
+class ALightningRod : public AAbilityBase , public IAbilityInterface {
 
 	GENERATED_BODY()
 
 public:
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ASPVoletileStormProjectile> ProjectileRefrence;
-	ASPVoletileStormProjectile* projectile;
+	TSubclassOf<ALightningRodStrike> LightningTemplate;
+
+	ALightningRodStrike* SpawndLightning = nullptr;
 
 	// Inherited via IAbilityInterface
 	void OnAbilityPressed() override;
@@ -22,10 +24,6 @@ public:
 	void ActivateCooldown() override;
 
 	virtual void CooldownCompleted() override;
-
 	virtual void UpdateUI(float Value) override;
 
-
-	// Inherited via AAbilityBase
-	FVector GetUltimateSpawnLocation() override;
 };

@@ -21,9 +21,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EditorUpdateAmmoTexts(int current, int extra);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
 	FSlateBrush HPImageBrush;
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush UltimateImageBrush;
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush PrimaryAbilityImageBrush;
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush ElementalAbilityImageBrush;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush UISliderBrush;
 
 	
 };

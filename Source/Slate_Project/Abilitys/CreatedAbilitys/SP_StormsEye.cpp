@@ -2,6 +2,9 @@
 #include "../../SP_Player.h"
 #include "../SP_AbilityDataAsstet.h"
 #include "../Projectiles/SP_StormTurret.h"
+#include "../../UI/SP_HUD.h"
+#include "../../UI/SP_PlayerHud.h"
+
 
 AStormsEye::AStormsEye()
 {
@@ -40,6 +43,7 @@ void AStormsEye::OnAbilityPressed()
 
 void AStormsEye::OnAbilityReleas()
 {
+	Caster->bIsPrimaryAbilityReady = false;
 	BIsAbilityActive = false;
 	FRotator Rotation = FRotator::ZeroRotator;
 	TargetingActor->GetRootComponent()->SetVisibility(false, true);
@@ -48,26 +52,30 @@ void AStormsEye::OnAbilityReleas()
 	if (!CreatedTurret)
 	{
 		CreatedTurret = GetWorld()->SpawnActor<AStormTurret>(TurretRefrence, TargetLocation, Rotation);
+		CreatedTurret->InitialicePlaceble(Caster);
 	}
 	
 	
 	CreatedTurret->Activate(TargetLocation);
+	ActivateCooldown();
 	
 }
 
-void AStormsEye::ActivateCooldown(float Time)
+void AStormsEye::ActivateCooldown()
 {
 	ActiveCooldown = 0;
 	CooldownTimer();
 }
 
-void AStormsEye::CooldownTimer()
+void AStormsEye::CooldownCompleted()
 {
-	if (ActiveCooldown < AbilityBaseStates->AbilityInfo.Cooldown)
-	{
-		ActiveCooldown++;
-		FTimerHandle GunTimerHandle;
-
-		GetWorldTimerManager().SetTimer(GunTimerHandle, this, &AStormsEye::CooldownTimer, 1, false);
-	}
+	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(0);
+	Caster->bIsPrimaryAbilityReady = true;
 }
+
+void AStormsEye::UpdateUI(float Value)
+{
+	Super::UpdateUI(Value);
+	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(CooldownPercent);
+}
+

@@ -63,6 +63,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* PrimaryAbilityAciton;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* ElementalAbilityAciton;
+
 	void BeginPlay()override;
 
 	void SetupPlayerInputComponent(UInputComponent* playerInputComponent) override;
@@ -87,6 +90,10 @@ protected:
 	void HandlePrimaryAbilityTrigger();
 	void HandlePrimaryAbilityRelease();
 
+	void HandleElementalAbilityTrigger();
+	void HandleElementalAbilityRelease();
+
+
 	UFUNCTION()
 	void OnDeath();
 
@@ -96,6 +103,10 @@ protected:
 	USubclassComponent* SCcomponent = nullptr;
 
 public:
+
+	bool bIsUltimateReady = true;
+	bool bIsPrimaryAbilityReady = true;
+	bool bIsElementalAbilityReady = true;
 
 	FVector GetAimPoint(float Range);
 	FVector GetPlacablePoint(float Range);

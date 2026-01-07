@@ -12,6 +12,8 @@ AStormTurret::AStormTurret()
 	TurretRange = CreateDefaultSubobject<USphereComponent>("Range");
 	TurretRange->SetupAttachment(Root);
 	TurretRange->OnComponentBeginOverlap.AddDynamic(this, &AStormTurret::OnEnemyEnter);
+	TurretRange->OnComponentEndOverlap.AddDynamic(this, &AStormTurret::OnEnemyExit);
+
 }
 
 void AStormTurret::Tick(float DeltaTime)
@@ -32,15 +34,6 @@ void AStormTurret::Tick(float DeltaTime)
 		else
 		{
 			AttackTimer += DeltaTime;
-		}
-
-		if (duration <= 0)
-		{
-			Deactivate();
-		}
-		else
-		{
-			duration -= DeltaTime;
 		}
 	}
 
@@ -70,10 +63,10 @@ void AStormTurret::OnEnemyExit(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	}
 }
 
-void AStormTurret::Deactivate()
+
+void AStormTurret::DeActivate()
 {
-	SetActorHiddenInGame(true);
-	IsActive = false;
+	Super::DeActivate();
 }
 
 void AStormTurret::PerformAttack()
@@ -82,7 +75,7 @@ void AStormTurret::PerformAttack()
 		UHealthComponent* healthComponent = CurrentCharacter->FindComponentByClass<UHealthComponent>();
 		if (healthComponent)
 		{
-			healthComponent->TakeDamage(10);
+			healthComponent->TakeDamage(Damage);
 		}
 		
 	}

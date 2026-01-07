@@ -24,23 +24,53 @@ public:
 
 	void UpdateHPPercent(float percent);
 
+	void UpdateUltimatePercent(float percent);
+
+	void UpdatePrimaryAbilityPercent(float percent);
+
+	void UpdateElementalAbilityPercent(float percent);
+
 
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 
 private:
 
-	FSlateBrush HPBrush;
+	void SetSlateBrushes();
 
 	FText GetCurrntAmmoText() const { return CurrntAmmoText; }
 	FText GetExtraAmmoText() const { return ExtraAmmoText; }
 
 	FSlateBrush GetHPBrush() const { return HPBrush; }
+
+	
  
 	UMaterialInterface* HealthBarMaterial = nullptr;
-	UMaterialInstanceDynamic* MaterialInstance = nullptr;
+	UMaterialInstanceDynamic* HPMaterialInstance = nullptr;
+
+	UMaterialInterface* UltimateMaterial = nullptr;
+	UMaterialInstanceDynamic* UltimateMaterialInstance = nullptr;
+
+	UMaterialInterface* PrimaryAbilityMaterial = nullptr;
+	UMaterialInstanceDynamic* PrimaryAbilityMaterialInstance = nullptr;
+
+	UMaterialInterface* ElementalAbilityMaterial = nullptr;
+	UMaterialInstanceDynamic* ElementalAbilityMaterialInstance = nullptr;
+
+	FSlateBrush HPBrush;
+	FSlateBrush UltimateBrush;
+	FSlateBrush PrimaryAbilityBrush;
+	FSlateBrush ElementalAbilityBrush;
+
+	FSlateBrush UltimateSliderBrush;
+	FSlateBrush PrimaryAbilitySliderBrush;
+	FSlateBrush ElementalAbilitySliderBrush;
 
 	FText CurrntAmmoText;
 	FText ExtraAmmoText;
+
+	float UltimatePercent;
+	float PrimaryAbilityPercent;
+	float ElementalAbilityPercent;
 
 
 };

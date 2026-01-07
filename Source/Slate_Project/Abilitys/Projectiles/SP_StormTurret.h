@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float AttackInterval = 2.0f;
 
-	void Deactivate();
+	virtual void DeActivate() override;
 
 private:
 

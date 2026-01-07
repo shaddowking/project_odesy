@@ -17,6 +17,5 @@ public:
 	virtual void OnAbilityPressed() = 0;
 	virtual void OnAbilityReleas() = 0;
 
-	virtual void ActivateCooldown(float Time) = 0;
-	virtual void CooldownTimer() = 0;
+	virtual void ActivateCooldown() = 0;
 };

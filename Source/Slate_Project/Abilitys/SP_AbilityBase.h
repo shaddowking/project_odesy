@@ -14,6 +14,7 @@
 
 class UAbilityDataAsset;
 class ASPCharacter;
+class ASP_HUD;
 
 UCLASS(abstract)
 class AAbilityBase : public AActor {
@@ -36,7 +37,17 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void spawnDebug(FVector position);
 
+	ASP_HUD* Hud = nullptr;
+
+	float CooldownPercent = 0;
 
 	virtual FVector GetUltimateSpawnLocation();
+
+
+	virtual void CooldownTimer();
+
+	virtual void CooldownCompleted();
+
+	virtual void UpdateUI(float Value);
 	
 };

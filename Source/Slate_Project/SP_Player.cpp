@@ -73,8 +73,9 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(PrimaryAbilityAciton, ETriggerEvent::Started, this, &ASPCharacter::HandlePrimaryAbilityTrigger);
 		EnhancedInputComponent->BindAction(PrimaryAbilityAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandlePrimaryAbilityRelease);
 
-
-
+		EnhancedInputComponent->BindAction(ElementalAbilityAciton, ETriggerEvent::Started, this, &ASPCharacter::HandleElementalAbilityTrigger);
+		EnhancedInputComponent->BindAction(ElementalAbilityAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandleElementalAbilityRelease);
+		
 
 
 
@@ -212,40 +213,84 @@ void ASPCharacter::HandleRelode()
 
 void ASPCharacter::HandleUltimateTrigger()
 {
-	
-	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
-	if (AbilityInterface)
+
+	if (bIsUltimateReady)
 	{
-		AbilityInterface->OnAbilityPressed();
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityPressed();
+		}
 	}
+
+	
 	
 }
 
 void ASPCharacter::HandleUltimateRelease()
 {
-	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
-	if (AbilityInterface)
+	if (bIsUltimateReady)
 	{
-		AbilityInterface->OnAbilityReleas();
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityReleas();
+		}
 	}
+	
 }
 
 void ASPCharacter::HandlePrimaryAbilityTrigger()
 {
-	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
-	if (AbilityInterface)
+	if (bIsPrimaryAbilityReady)
 	{
-		AbilityInterface->OnAbilityPressed();
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityPressed();
+		}
 	}
+	
 }
 
 void ASPCharacter::HandlePrimaryAbilityRelease()
 {
-	IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
-	if (AbilityInterface)
+	if (bIsPrimaryAbilityReady)
 	{
-		AbilityInterface->OnAbilityReleas();
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityReleas();
+		}
 	}
+	
+}
+
+void ASPCharacter::HandleElementalAbilityTrigger()
+{
+	if (bIsElementalAbilityReady)
+	{
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability2);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityPressed();
+		}
+	}
+	
+
+}
+
+void ASPCharacter::HandleElementalAbilityRelease()
+{
+	if (bIsElementalAbilityReady)
+	{
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability2);
+		if (AbilityInterface)
+		{
+			AbilityInterface->OnAbilityReleas();
+		}
+	}
+	
 }
 
 void ASPCharacter::OnDeath()

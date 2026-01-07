@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (UIMin = "0.0", UIMax = "500.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", UIMax = "500.0"))
 	float MaxHealth = 100.f;
 
 	UPROPERTY(BlueprintReadOnly)

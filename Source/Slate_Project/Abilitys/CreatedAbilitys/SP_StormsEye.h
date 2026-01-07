@@ -22,8 +22,13 @@ public:
 	// Inherited via IAbilityInterface
 	void OnAbilityPressed() override;
 	void OnAbilityReleas() override;
-	void ActivateCooldown(float Time) override;
-	void CooldownTimer() override;
+	void ActivateCooldown() override;
+
+	virtual void CooldownCompleted() override;
+
+	virtual void UpdateUI(float Value) override;
+
+
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> TargetingTemplate;

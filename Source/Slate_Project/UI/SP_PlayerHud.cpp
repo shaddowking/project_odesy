@@ -13,14 +13,11 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 	OwningHUD = InArgs._OwningHUD;
 
 
+	SetSlateBrushes();
+
+
+
 	
-	HPBrush = OwningHUD->HPImageBrush;
-
-	HealthBarMaterial = Cast<UMaterialInterface>(HPBrush.GetResourceObject());
-
-	MaterialInstance = UMaterialInstanceDynamic::Create(HealthBarMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-
-	HPBrush.SetResourceObject(MaterialInstance);
 
 	FSlateFontInfo CurrentAmmoTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
 	CurrentAmmoTextStyle.Size = 30.f;
@@ -55,6 +52,42 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 			[
 				SNew(SImage).Image(&HPBrush)
 			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(250.f, 40.f))
+			.VAlign(VAlign_Bottom)
+			.HAlign(HAlign_Left)
+			[					
+				SNew(SImage)
+					.Image(&PrimaryAbilityBrush)
+					
+			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(250.f, 40.f))
+			.VAlign(VAlign_Bottom)
+			.HAlign(HAlign_Left)
+			[					
+				SNew(SImage)
+					.Image(&PrimaryAbilitySliderBrush)
+			]
+			
+			+ SOverlay::Slot()
+			.Padding(FMargin(350.f, 40.f))
+			.VAlign(VAlign_Bottom)
+			.HAlign(HAlign_Left)
+			[					
+				SNew(SImage)
+					.Image(&ElementalAbilityBrush)
+			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(350.f, 40.f))
+			.VAlign(VAlign_Bottom)
+			.HAlign(HAlign_Left)
+			[					
+				SNew(SImage)
+					.Image(&ElementalAbilitySliderBrush)
+			]
+			
+
 		];
 
 }
@@ -69,7 +102,62 @@ void SPlayerHud::UpdateAmmoText(int current, int Extra)
 
 void SPlayerHud::UpdateHPPercent(float percent)
 {
-	MaterialInstance->SetScalarParameterValue("Percentage", percent);
+	HPMaterialInstance->SetScalarParameterValue("Percentage", percent);
+}
+
+void SPlayerHud::UpdateUltimatePercent(float percent)
+{
+	UltimatePercent = percent;
+	UltimateMaterialInstance->SetScalarParameterValue("Percent", percent);
+
+}
+
+void SPlayerHud::UpdatePrimaryAbilityPercent(float percent)
+{
+	PrimaryAbilityPercent = percent;
+	PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+}
+
+void SPlayerHud::UpdateElementalAbilityPercent(float percent)
+{
+	ElementalAbilityPercent = percent;
+	ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+}
+
+void SPlayerHud::SetSlateBrushes()
+{
+	//HP-------
+	HPBrush = OwningHUD->HPImageBrush;
+
+	HealthBarMaterial = Cast<UMaterialInterface>(HPBrush.GetResourceObject());
+	HPMaterialInstance = UMaterialInstanceDynamic::Create(HealthBarMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
+	HPBrush.SetResourceObject(HPMaterialInstance);
+	//---------
+	//Abilitys-
+	UltimateBrush = OwningHUD->UltimateImageBrush;
+	UltimateSliderBrush = OwningHUD->UISliderBrush;
+
+	UltimateMaterial = Cast<UMaterialInterface>(UltimateSliderBrush.GetResourceObject());
+	UltimateMaterialInstance = UMaterialInstanceDynamic::Create(UltimateMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
+	UltimateSliderBrush.SetResourceObject(UltimateMaterialInstance);
+
+	
+	PrimaryAbilityBrush = OwningHUD->PrimaryAbilityImageBrush;
+	PrimaryAbilitySliderBrush = OwningHUD->UISliderBrush;
+
+	PrimaryAbilityMaterial = Cast<UMaterialInterface>(PrimaryAbilitySliderBrush.GetResourceObject());
+	PrimaryAbilityMaterialInstance = UMaterialInstanceDynamic::Create(PrimaryAbilityMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
+	PrimaryAbilitySliderBrush.SetResourceObject(PrimaryAbilityMaterialInstance);
+
+
+	ElementalAbilityBrush = OwningHUD->ElementalAbilityImageBrush;
+	ElementalAbilitySliderBrush = OwningHUD->UISliderBrush;
+
+	ElementalAbilityMaterial = Cast<UMaterialInterface>(ElementalAbilitySliderBrush.GetResourceObject());
+	ElementalAbilityMaterialInstance = UMaterialInstanceDynamic::Create(ElementalAbilityMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
+	ElementalAbilitySliderBrush.SetResourceObject(ElementalAbilityMaterialInstance);
+
+	//---------
 }
 
 

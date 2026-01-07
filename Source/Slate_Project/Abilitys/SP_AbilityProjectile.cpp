@@ -20,7 +20,15 @@ void AAbilityProjectile::Tick(float DeltaTime)
 	{
 		FHitResult SweepHit;
 		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, false);
-		
+
+		if (Duration <= 0)
+		{
+			ProjectileDeActivate();
+		}
+		else
+		{
+			Duration -= DeltaTime;
+		}
 	}
 	
 }
@@ -39,9 +47,30 @@ void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AA
 		{
 			healthComponent->TakeDamage(Stats.ImpactDamage);
 		}
-		bIsActive = false;
+		ProjectileDeActivate();
 
 	}
+}
+
+void AAbilityProjectile::ProjectileActivate(FVector location, FRotator Rotation)
+{
+	ProjectileMove(location, Rotation);
+	bIsActive = true;
+
+}
+
+void AAbilityProjectile::ProjectileMove(FVector location, FRotator Rotation)
+{
+	Duration = MaxDuration;
+	SetActorLocationAndRotation(location, Rotation);
+	SetActorHiddenInGame(false);
+
+}
+
+void AAbilityProjectile::ProjectileDeActivate()
+{
+	bIsActive = false;
+	SetActorHiddenInGame(true);
 }
 
 
