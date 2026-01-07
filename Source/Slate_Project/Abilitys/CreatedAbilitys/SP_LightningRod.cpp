@@ -36,6 +36,12 @@ void ALightningRod::ActivateCooldown()
 	CooldownTimer();
 }
 
+void ALightningRod::InitialiceAbility(ASPCharacter* player)
+{
+	Super::InitialiceAbility(player);
+	Hud->PlayerHudWidget->UpdateElementAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
+}
+
 void ALightningRod::CooldownCompleted()
 {
 	Hud->PlayerHudWidget->UpdateElementalAbilityPercent(0);

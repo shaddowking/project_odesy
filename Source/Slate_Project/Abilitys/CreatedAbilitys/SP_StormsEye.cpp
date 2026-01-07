@@ -79,3 +79,9 @@ void AStormsEye::UpdateUI(float Value)
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(CooldownPercent);
 }
 
+void AStormsEye::InitialiceAbility(ASPCharacter* player)
+{
+	Super::InitialiceAbility(player);
+	Hud->PlayerHudWidget->UpdatePrimaryAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
+}
+

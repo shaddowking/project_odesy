@@ -118,10 +118,20 @@ void SPlayerHud::UpdatePrimaryAbilityPercent(float percent)
 	PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
 }
 
+void SPlayerHud::UpdatePrimaryAbilityIcon(UTexture2D* icon)
+{
+	PrimaryAbilityBrush.SetResourceObject(icon);
+}
+
 void SPlayerHud::UpdateElementalAbilityPercent(float percent)
 {
 	ElementalAbilityPercent = percent;
 	ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+}
+
+void SPlayerHud::UpdateElementAbilityIcon(UTexture2D* icon)
+{
+	ElementalAbilityBrush.SetResourceObject(icon);
 }
 
 void SPlayerHud::SetSlateBrushes()

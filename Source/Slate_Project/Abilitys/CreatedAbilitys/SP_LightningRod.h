@@ -23,6 +23,8 @@ public:
 	void OnAbilityReleas() override;
 	void ActivateCooldown() override;
 
+	virtual void InitialiceAbility(ASPCharacter* player) override;
+
 	virtual void CooldownCompleted() override;
 	virtual void UpdateUI(float Value) override;
 

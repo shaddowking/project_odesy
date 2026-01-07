@@ -27,8 +27,10 @@ public:
 	void UpdateUltimatePercent(float percent);
 
 	void UpdatePrimaryAbilityPercent(float percent);
+	void UpdatePrimaryAbilityIcon(UTexture2D* icon);
 
 	void UpdateElementalAbilityPercent(float percent);
+	void UpdateElementAbilityIcon(UTexture2D* icon);
 
 
 	virtual bool SupportsKeyboardFocus() const override { return true; }

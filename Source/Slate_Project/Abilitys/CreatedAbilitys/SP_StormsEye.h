@@ -28,6 +28,9 @@ public:
 
 	virtual void UpdateUI(float Value) override;
 
+	virtual void InitialiceAbility(ASPCharacter* player) override;
+
+
 
 
 	UPROPERTY(EditDefaultsOnly)

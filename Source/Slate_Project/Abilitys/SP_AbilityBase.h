@@ -30,7 +30,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UAbilityDataAsset* AbilityBaseStates = nullptr;
 
-	void InitialiceAbility(ASPCharacter* player);
+	virtual void InitialiceAbility(ASPCharacter* player);
 
 	ASPCharacter* Caster = nullptr;
 
