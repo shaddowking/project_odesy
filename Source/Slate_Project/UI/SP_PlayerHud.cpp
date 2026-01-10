@@ -108,14 +108,22 @@ void SPlayerHud::UpdateHPPercent(float percent)
 void SPlayerHud::UpdateUltimatePercent(float percent)
 {
 	UltimatePercent = percent;
-	UltimateMaterialInstance->SetScalarParameterValue("Percent", percent);
+	if (UltimateMaterialInstance)
+	{
+		UltimateMaterialInstance->SetScalarParameterValue("Percent", percent);
+
+	}
 
 }
 
 void SPlayerHud::UpdatePrimaryAbilityPercent(float percent)
 {
 	PrimaryAbilityPercent = percent;
-	PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+	if (PrimaryAbilityMaterialInstance)
+	{
+		PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+
+	}
 }
 
 void SPlayerHud::UpdatePrimaryAbilityIcon(UTexture2D* icon)
@@ -126,7 +134,11 @@ void SPlayerHud::UpdatePrimaryAbilityIcon(UTexture2D* icon)
 void SPlayerHud::UpdateElementalAbilityPercent(float percent)
 {
 	ElementalAbilityPercent = percent;
-	ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+	if (ElementalAbilityMaterialInstance)
+	{
+		ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+
+	}
 }
 
 void SPlayerHud::UpdateElementAbilityIcon(UTexture2D* icon)

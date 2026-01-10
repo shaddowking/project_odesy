@@ -24,6 +24,12 @@ void AStormsEye::Tick(float DeltaTime)
 	
 }
 
+void AStormsEye::LanchAbility()
+{
+	CreatedTurret->Activate(TargetLocation);
+	ActivateCooldown();
+}
+
 void AStormsEye::OnAbilityPressed()
 {
 	BIsAbilityActive = true;
@@ -53,11 +59,14 @@ void AStormsEye::OnAbilityReleas()
 	{
 		CreatedTurret = GetWorld()->SpawnActor<AStormTurret>(TurretRefrence, TargetLocation, Rotation);
 		CreatedTurret->InitialicePlaceble(Caster);
+		CreatedTurret->DeActivate();
 	}
 	
+	FTimerHandle AbilityTimerHandle;
+
+	GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &AStormsEye::LanchAbility, CastDelay, false);
 	
-	CreatedTurret->Activate(TargetLocation);
-	ActivateCooldown();
+	
 	
 }
 

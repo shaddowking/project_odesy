@@ -27,6 +27,9 @@ public:
 
 	float ActiveCooldown = 0;
 
+	UPROPERTY(EditInstanceOnly)
+	float CastDelay = 0.5f;
+
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UAbilityDataAsset* AbilityBaseStates = nullptr;
 

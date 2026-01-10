@@ -54,15 +54,18 @@ void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AA
 
 void AAbilityProjectile::ProjectileActivate(FVector location, FRotator Rotation)
 {
-	ProjectileMove(location, Rotation);
 	bIsActive = true;
+	Duration = MaxDuration;
+	BPActivate(location);
+
 
 }
 
 void AAbilityProjectile::ProjectileMove(FVector location, FRotator Rotation)
 {
-	Duration = MaxDuration;
 	SetActorLocationAndRotation(location, Rotation);
+	BPMove(location);
+	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	SetActorHiddenInGame(false);
 
 }
@@ -71,6 +74,8 @@ void AAbilityProjectile::ProjectileDeActivate()
 {
 	bIsActive = false;
 	SetActorHiddenInGame(true);
+	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
+
 }
 
 

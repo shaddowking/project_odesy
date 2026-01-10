@@ -6,8 +6,8 @@
 class USphereComponent;
 
 
-UCLASS()
 
+UCLASS()
 class ASPVoletileStormProjectile : public AAbilityProjectile 
 {
 	GENERATED_BODY()
@@ -22,10 +22,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	int ShockDamage = 10;
 
+	
 
 	UFUNCTION()
 	void OnEnemyEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	virtual void ProjectileActivate(FVector location, FRotator Rotation) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartLightningVFX(FVector Location);
+
+	
+
+	virtual void ProjectileDeActivate() override;
 
 private:
 

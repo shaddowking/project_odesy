@@ -19,9 +19,9 @@ void AAbilityBase::CooldownTimer()
 		ActiveCooldown += 0.1f;
 		UpdateUI(ActiveCooldown);
 		CooldownPercent = ActiveCooldown / AbilityBaseStates->AbilityInfo.Cooldown;
-		FTimerHandle GunTimerHandle;
+		FTimerHandle AbilityTimerHandle;
 
-		GetWorldTimerManager().SetTimer(GunTimerHandle, this, &AAbilityBase::CooldownTimer, 0.1f, false);
+		GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &AAbilityBase::CooldownTimer, 0.1f, false);
 	}
 	else
 	{

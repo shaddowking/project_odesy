@@ -30,6 +30,8 @@ void AAbilityPlacable::Activate(FVector Location)
 	SetActorLocation(Location);
 	duration = Maxduration;
 	SetActorHiddenInGame(false);
+	BPActivate(Location);
+
 	IsActive = true;
 }
 

@@ -18,6 +18,8 @@ public:
 
 	void Tick(float DeltaTime) override;
 
+	void LanchAbility();
+
 
 	// Inherited via IAbilityInterface
 	void OnAbilityPressed() override;

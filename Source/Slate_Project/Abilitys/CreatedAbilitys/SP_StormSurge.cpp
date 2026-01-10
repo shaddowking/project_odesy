@@ -9,11 +9,20 @@
 
 
 
+void AStormSurge::LanchProjectile()
+{
+	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
+
+	projectile->ProjectileActivate(GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
+
+	ActivateCooldown();
+}
+
 void AStormSurge::OnAbilityPressed()
 {
 	Caster->bIsUltimateReady = false;
-	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
 	spawnDebug(Caster->GetAimPoint(5000));
+	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
 
 	if (ProjectileRefrence && !projectile)
 	{
@@ -21,9 +30,15 @@ void AStormSurge::OnAbilityPressed()
 		projectile->InitialiceProjectile(Caster);
 	}
 
-	projectile->ProjectileActivate(GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 	
-	ActivateCooldown();
+
+	projectile->ProjectileMove(GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
+	
+	FTimerHandle AbilityTimerHandle;
+
+	GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &AStormSurge::LanchProjectile, CastDelay, false);
+
+	
 
 }
 

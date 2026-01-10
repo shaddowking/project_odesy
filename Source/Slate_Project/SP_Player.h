@@ -82,6 +82,7 @@ protected:
 	void HandleStopAim();
 
 	void HandleShoot();
+	void HandleShootRealese();
 	void HandleRelode();
 
 	void HandleUltimateTrigger();
@@ -92,6 +93,8 @@ protected:
 
 	void HandleElementalAbilityTrigger();
 	void HandleElementalAbilityRelease();
+
+	
 
 
 	UFUNCTION()
@@ -104,12 +107,31 @@ protected:
 
 public:
 
+	UPROPERTY(EditAnywhere)
+	int ProjectilePoolsice = 200;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<AProjectile*> ProjectilePool;
+
+	UFUNCTION()
+	AProjectile* GetNextAvalableProjectile();
+
+	AProjectile* AddProjectileTooPool();
+
+	void CreateProjectilePool();
+
+
+
 	bool bIsUltimateReady = true;
 	bool bIsPrimaryAbilityReady = true;
 	bool bIsElementalAbilityReady = true;
 
 	FVector GetAimPoint(float Range);
 	FVector GetPlacablePoint(float Range);
+
 
 	void Tick(float DeltaTime) override;
 	void GroundCheck();
@@ -147,6 +169,11 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	ASP_Gun* CurrentGun = nullptr;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<ASP_Gun*> CreatedGunList;
+
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
+	void EquipGun(ASP_Gun* NewGun);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USP_GunComponent* EquiptGun = nullptr;

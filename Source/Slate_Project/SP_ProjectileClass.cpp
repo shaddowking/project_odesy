@@ -14,24 +14,51 @@ void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
-	FHitResult SweepHit;
-	AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, true, &SweepHit);
-	if (SweepHit.bBlockingHit)
+	if (IsActive)
 	{
-		AActor* HitActor = SweepHit.GetActor();
-		if (HitActor)
+		FHitResult SweepHit;
+		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, true, &SweepHit);
+		if (SweepHit.bBlockingHit)
 		{
-			
-			UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
-			if (healthComponent)
+			AActor* HitActor = SweepHit.GetActor();
+			if (HitActor)
 			{
-				healthComponent->TakeDamage(20);
+
+				UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
+				if (healthComponent)
+				{
+					healthComponent->TakeDamage(20);
+				}
+
 			}
-			
+			DeActivate();
 		}
-		Destroy();
+
+		if (Duration <= 0)
+		{
+			DeActivate();
+		}
+		else
+		{
+			Duration -= DeltaTime;
+		}
 	}
+	
+}
+
+void AProjectile::Activate()
+{
+	Duration = MaxDuration;
+	SetActorHiddenInGame(false);
+	IsActive = true;
+	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+}
+
+void AProjectile::DeActivate()
+{
+	SetActorHiddenInGame(true);
+	IsActive = false;
+	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 

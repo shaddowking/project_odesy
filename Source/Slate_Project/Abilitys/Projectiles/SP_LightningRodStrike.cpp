@@ -11,15 +11,27 @@ ALightningRodStrike::ALightningRodStrike()
 	AttackRadius->SetupAttachment(Root);
 	AttackRadius->OnComponentBeginOverlap.AddDynamic(this, &ALightningRodStrike::OnEnemyenter);
 	AttackRadius->OnComponentEndOverlap.AddDynamic(this, &ALightningRodStrike::OnEnemyexit);
+
 }
 
 void ALightningRodStrike::Activate(FVector Location)
 {
 	Super::Activate(Location);
+	AttackRadius->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	BPActivate(Location);
+	
 	FTimerHandle AbilityTimerHandle;
 
 	GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &ALightningRodStrike::LightningStrike, 0.5f, false);
+
+
+
+}
+
+void ALightningRodStrike::DeActivate()
+{
+	Super::DeActivate();
+	AttackRadius->SetCollisionProfileName(TEXT("NoCollision"));
 
 }
 

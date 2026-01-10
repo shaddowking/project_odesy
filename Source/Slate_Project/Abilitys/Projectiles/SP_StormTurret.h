@@ -32,6 +32,9 @@ public:
 
 	virtual void DeActivate() override;
 
+	virtual void Activate(FVector Location) override;
+
+
 private:
 
 	void PerformAttack();

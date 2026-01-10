@@ -7,6 +7,8 @@ class AProjectile;
 class ASPCharacter;
 class ASP_HUD;
 
+
+
 UCLASS()
 class ASP_Gun : public AActor {
 	GENERATED_BODY()
@@ -26,8 +28,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USP_GunComponent* GunComponent = nullptr;
 
+	UPROPERTY(BlueprintReadWrite)
+	ASPCharacter* player = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AProjectile> ProjectileClass;
+
 
 	UFUNCTION()
 	void GunFire();
@@ -46,4 +52,8 @@ private:
 	ASP_HUD* hud = nullptr;
 
 	void Burst();
+
+	void FullAuto();
+	void SemiAuto();
+	void Charge();
 };

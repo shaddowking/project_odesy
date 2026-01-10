@@ -25,29 +25,30 @@ void ASP_Gun::BeginPlay()
 	GunComponent->CurrentAmmo = GunComponent->MaxAmmo;
 	GunComponent->OwningGun = this;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	//player = GunComponent->Owner;
+	//int test = player->ProjectilePool.Num();
 }
 
 void ASP_Gun::GunFire()
 {
-	if (GunComponent->Guntype == EGunType::Burst)
+	
+	switch (GunComponent->Guntype)
 	{
+	case EGunType::FullAuto:
+		FullAuto();
+		break;
+	case EGunType::SemiAuto:
+		SemiAuto();
+		break;
+	case EGunType::Burst:
 		burstsMade = 0;
 		Burst();
-	}
-	else if (GunComponent->Guntype == EGunType::FullAuto)
-	{
-		FHitResult AimHit;
-		GetWorld()->LineTraceSingleByChannel(AimHit, GunComponent->ViewOrigin, GunComponent->ViewOrigin + GunComponent->ViewForward * 5000, ECollisionChannel::ECC_Visibility);
-
-		FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
-
-		SpawnBullet(AimPoint, FirePoint);
-
-		GunComponent->CurrentAmmo--;
-
-
-		hud->PlayerHudWidget->UpdateAmmoText(GunComponent->CurrentAmmo, GunComponent->ExtraAmmo);
-		
+		break;
+	case EGunType::Charge:
+		Charge();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -57,14 +58,15 @@ void ASP_Gun::SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint)
 	FVector ShootDirection = AimPoint - GunFirePoint->GetComponentLocation();
 
 
-	AProjectile* CurentBullet = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, GunFirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
-	AProjectile* Bullet = Cast<AProjectile>(CurentBullet);
-	Bullet->Speed = GunComponent->BulletSpeed;
+	AProjectile* CurentBullet = player->GetNextAvalableProjectile();
 
-	FTimerHandle GunTimerHandle;
+	CurentBullet->SetActorLocationAndRotation(GunFirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
-	GetWorldTimerManager().SetTimer(GunTimerHandle, this, &ASP_Gun::ResetCanShoot, GunComponent->TimeBetweenShots, false);
+	CurentBullet->Speed = GunComponent->BulletSpeed;
+	CurentBullet->Activate();
+
+	
 
 }
 
@@ -96,14 +98,12 @@ void ASP_Gun::Burst()
 
 	if (burstsMade < GunComponent->BurstAmount)
 	{
-		float test = GunComponent->CurrentAmmo + GunComponent->BurstAmount;
-
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("tast = %f"), GunComponent->CurrentAmmo - burstsMade));
+		
 
 
 		if (GunComponent->CurrentAmmo < 0)
 		{
-
+			
 		}
 		else
 		{
@@ -122,5 +122,43 @@ void ASP_Gun::Burst()
 		GetWorldTimerManager().SetTimer(GunTimerHandle, this, &ASP_Gun::ResetCanShoot, GunComponent->TimeBetweenShots, false);
 
 	}
+}
+
+void ASP_Gun::FullAuto()
+{
+	FHitResult AimHit;
+	GetWorld()->LineTraceSingleByChannel(AimHit, GunComponent->ViewOrigin, GunComponent->ViewOrigin + GunComponent->ViewForward * 5000, ECollisionChannel::ECC_Visibility);
+
+	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
+
+	SpawnBullet(AimPoint, FirePoint);
+
+	GunComponent->CurrentAmmo--;
+
+
+	hud->PlayerHudWidget->UpdateAmmoText(GunComponent->CurrentAmmo, GunComponent->ExtraAmmo);
+
+	FTimerHandle GunTimerHandle;
+
+	GetWorldTimerManager().SetTimer(GunTimerHandle, this, &ASP_Gun::ResetCanShoot, GunComponent->TimeBetweenShots, false);
+}
+
+void ASP_Gun::SemiAuto()
+{
+	FHitResult AimHit;
+	GetWorld()->LineTraceSingleByChannel(AimHit, GunComponent->ViewOrigin, GunComponent->ViewOrigin + GunComponent->ViewForward * 5000, ECollisionChannel::ECC_Visibility);
+
+	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
+
+	SpawnBullet(AimPoint, FirePoint);
+
+	GunComponent->CurrentAmmo--;
+
+
+	hud->PlayerHudWidget->UpdateAmmoText(GunComponent->CurrentAmmo, GunComponent->ExtraAmmo);
+}
+
+void ASP_Gun::Charge()
+{
 }
 

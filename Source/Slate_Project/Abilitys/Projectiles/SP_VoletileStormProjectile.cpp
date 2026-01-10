@@ -23,6 +23,7 @@ void ASPVoletileStormProjectile::OnEnemyEnter(UPrimitiveComponent* OverlappedCom
 		ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
 		if (FoundTarget)
 		{
+			StartLightningVFX(FoundTarget->GetActorLocation());
 			UHealthComponent* healthComponent = FoundTarget->FindComponentByClass<UHealthComponent>();
 			if (healthComponent)
 			{
@@ -32,4 +33,18 @@ void ASPVoletileStormProjectile::OnEnemyEnter(UPrimitiveComponent* OverlappedCom
 	}
 
 	
+}
+
+void ASPVoletileStormProjectile::ProjectileActivate(FVector location, FRotator Rotation)
+{
+	Super::ProjectileActivate(location, Rotation);
+	ShockRange->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+
+}
+
+void ASPVoletileStormProjectile::ProjectileDeActivate()
+{
+	Super::ProjectileDeActivate();
+	ShockRange->SetCollisionProfileName(TEXT("NoCollision"));
+
 }

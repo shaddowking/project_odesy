@@ -12,6 +12,7 @@
 #include "Abilitys/SP_SubclassComponent.h"
 #include "Abilitys/CreatedAbilitys/SP_StormWalker.h"
 #include "Abilitys/AbilityInterface.h"
+#include "SP_ProjectileClass.h"
 
 
 ASPCharacter::ASPCharacter()
@@ -39,6 +40,9 @@ void ASPCharacter::BeginPlay()
 	}
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	CreateProjectilePool();
+
+	AProjectile* test = GetNextAvalableProjectile();
 }
 
 void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputComponent)
@@ -63,6 +67,8 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ASPCharacter::HandleStopAim);
 
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleShoot);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &ASPCharacter::HandleShootRealese);
+
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::None, this, &ASPCharacter::StopShoot);
 		
 		EnhancedInputComponent->BindAction(RelodeAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleRelode);
@@ -199,6 +205,11 @@ void ASPCharacter::HandleShoot()
 
 }
 
+void ASPCharacter::HandleShootRealese()
+{
+	ResetTimeBetwenShots();
+}
+
 void ASPCharacter::HandleRelode()
 {
 	
@@ -293,6 +304,62 @@ void ASPCharacter::HandleElementalAbilityRelease()
 	
 }
 
+
+
+AProjectile* ASPCharacter::GetNextAvalableProjectile()
+{
+	AProjectile* result = nullptr;
+	for (AProjectile* projectile : ProjectilePool)
+	{
+		if (projectile->IsActive == false)
+		{
+			result = projectile;
+			break;
+		}
+	}
+
+	if (result == nullptr)
+	{
+		result = AddProjectileTooPool();
+	}
+
+	return result;
+}
+
+AProjectile* ASPCharacter::AddProjectileTooPool()
+{
+	AProjectile* createdprojectile = nullptr;
+
+	createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, FVector::ZeroVector, GetActorRotation());
+	ProjectilePool.Add(createdprojectile);
+	createdprojectile->DeActivate();
+
+	return createdprojectile;
+}
+
+
+
+
+
+
+	
+
+
+
+void ASPCharacter::CreateProjectilePool()
+{
+	AProjectile* createdprojectile = nullptr;
+	for (size_t i = 0; i < ProjectilePoolsice; i++)
+	{
+
+		 createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), GetActorRotation());
+		 ProjectilePool.Add(createdprojectile);
+		 createdprojectile->DeActivate();
+
+	}
+
+}
+
 void ASPCharacter::OnDeath()
 {
 }
@@ -344,8 +411,6 @@ void ASPCharacter::GroundCheck()
 
 void ASPCharacter::ResetTimeBetwenShots()
 {
-
-
 	bCanShoot = true;
 }
 

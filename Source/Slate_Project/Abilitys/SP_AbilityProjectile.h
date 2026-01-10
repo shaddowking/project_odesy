@@ -51,6 +51,12 @@ public:
 
 	virtual void ProjectileActivate(FVector location,FRotator Rotation);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BPActivate(FVector location);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BPMove(FVector location);
+
 	virtual void ProjectileMove(FVector location, FRotator Rotation);
 
 	virtual void ProjectileDeActivate();

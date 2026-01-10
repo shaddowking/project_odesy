@@ -12,7 +12,9 @@ UENUM(BlueprintType)
 enum class EGunType : uint8
 {
 	FullAuto,
-	Burst
+	SemiAuto,
+	Burst,
+	Charge
 };
 
 UCLASS(meta = (BlueprintSpawnableComponent))

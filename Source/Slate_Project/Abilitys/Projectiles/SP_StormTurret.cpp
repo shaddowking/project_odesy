@@ -67,6 +67,15 @@ void AStormTurret::OnEnemyExit(UPrimitiveComponent* OverlappedComp, AActor* Othe
 void AStormTurret::DeActivate()
 {
 	Super::DeActivate();
+	TurretRange->SetCollisionProfileName(TEXT("NoCollision"));
+
+}
+
+void AStormTurret::Activate(FVector Location)
+{
+	Super::Activate(Location);
+	TurretRange->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+
 }
 
 void AStormTurret::PerformAttack()

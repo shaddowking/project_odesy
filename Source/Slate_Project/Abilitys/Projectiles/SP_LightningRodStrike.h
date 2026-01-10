@@ -18,6 +18,9 @@ public:
 
 	virtual void Activate(FVector Location) override;
 
+	virtual void DeActivate() override;
+
+
 	void LightningStrike();
 
 	UFUNCTION()

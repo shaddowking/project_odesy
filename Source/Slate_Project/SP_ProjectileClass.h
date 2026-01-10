@@ -17,7 +17,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Speed = 2000.f;
 
-	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	int Damage = 10;
+
+	float Duration;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Duration")
+	float MaxDuration = 10;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool IsActive = false;
+
+	void Activate();
+
+	void DeActivate();
 
 private:
 	UPROPERTY(VisibleAnywhere)
