@@ -8,16 +8,9 @@
 
 void SPlayerHud::Construct(const FArguments& InArgs) 
 {
-
-
 	OwningHUD = InArgs._OwningHUD;
 
-
 	SetSlateBrushes();
-
-
-
-	
 
 	FSlateFontInfo CurrentAmmoTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
 	CurrentAmmoTextStyle.Size = 30.f;

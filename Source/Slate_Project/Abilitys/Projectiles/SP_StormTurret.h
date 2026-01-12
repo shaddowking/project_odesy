@@ -34,6 +34,9 @@ public:
 
 	virtual void Activate(FVector Location) override;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdeteCoreShader(float percent);
+
 
 private:
 

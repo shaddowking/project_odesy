@@ -35,6 +35,7 @@ void AStormTurret::Tick(float DeltaTime)
 		{
 			AttackTimer += DeltaTime;
 		}
+		UpdeteCoreShader(AttackTimer / AttackInterval);
 	}
 
 
