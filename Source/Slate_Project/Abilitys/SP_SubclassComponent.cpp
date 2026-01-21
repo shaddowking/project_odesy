@@ -8,4 +8,5 @@ void USubclassComponent::InitializeSubclasses(ASPCharacter* Holder)
 	Owner = Holder;
 	StormsEya = Cast<AStormWalker>(GetWorld()->SpawnActor<ASubclass>(StormsEya_Template));
 	StormsEya->InitializeSubclass(Owner);
+	activeSubclass = StormsEya;
 }

@@ -235,7 +235,7 @@ void ASPCharacter::HandleUltimateTrigger()
 
 	if (bIsUltimateReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityPressed();
@@ -250,7 +250,7 @@ void ASPCharacter::HandleUltimateRelease()
 {
 	if (bIsUltimateReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ultimate);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityReleas();
@@ -263,7 +263,7 @@ void ASPCharacter::HandlePrimaryAbilityTrigger()
 {
 	if (bIsPrimaryAbilityReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityPressed();
@@ -276,7 +276,7 @@ void ASPCharacter::HandlePrimaryAbilityRelease()
 {
 	if (bIsPrimaryAbilityReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability1);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityReleas();
@@ -289,7 +289,7 @@ void ASPCharacter::HandleElementalAbilityTrigger()
 {
 	if (bIsElementalAbilityReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability2);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityPressed();
@@ -303,7 +303,7 @@ void ASPCharacter::HandleElementalAbilityRelease()
 {
 	if (bIsElementalAbilityReady)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->StormsEya->Ability2);
+		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 		if (AbilityInterface)
 		{
 			AbilityInterface->OnAbilityReleas();

@@ -17,6 +17,9 @@ public:
 
 	void InitializeSubclasses(ASPCharacter* Holder);
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	ASubclass* activeSubclass = nullptr;
+
 	// Subclasses
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASubclass> StormsEya_Template;

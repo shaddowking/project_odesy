@@ -80,11 +80,18 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 					.Image(&ElementalAbilitySliderBrush)
 			]
 			+ SOverlay::Slot()
-			.Padding(FMargin(0.f, -80.f))
+			.Padding(FMargin(400.f, 0.f))
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Bottom)
+			[
+				SNew(SImage).Image(&ChargeSliderBrush).Visibility(this, &SPlayerHud::GetChargeSliderVisibility)
+			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(0.f, 0.f))
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			[
-				SNew(SImage).Image(&ChargeSliderBrush).Visibility(this, &SPlayerHud::GetChargeSliderVisibility)
+				SNew(SImage)
 			]
 			
 
