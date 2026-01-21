@@ -6,8 +6,10 @@
 AProjectile::AProjectile()
 {
 	Sphere = CreateDefaultSubobject<USphereComponent>("sphere");
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnProjectileHit);
 	RootComponent = Sphere;
 	PrimaryActorTick.bCanEverTick = true;
+	
 }
 
 void AProjectile::Tick(float DeltaTime)
@@ -16,23 +18,8 @@ void AProjectile::Tick(float DeltaTime)
 
 	if (IsActive)
 	{
-		FHitResult SweepHit;
-		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, true, &SweepHit);
-		if (SweepHit.bBlockingHit)
-		{
-			AActor* HitActor = SweepHit.GetActor();
-			if (HitActor)
-			{
-
-				UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
-				if (healthComponent)
-				{
-					healthComponent->TakeDamage(20);
-				}
-
-			}
-			DeActivate();
-		}
+		AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, false);
+		
 
 		if (Duration <= 0)
 		{
@@ -52,6 +39,8 @@ void AProjectile::Activate()
 	SetActorHiddenInGame(false);
 	IsActive = true;
 	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+
 }
 
 void AProjectile::DeActivate()
@@ -59,6 +48,28 @@ void AProjectile::DeActivate()
 	SetActorHiddenInGame(true);
 	IsActive = false;
 	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
+	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility,ECR_Ignore);
+}
+
+void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (IsActive)
+	{
+		AActor* HitActor = OtherActor;
+		AProjectile* hitprojectile = Cast<AProjectile>(HitActor);
+		if (HitActor && hitprojectile == nullptr)
+		{
+
+			UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
+			if (healthComponent)
+			{
+				healthComponent->TakeDamage(Damage);
+			}
+
+		}
+		DeActivate();
+	}
+	
 }
 
 

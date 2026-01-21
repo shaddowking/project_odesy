@@ -23,7 +23,7 @@ public:
 	float Duration;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Duration")
-	float MaxDuration = 10;
+	float MaxDuration = 5;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsActive = false;
@@ -31,6 +31,10 @@ public:
 	void Activate();
 
 	void DeActivate();
+
+	UFUNCTION()
+	void OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 private:
 	UPROPERTY(VisibleAnywhere)

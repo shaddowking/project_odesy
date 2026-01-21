@@ -88,7 +88,7 @@ void ASP_Gun::SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint, float
 	CurentBullet->SetActorLocationAndRotation(GunFirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
 	CurentBullet->Speed = GunComponent->BulletSpeed * DamageModefire;
-	CurentBullet->Damage = CurentBullet->Damage * DamageModefire;
+	CurentBullet->Damage = GunComponent->GunDamage * DamageModefire;
 	CurentBullet->Activate();
 
 	
@@ -114,11 +114,9 @@ void ASP_Gun::Burst()
 
 	FVector ShootDirection = AimPoint - FirePoint->GetComponentLocation();
 
+	SpawnBullet(AimPoint, FirePoint);
 
-	AProjectile* CurentBullet = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, FirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
-
-	AProjectile* Bullet = Cast<AProjectile>(CurentBullet);
-	Bullet->Speed = GunComponent->BulletSpeed;
+	
 
 	GunComponent->CurrentAmmo--;
 	hud->PlayerHudWidget->UpdateAmmoText(GunComponent->CurrentAmmo, GunComponent->ExtraAmmo);
@@ -203,7 +201,7 @@ void ASP_Gun::Charge()
 	{
 		ChargeValue += 0.1f;
 	}
-	hud->PlayerHudWidget->UpdateWeaponChargeSlider( ChargeValue / MaxChargeValue);
+	hud->PlayerHudWidget->UpdateChargeSlider( ChargeValue / MaxChargeValue);
 
 }
 
@@ -231,7 +229,7 @@ void ASP_Gun::ChargeRelease()
 	GunComponent->CurrentAmmo--;
 	bHasStartedCharge = false;
 	hud->PlayerHudWidget->ChageChargeSliderVisibility(false);
-	hud->PlayerHudWidget->UpdateWeaponChargeSlider(ChargeValue / MaxChargeValue);
+	hud->PlayerHudWidget->UpdateChargeSlider(ChargeValue / MaxChargeValue);
 	hud->PlayerHudWidget->UpdateAmmoText(GunComponent->CurrentAmmo, GunComponent->ExtraAmmo);
 
 

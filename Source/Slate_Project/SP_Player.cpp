@@ -158,9 +158,13 @@ void ASPCharacter::HandleStartAim()
 
 void ASPCharacter::HandleStopAim()
 {
-	bIsAiming = false;
-	SetIdleRotationOn();
-	StopAimCam();
+	if (bIsShooting == false)
+	{
+		bIsAiming = false;
+		SetIdleRotationOn();
+		StopAimCam();
+	}
+	
 
 }
 
@@ -207,7 +211,11 @@ void ASPCharacter::HandleShoot()
 
 void ASPCharacter::HandleShootRealese()
 {
-	EquiptGun->RealeseGun();
+	if (bIsAiming)
+	{
+		EquiptGun->RealeseGun();
+
+	}
 }
 
 void ASPCharacter::HandleRelode()
