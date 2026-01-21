@@ -32,6 +32,8 @@ public:
 	void UpdateElementalAbilityPercent(float percent);
 	void UpdateElementAbilityIcon(UTexture2D* icon);
 
+	void UpdateWeaponChargeSlider(float percent);
+	void ChageChargeSliderVisibility(bool IsVisible);
 
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 
@@ -43,6 +45,8 @@ private:
 	FText GetExtraAmmoText() const { return ExtraAmmoText; }
 
 	FSlateBrush GetHPBrush() const { return HPBrush; }
+
+	EVisibility GetChargeWeaponSliderVisibility() const { return WeaponChargeSliderVisibility; }
 
 	
  
@@ -58,6 +62,9 @@ private:
 	UMaterialInterface* ElementalAbilityMaterial = nullptr;
 	UMaterialInstanceDynamic* ElementalAbilityMaterialInstance = nullptr;
 
+	UMaterialInterface* WeaponChargeMaterial = nullptr;
+	UMaterialInstanceDynamic* WeaponChargeInstance = nullptr;
+
 	FSlateBrush HPBrush;
 	FSlateBrush UltimateBrush;
 	FSlateBrush PrimaryAbilityBrush;
@@ -69,6 +76,9 @@ private:
 
 	FText CurrntAmmoText;
 	FText ExtraAmmoText;
+	FSlateBrush ChargeSliderBrush;
+
+	EVisibility WeaponChargeSliderVisibility;
 
 	float UltimatePercent;
 	float PrimaryAbilityPercent;

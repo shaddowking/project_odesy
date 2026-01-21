@@ -79,6 +79,13 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 				SNew(SImage)
 					.Image(&ElementalAbilitySliderBrush)
 			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(0.f, -80.f))
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+			[
+				SNew(SImage).Image(&ChargeSliderBrush).Visibility(this, &SPlayerHud::GetChargeWeaponSliderVisibility)
+			]
 			
 
 		];
@@ -139,6 +146,31 @@ void SPlayerHud::UpdateElementAbilityIcon(UTexture2D* icon)
 	ElementalAbilityBrush.SetResourceObject(icon);
 }
 
+void SPlayerHud::UpdateWeaponChargeSlider(float percent)
+{
+	if (WeaponChargeInstance)
+	{
+		WeaponChargeInstance->SetScalarParameterValue("Percent", percent);
+	}
+}
+
+void SPlayerHud::ChageChargeSliderVisibility(bool IsVisible)
+{
+	
+
+	if (IsVisible)
+	{
+		WeaponChargeSliderVisibility = EVisibility::HitTestInvisible;
+	}
+	else
+	{
+		WeaponChargeSliderVisibility = EVisibility::Collapsed;
+	}
+
+
+
+}
+
 void SPlayerHud::SetSlateBrushes()
 {
 	//HP-------
@@ -173,6 +205,15 @@ void SPlayerHud::SetSlateBrushes()
 	ElementalAbilitySliderBrush.SetResourceObject(ElementalAbilityMaterialInstance);
 
 	//---------
+	//Weapon
+
+	ChargeSliderBrush = OwningHUD->ShargeWeaponSlider;
+
+	WeaponChargeMaterial = Cast<UMaterialInterface>(ChargeSliderBrush.GetResourceObject());
+	WeaponChargeInstance = UMaterialInstanceDynamic::Create(WeaponChargeMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
+	ChargeSliderBrush.SetResourceObject(WeaponChargeInstance);
+
+
 }
 
 

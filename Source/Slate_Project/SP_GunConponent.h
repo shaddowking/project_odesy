@@ -29,6 +29,10 @@ public:
 		OnShoot.Broadcast();
 	}
 
+	void RealeseGun() {
+		OnRealese.Broadcast();
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gun Stats")
 	EGunType Guntype = EGunType::FullAuto;
 
@@ -46,6 +50,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FSPGunSigniture OnShoot;
+
+	UPROPERTY(BlueprintAssignable)
+	FSPGunSigniture OnRealese;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun Stats")
 	float TimeBetweenShots = 0.1f;

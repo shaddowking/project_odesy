@@ -33,5 +33,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Brush")
 	FSlateBrush UISliderBrush;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush ShargeWeaponSlider;
+
 	
 };

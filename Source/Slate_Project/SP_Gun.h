@@ -38,7 +38,10 @@ public:
 	UFUNCTION()
 	void GunFire();
 
-	void SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint);
+	UFUNCTION()
+	void GunRealese();
+
+	void SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint,float DamageModefire = 1);
 
 
 
@@ -56,4 +59,11 @@ private:
 	void FullAuto();
 	void SemiAuto();
 	void Charge();
+	void ChargeRelease();
+
+	bool bHasStartedCharge = false;
+	float ChargeValue = 1;
+	
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAcces = "true"))
+	float MaxChargeValue = 2;
 };

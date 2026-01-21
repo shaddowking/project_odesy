@@ -207,7 +207,7 @@ void ASPCharacter::HandleShoot()
 
 void ASPCharacter::HandleShootRealese()
 {
-	ResetTimeBetwenShots();
+	EquiptGun->RealeseGun();
 }
 
 void ASPCharacter::HandleRelode()
@@ -418,7 +418,7 @@ void ASPCharacter::Shoot(FVector ViewForward, FVector ViewOrigin)
 {
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	bCanShoot = false;
+	//bCanShoot = false;
 	bIsShooting = true;
 	EquiptGun->FireGun(ViewOrigin, ViewForward);
 
