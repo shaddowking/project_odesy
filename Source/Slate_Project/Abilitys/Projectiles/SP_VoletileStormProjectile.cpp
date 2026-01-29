@@ -38,13 +38,15 @@ void ASPVoletileStormProjectile::OnEnemyEnter(UPrimitiveComponent* OverlappedCom
 void ASPVoletileStormProjectile::ProjectileActivate(FVector location, FRotator Rotation)
 {
 	Super::ProjectileActivate(location, Rotation);
-	ShockRange->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	ShockRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 
 }
 
 void ASPVoletileStormProjectile::ProjectileDeActivate()
 {
 	Super::ProjectileDeActivate();
-	ShockRange->SetCollisionProfileName(TEXT("NoCollision"));
+	ShockRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
 }

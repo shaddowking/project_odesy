@@ -53,6 +53,15 @@ void AStormSurge::ActivateCooldown()
 	CooldownTimer();
 }
 
+void AStormSurge::AbilitySelected()
+{
+}
+
+void AStormSurge::InitialiceAbility(ASPCharacter* player)
+{
+	Super::InitialiceAbility(player);
+}
+
 void AStormSurge::CooldownCompleted()
 {
 	Hud->PlayerHudWidget->UpdateUltimatePercent(0);

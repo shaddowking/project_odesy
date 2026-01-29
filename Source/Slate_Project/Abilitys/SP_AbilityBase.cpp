@@ -8,6 +8,12 @@ void AAbilityBase::InitialiceAbility(ASPCharacter* player)
 
 }
 
+void AAbilityBase::AbilitySelected()
+{
+}
+
+
+
 FVector AAbilityBase::GetUltimateSpawnLocation() {
 	return FVector::ZeroVector;
 }

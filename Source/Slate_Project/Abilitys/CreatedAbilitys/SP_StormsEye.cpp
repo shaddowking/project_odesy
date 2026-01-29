@@ -6,6 +6,7 @@
 #include "../../UI/SP_PlayerHud.h"
 
 
+
 AStormsEye::AStormsEye()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -76,6 +77,11 @@ void AStormsEye::ActivateCooldown()
 	CooldownTimer();
 }
 
+void AStormsEye::AbilitySelected()
+{	
+	Hud->PlayerHudWidget->UpdatePrimaryAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
+}
+
 void AStormsEye::CooldownCompleted()
 {
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(0);
@@ -91,6 +97,5 @@ void AStormsEye::UpdateUI(float Value)
 void AStormsEye::InitialiceAbility(ASPCharacter* player)
 {
 	Super::InitialiceAbility(player);
-	Hud->PlayerHudWidget->UpdatePrimaryAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
 }
 

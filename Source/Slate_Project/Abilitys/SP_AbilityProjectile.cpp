@@ -1,5 +1,7 @@
 #include "SP_AbilityProjectile.h"
 #include "Components/SphereComponent.h"
+#include "SP_AbilityPlacable.h"
+#include "SP_AbilityPlacableCharacter.h"
 #include "../SP_Player.h"
 #include "../SP_HealthComponent.h"
 
@@ -46,8 +48,15 @@ void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AA
 		if (healthComponent)
 		{
 			healthComponent->TakeDamage(Stats.ImpactDamage);
+			ProjectileDeActivate();
+
 		}
-		ProjectileDeActivate();
+		
+			if (Cast<AAbilityPlacable>(OtherActor) == nullptr && Cast<AAbilityPlacableCharacter>(OtherActor) == nullptr)
+			{
+				ProjectileDeActivate();
+			}
+	
 
 	}
 }
@@ -66,6 +75,8 @@ void AAbilityProjectile::ProjectileMove(FVector location, FRotator Rotation)
 	SetActorLocationAndRotation(location, Rotation);
 	BPMove(location);
 	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+
 	SetActorHiddenInGame(false);
 
 }
@@ -75,6 +86,8 @@ void AAbilityProjectile::ProjectileDeActivate()
 	bIsActive = false;
 	SetActorHiddenInGame(true);
 	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
+	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+
 
 }
 

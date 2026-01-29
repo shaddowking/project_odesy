@@ -28,8 +28,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsActive = false;
 
+	UFUNCTION()
 	void Activate();
 
+	UFUNCTION()
 	void DeActivate();
 
 	UFUNCTION()

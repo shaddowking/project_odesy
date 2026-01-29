@@ -17,7 +17,8 @@ ALightningRodStrike::ALightningRodStrike()
 void ALightningRodStrike::Activate(FVector Location)
 {
 	Super::Activate(Location);
-	AttackRadius->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	AttackRadius->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 	BPActivate(Location);
 	
 	FTimerHandle AbilityTimerHandle;
@@ -31,7 +32,8 @@ void ALightningRodStrike::Activate(FVector Location)
 void ALightningRodStrike::DeActivate()
 {
 	Super::DeActivate();
-	AttackRadius->SetCollisionProfileName(TEXT("NoCollision"));
+	AttackRadius->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
 }
 

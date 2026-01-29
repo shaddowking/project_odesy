@@ -4,7 +4,7 @@
 #include "SP_GaiasVenginse.generated.h"
 
 
-
+UCLASS()
 class AGiasVeginse : public AAbilityBase, public IAbilityInterface
 {
 	GENERATED_BODY()
@@ -13,4 +13,7 @@ class AGiasVeginse : public AAbilityBase, public IAbilityInterface
 	void OnAbilityPressed() override;
 	void OnAbilityReleas() override;
 	void ActivateCooldown() override;
+
+	void AbilitySelected() override;
+
 };

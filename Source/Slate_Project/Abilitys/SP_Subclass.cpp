@@ -32,3 +32,10 @@ void ASubclass::InitializeSubclass(ASPCharacter* Player)
 
 	
 }
+
+void ASubclass::SubclassSelected()
+{
+	Ultimate->AbilitySelected();
+	Ability1->AbilitySelected();
+	Ability2->AbilitySelected();
+}

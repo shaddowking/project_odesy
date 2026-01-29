@@ -1,6 +1,8 @@
 #include "SP_ProjectileClass.h"
 #include "Components/SphereComponent.h"
 #include "SP_HealthComponent.h"
+#include "Abilitys/SP_AbilityPlacable.h"
+#include "Abilitys/SP_AbilityPlacableCharacter.h"
 
 
 AProjectile::AProjectile()
@@ -38,8 +40,7 @@ void AProjectile::Activate()
 	Duration = MaxDuration;
 	SetActorHiddenInGame(false);
 	IsActive = true;
-	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 }
 
@@ -47,8 +48,8 @@ void AProjectile::DeActivate()
 {
 	SetActorHiddenInGame(true);
 	IsActive = false;
-	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
-	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility,ECR_Ignore);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -67,7 +68,10 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 			}
 
 		}
-		DeActivate();
+		if (Cast<AAbilityPlacable>(OtherActor) == nullptr && Cast<AAbilityPlacableCharacter>(OtherActor) == nullptr)
+		{
+			DeActivate();
+		}
 	}
 	
 }

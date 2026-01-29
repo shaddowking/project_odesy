@@ -26,6 +26,9 @@ public:
 	void OnAbilityReleas() override;
 	void ActivateCooldown() override;
 
+	void AbilitySelected() override;
+
+
 	virtual void CooldownCompleted() override;
 
 	virtual void UpdateUI(float Value) override;

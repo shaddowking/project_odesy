@@ -22,6 +22,8 @@ ASPCharacter::ASPCharacter()
 	HPComp->OnDamage.AddDynamic(this, &ASPCharacter::OnDamage);
 	HPComp->OnDeath.AddDynamic(this, &ASPCharacter::OnDeath);
 	SCcomponent = CreateDefaultSubobject<USubclassComponent>("SubClassComponent");
+	Aimpoint = CreateDefaultSubobject<USceneComponent>("aimpoint");
+	Aimpoint->SetupAttachment(RootComponent);
 }
 
 void ASPCharacter::BeginPlay()
@@ -42,7 +44,6 @@ void ASPCharacter::BeginPlay()
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	CreateProjectilePool();
 
-	AProjectile* test = GetNextAvalableProjectile();
 }
 
 void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputComponent)

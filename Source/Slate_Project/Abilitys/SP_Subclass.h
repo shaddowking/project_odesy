@@ -31,4 +31,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeSubclass(ASPCharacter* Player);
 
+	void SubclassSelected();
+
 };

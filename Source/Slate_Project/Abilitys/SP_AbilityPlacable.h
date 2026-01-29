@@ -39,6 +39,9 @@ public:
 	void BPActivate(FVector Location);
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void BPDeactivate();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void BPMove(FVector location);
 
 	bool IsActive = false;

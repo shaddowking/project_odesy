@@ -35,6 +35,8 @@ public:
 
 	virtual void InitialiceAbility(ASPCharacter* player);
 
+	virtual void AbilitySelected();
+
 	ASPCharacter* Caster = nullptr;
 
 	UFUNCTION(BlueprintImplementableEvent)

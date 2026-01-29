@@ -108,6 +108,9 @@ protected:
 public:
 
 	UPROPERTY(EditAnywhere)
+	USceneComponent* Aimpoint = nullptr;
+
+	UPROPERTY(EditAnywhere)
 	int ProjectilePoolsice = 200;
 
 	UPROPERTY(EditAnywhere)

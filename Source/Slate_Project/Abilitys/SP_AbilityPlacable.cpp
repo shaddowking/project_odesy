@@ -37,6 +37,8 @@ void AAbilityPlacable::Activate(FVector Location)
 
 void AAbilityPlacable::DeActivate()
 {
+
 	SetActorHiddenInGame(true);
+	BPDeactivate();
 	IsActive = false;
 }

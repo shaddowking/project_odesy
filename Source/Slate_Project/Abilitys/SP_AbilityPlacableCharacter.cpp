@@ -1,4 +1,7 @@
 #include "SP_AbilityPlacableCharacter.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "../AI/AbilityPlacableAIController.h"
+
 
 AAbilityPlacableCharacter::AAbilityPlacableCharacter()
 {
@@ -6,6 +9,10 @@ AAbilityPlacableCharacter::AAbilityPlacableCharacter()
 
 	Root = CreateDefaultSubobject<USceneComponent>("Root");
 	RootComponent = Root;
+}
+
+void AAbilityPlacableCharacter::Spawned()
+{
 }
 
 void AAbilityPlacableCharacter::Tick(float DeltaTime)
@@ -30,13 +37,15 @@ void AAbilityPlacableCharacter::Activate(FVector Location)
 	duration = Maxduration;
 	SetActorHiddenInGame(false);
 	BPActivate(Location);
-
 	IsActive = true;
+	
 }
 
 void AAbilityPlacableCharacter::DeActivate()
 {
 	SetActorHiddenInGame(true);
 	IsActive = false;
+	BPDeactivate();
+	
 }
 

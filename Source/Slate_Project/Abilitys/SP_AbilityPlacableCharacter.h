@@ -1,12 +1,17 @@
 #pragma once
 #include "GameFramework/Character.h"
+#include "GameFramework/Actor.h"
+
 #include "SP_AbilityPlacableCharacter.generated.h"
 
 class ASPCharacter;
+class UBehaviorTree;
+class UBlackboardComponent;
+class AAbilityPlacableController;
 
 
 UCLASS()
-class AAbilityPlacableCharacter : public ACharacter
+class AAbilityPlacableCharacter : public AActor
 {
 	GENERATED_BODY()
 
@@ -17,7 +22,13 @@ public:
 
 	AAbilityPlacableCharacter();
 
-	void InitialicePlaceblecharacter(ASPCharacter* player) { Caster = player; }
+	void InitialicePlaceblecharacter(ASPCharacter* player) 
+	{ 
+		Caster = player;
+		Spawned();
+	}
+
+	virtual void Spawned();
 
 	ASPCharacter* Caster = nullptr;
 
@@ -43,7 +54,12 @@ public:
 	void BPActivate(FVector Location);
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void BPDeactivate();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void BPMove(FVector location);
 
 	bool IsActive = false;
+
+
 };
