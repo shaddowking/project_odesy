@@ -41,6 +41,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	AActor* BaricadeTargeting = nullptr;
 	FVector TargetLocation;
+	FRotator CurrentTargetRotation;
+	FRotator TargetingDirection;
 	FVector playerDirection;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))

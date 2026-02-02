@@ -13,6 +13,10 @@ class USP_GunComponent;
 class UHealthComponent;
 class ASP_HUD;
 class USubclassComponent;
+class UWeaponBaseCompnent;
+class UMeleWeaponComponent;
+class ASP_MeleWeapon;
+class AWeaponBase;
 
 
 
@@ -52,9 +56,6 @@ protected:
 	UInputAction* RelodeAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* OpenPauseMenuAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
@@ -65,6 +66,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* ElementalAbilityAciton;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* SwitchWeaponAction;
 
 	void BeginPlay()override;
 
@@ -93,6 +97,8 @@ protected:
 
 	void HandleElementalAbilityTrigger();
 	void HandleElementalAbilityRelease();
+
+	void HandleWeaponSwitch(const FInputActionValue& value);
 
 	
 
@@ -168,15 +174,52 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerJump(float Force);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UWeaponBaseCompnent* CurrentWeapon = nullptr;
+
 	
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	ASP_Gun* CurrentGun = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	ASP_MeleWeapon* currentMeleeWeapon = nullptr;
+
 	UPROPERTY(BlueprintReadWrite)
-	TArray<ASP_Gun*> CreatedGunList;
+	TArray<AWeaponBase*> CreatedWeaponList;
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void EquipGun(ASP_Gun* NewGun);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SwitchWeapon(AWeaponBase*& Newweapon,AWeaponBase*& OldWeapon);
+
+	UFUNCTION()
+	void SwitchWeaponWithID(float ID);
+
+	UFUNCTION(BlueprintCallable)
+	void ResetGun() 
+	{
+		EquiptGun = nullptr;
+		EquiptMeleWeapon = nullptr;
+	};
+
+	UFUNCTION()
+	void CreateWeapons();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AnimateWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AttachWeaponToPlayer(AWeaponBase* weapon);
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeaponBase> primaryWeaponTemplate;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeaponBase> SecendaryWeaponTemplate;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UMeleWeaponComponent* EquiptMeleWeapon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USP_GunComponent* EquiptGun = nullptr;
@@ -227,4 +270,10 @@ public:
 	void StartRelode(float RelodeSpeed);
 	
 	
+private:
+
+	ASP_MeleWeapon* Melee = nullptr;
+	ASP_Gun* gun = nullptr;
+	AWeaponBase* newWeapon = nullptr;
+
 };

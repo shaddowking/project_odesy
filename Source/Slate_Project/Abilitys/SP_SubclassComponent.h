@@ -9,7 +9,7 @@ class APupeter;
 
 
 UENUM(BlueprintType)
-enum Subclasses
+enum class ESubclasses : uint8
 {
 StormWalker,
 Pupeter
@@ -23,8 +23,11 @@ public:
 
 	ASPCharacter* Owner;
 
+	UPROPERTY(EditAnywhere)
+	ESubclasses activeSublcassEnum = ESubclasses::StormWalker;
+
 	void InitializeSubclasses(ASPCharacter* Holder);
-	void SelectSubclass(Subclasses subclass);
+	void SelectSubclass(ESubclasses subclass);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ASubclass* activeSubclass = nullptr;

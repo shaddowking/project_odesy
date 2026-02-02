@@ -1,8 +1,8 @@
 #pragma once
 #include "Components/ActorComponent.h"
+#include "SP_WeaponComponent.h"
 #include "SP_GunConponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSPGunSigniture);
 
 
 class ASPCharacter;
@@ -18,41 +18,23 @@ enum class EGunType : uint8
 };
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class USP_GunComponent : public UActorComponent {
+class USP_GunComponent : public UWeaponBaseCompnent {
 	GENERATED_BODY()
 public:
 
-	void FireGun(FVector origin, FVector Forward)
-	{
-		ViewOrigin = origin;
-		ViewForward = Forward;
-		OnShoot.Broadcast();
-	}
-
-	void RealeseGun() {
-		OnRealese.Broadcast();
-	}
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gun Stats")
 	EGunType Guntype = EGunType::FullAuto;
 
-	UPROPERTY(BlueprintReadWrite)
-	ASPCharacter* Owner = nullptr;
+	
 
-	UPROPERTY(BlueprintReadOnly)
-	FVector ViewOrigin;
-	UPROPERTY(BlueprintReadOnly)
-	FVector ViewForward;
 
 	UPROPERTY(BlueprintReadOnly)
 	ASP_Gun* OwningGun = nullptr;
 
 
-	UPROPERTY(BlueprintAssignable)
-	FSPGunSigniture OnShoot;
-
-	UPROPERTY(BlueprintAssignable)
-	FSPGunSigniture OnRealese;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun Stats")
 	float TimeBetweenShots = 0.1f;
@@ -69,8 +51,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun Stats")
 	float RelodeTime = 2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun Stats")
-	float GunDamage = 10;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun Stats")
 	float BulletSpeed = 2000;

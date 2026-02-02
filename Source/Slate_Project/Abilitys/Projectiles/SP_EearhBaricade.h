@@ -13,10 +13,10 @@ class AEarthBaricade : public AAbilityPlacable
 public:
 	AEarthBaricade();
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UHealthComponent* hpcomp = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* baricadeCollision = nullptr;
 
 	UFUNCTION()

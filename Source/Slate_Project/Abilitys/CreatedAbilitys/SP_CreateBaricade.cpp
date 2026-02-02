@@ -20,8 +20,12 @@ void AEarthBaricadeAbility::Tick(float DeltaTime)
 	{
 		playerDirection = BaricadeTargeting->GetActorLocation() - Caster->Aimpoint->GetComponentLocation();
 		TargetLocation = Caster->GetPlacablePoint(10000);
-
-		BaricadeTargeting->SetActorRotation(UKismetMathLibrary::MakeRotFromX(playerDirection));
+		CurrentTargetRotation = BaricadeTargeting->GetActorRotation();
+		TargetingDirection = UKismetMathLibrary::MakeRotFromX(playerDirection);
+		CurrentTargetRotation.Yaw = TargetingDirection.Yaw;
+		BaricadeTargeting->SetActorRotation(CurrentTargetRotation);
+		
+		
 		BaricadeTargeting->SetActorLocation(TargetLocation);
 	}
 }
@@ -29,7 +33,7 @@ void AEarthBaricadeAbility::Tick(float DeltaTime)
 void AEarthBaricadeAbility::LaunchAbility()
 {
 	createdBaricade->Activate(TargetLocation);
-	createdBaricade->SetActorRotation(UKismetMathLibrary::MakeRotFromX(playerDirection));
+	createdBaricade->SetActorRotation(CurrentTargetRotation);
 	ActivateCooldown();
 }
 

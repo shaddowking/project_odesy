@@ -68,10 +68,8 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 			}
 
 		}
-		if (Cast<AAbilityPlacable>(OtherActor) == nullptr && Cast<AAbilityPlacableCharacter>(OtherActor) == nullptr)
-		{
-			DeActivate();
-		}
+		DeActivate();
+		
 	}
 	
 }

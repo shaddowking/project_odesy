@@ -12,18 +12,20 @@ void USubclassComponent::InitializeSubclasses(ASPCharacter* Holder)
 
 	pupeter = Cast<APupeter>(GetWorld()->SpawnActor<ASubclass>(pupeterTemplate));
 	pupeter->InitializeSubclass(Owner);
-	activeSubclass = pupeter;
-	SelectSubclass(Subclasses::Pupeter);
+	
+	SelectSubclass(activeSublcassEnum);
 }
 
-void USubclassComponent::SelectSubclass(Subclasses subclass)
+void USubclassComponent::SelectSubclass(ESubclasses subclass)
 {
 	switch (subclass)
 	{
-	case StormWalker:
+	case ESubclasses::StormWalker:
+		activeSubclass = StormsEya;
 		StormsEya->SubclassSelected();
 		break;
-	case Pupeter:
+	case ESubclasses::Pupeter:
+		activeSubclass = pupeter;
 		pupeter->SubclassSelected();
 		break;
 	default:

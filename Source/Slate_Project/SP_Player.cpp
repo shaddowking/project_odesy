@@ -13,6 +13,10 @@
 #include "Abilitys/CreatedAbilitys/SP_StormWalker.h"
 #include "Abilitys/AbilityInterface.h"
 #include "SP_ProjectileClass.h"
+#include "SP_MeleWeaponComponent.h"
+#include "SP_MeleweaponBase.h"
+#include "Math/UnrealMathUtility.h"
+#include "SP_Gun.h"
 
 
 ASPCharacter::ASPCharacter()
@@ -43,6 +47,7 @@ void ASPCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	CreateProjectilePool();
+	CreateWeapons();
 
 }
 
@@ -83,7 +88,7 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(ElementalAbilityAciton, ETriggerEvent::Started, this, &ASPCharacter::HandleElementalAbilityTrigger);
 		EnhancedInputComponent->BindAction(ElementalAbilityAciton, ETriggerEvent::Completed, this, &ASPCharacter::HandleElementalAbilityRelease);
 		
-
+		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleWeaponSwitch);
 
 
 	}
@@ -171,39 +176,52 @@ void ASPCharacter::HandleStopAim()
 
 void ASPCharacter::HandleShoot()
 {
+	if (EquiptMeleWeapon)
+	{
+		if (EquiptMeleWeapon->bIsUsingWeapon == false)
+		{
+			EquiptMeleWeapon->UseWeapon(FVector::Zero(), FVector::Zero());
+			EquiptMeleWeapon->bIsUsingWeapon = true;
+		}
+	}
+
+	if (EquiptGun)
+	{
+		if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
+		{
+			return;
+		}
+
+		if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
+		{
+			HandleRelode();
+		}
+
+		if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
+		{
+
+			FVector ViewOrigin;
+			FRotator ViewRotation;
+
+
+
+			GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
+
+			FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
+
+			if (!bIsAiming && bIsShooting == false)
+			{
+				bIsShooting = true;
+				RotatePlayerForward(ViewForward, ViewOrigin);
+			}
+			else if (bIsAiming || bIsFullyTurnd)
+			{
+				Shoot(ViewForward, ViewOrigin);
+			}
+		}
+	}
+
 	
-	if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
-	{
-		return;
-	}
-
-	if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
-	{
-		HandleRelode();
-	}
-
-	if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
-	{
-
-		FVector ViewOrigin;
-		FRotator ViewRotation;
-
-
-
-		GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
-
-		FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
-
-		if (!bIsAiming && bIsShooting == false)
-		{
-			bIsShooting = true;
-			RotatePlayerForward(ViewForward, ViewOrigin);
-		}
-		else if (bIsAiming || bIsFullyTurnd)
-		{
-			Shoot(ViewForward, ViewOrigin);
-		}
-	}
 	
 	
 
@@ -214,7 +232,7 @@ void ASPCharacter::HandleShootRealese()
 {
 	if (bIsAiming)
 	{
-		EquiptGun->RealeseGun();
+		EquiptGun->RealeseWeapon();
 
 	}
 }
@@ -311,6 +329,12 @@ void ASPCharacter::HandleElementalAbilityRelease()
 		}
 	}
 	
+}
+
+void ASPCharacter::HandleWeaponSwitch(const FInputActionValue& value)
+{
+	const float Value = value.Get<float>();
+	SwitchWeaponWithID(Value);
 }
 
 
@@ -429,7 +453,7 @@ void ASPCharacter::Shoot(FVector ViewForward, FVector ViewOrigin)
 
 	//bCanShoot = false;
 	bIsShooting = true;
-	EquiptGun->FireGun(ViewOrigin, ViewForward);
+	EquiptGun->UseWeapon(ViewOrigin, ViewForward);
 
 }
 
@@ -545,3 +569,61 @@ void ASPCharacter::SetIdleRotationOn()
 
 
 }
+
+void ASPCharacter::SwitchWeaponWithID(float ID)
+{
+	int NewID = ID;
+
+	if (NewID > CreatedWeaponList.Num()-1)
+	{
+		NewID = CreatedWeaponList.Num() - 1;
+	}
+	if (NewID < 0)
+	{
+		NewID = 0;
+	}
+	newWeapon = CreatedWeaponList[NewID];
+
+	if (currentMeleeWeapon)
+	{
+		currentMeleeWeapon->SetActorHiddenInGame(true);
+	}
+	if (CurrentGun)
+	{
+		CurrentGun->SetActorHiddenInGame(true);
+	}
+	ResetGun();
+	gun = Cast<ASP_Gun>(newWeapon);
+	Melee = Cast<ASP_MeleWeapon>(newWeapon);
+	if (gun)
+	{
+		CurrentGun = gun;
+		EquiptGun = gun->GunComponent;
+		EquiptGun->Owner = this;
+		AttachWeaponToPlayer(CurrentGun);
+		hud->PlayerHudWidget->UpdateAmmoText(EquiptGun->CurrentAmmo, EquiptGun->ExtraAmmo);
+		CurrentGun->SetActorHiddenInGame(false);
+	}
+	else if (Melee)
+	{
+		currentMeleeWeapon = Melee;
+		EquiptMeleWeapon = Melee->WeaponComponent;
+		EquiptMeleWeapon->Owner = this;
+		AttachWeaponToPlayer(currentMeleeWeapon);
+		currentMeleeWeapon->SetActorHiddenInGame(false);
+	}
+	
+	
+}
+
+void ASPCharacter::CreateWeapons()
+{
+	CreatedWeaponList.Add(GetWorld()->SpawnActor<AWeaponBase>(primaryWeaponTemplate));
+	CreatedWeaponList.Add(GetWorld()->SpawnActor<AWeaponBase>(SecendaryWeaponTemplate));
+	CreatedWeaponList[0]->SetActorHiddenInGame(true);
+	CreatedWeaponList[1]->SetActorHiddenInGame(true);
+
+	SwitchWeaponWithID(0);
+}
+
+

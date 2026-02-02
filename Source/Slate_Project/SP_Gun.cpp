@@ -83,12 +83,12 @@ void ASP_Gun::SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint, float
 
 
 
-	AProjectile* CurentBullet = player->GetNextAvalableProjectile();
+	AProjectile* CurentBullet = GunComponent->Owner->GetNextAvalableProjectile();
 
 	CurentBullet->SetActorLocationAndRotation(GunFirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
 	CurentBullet->Speed = GunComponent->BulletSpeed * DamageModefire;
-	CurentBullet->Damage = GunComponent->GunDamage * DamageModefire;
+	CurentBullet->Damage = GunComponent->Damage * DamageModefire;
 	CurentBullet->Activate();
 
 	

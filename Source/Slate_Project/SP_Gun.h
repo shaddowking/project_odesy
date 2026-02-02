@@ -1,5 +1,7 @@
 #pragma once 
 #include "GameFramework/Actor.h"
+
+#include "SP_WeaponBase.h"
 #include "SP_Gun.generated.h"
 
 class USP_GunComponent;
@@ -10,7 +12,7 @@ class ASP_HUD;
 
 
 UCLASS()
-class ASP_Gun : public AActor {
+class ASP_Gun : public AWeaponBase {
 	GENERATED_BODY()
 public:
 
