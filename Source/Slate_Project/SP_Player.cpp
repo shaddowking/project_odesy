@@ -17,6 +17,7 @@
 #include "SP_MeleweaponBase.h"
 #include "Math/UnrealMathUtility.h"
 #include "SP_Gun.h"
+#include "Abilitys/SP_AbilityBase.h"
 
 
 ASPCharacter::ASPCharacter()
@@ -154,72 +155,105 @@ void ASPCharacter::HandleStopRun()
 void ASPCharacter::HandleStartAim()
 {
 
-	bIsAiming = true;
+	if (!bIsUsingAbility)
+	{
+		bIsAiming = true;
 
-	SetIdleRotationOff();
-	StartAimCam();
+		SetIdleRotationOff();
+		StartAimCam();
+	}
+	else
+	{
+		Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttack();
+
+	}
+	
 
 
 }
 
 void ASPCharacter::HandleStopAim()
 {
-	if (bIsShooting == false)
+	if (!bIsUsingAbility)
 	{
-		bIsAiming = false;
-		SetIdleRotationOn();
-		StopAimCam();
+		if (bIsShooting == false)
+		{
+			bIsAiming = false;
+			SetIdleRotationOn();
+			StopAimCam();
+		}
 	}
+	else
+	{
+		if (SCcomponent->activeSubclass->ActiveAbility)
+		{
+			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttackRealese();
+		}
+
+	}
+	
 	
 
 }
 
 void ASPCharacter::HandleShoot()
 {
-	if (EquiptMeleWeapon)
+	if (!bIsUsingAbility)
 	{
-		if (EquiptMeleWeapon->bIsUsingWeapon == false)
+		if (EquiptMeleWeapon)
 		{
-			EquiptMeleWeapon->UseWeapon(FVector::Zero(), FVector::Zero());
-			EquiptMeleWeapon->bIsUsingWeapon = true;
-		}
-	}
-
-	if (EquiptGun)
-	{
-		if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
-		{
-			return;
-		}
-
-		if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
-		{
-			HandleRelode();
-		}
-
-		if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
-		{
-
-			FVector ViewOrigin;
-			FRotator ViewRotation;
-
-
-
-			GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
-
-			FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
-
-			if (!bIsAiming && bIsShooting == false)
+			if (EquiptMeleWeapon->bIsUsingWeapon == false)
 			{
-				bIsShooting = true;
-				RotatePlayerForward(ViewForward, ViewOrigin);
-			}
-			else if (bIsAiming || bIsFullyTurnd)
-			{
-				Shoot(ViewForward, ViewOrigin);
+				EquiptMeleWeapon->UseWeapon(FVector::Zero(), FVector::Zero());
+				EquiptMeleWeapon->bIsUsingWeapon = true;
 			}
 		}
+
+		if (EquiptGun)
+		{
+			if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
+			{
+				return;
+			}
+
+			if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
+			{
+				HandleRelode();
+			}
+
+			if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
+			{
+
+				FVector ViewOrigin;
+				FRotator ViewRotation;
+
+
+
+				GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
+
+				FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
+
+				if (!bIsAiming && bIsShooting == false)
+				{
+					bIsShooting = true;
+					RotatePlayerForward(ViewForward, ViewOrigin);
+				}
+				else if (bIsAiming || bIsFullyTurnd)
+				{
+					Shoot(ViewForward, ViewOrigin);
+				}
+			}
+
+			
+			
+
+		}
 	}
+	else
+	{
+		Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttack();
+	}
+	
 
 	
 	
@@ -230,9 +264,17 @@ void ASPCharacter::HandleShoot()
 
 void ASPCharacter::HandleShootRealese()
 {
-	if (bIsAiming)
+	if (bIsAiming && !bIsUsingAbility)
 	{
 		EquiptGun->RealeseWeapon();
+
+	}
+	else
+	{
+		if (SCcomponent->activeSubclass->ActiveAbility)
+		{
+			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttackRelease();
+		}
 
 	}
 }
@@ -240,7 +282,7 @@ void ASPCharacter::HandleShootRealese()
 void ASPCharacter::HandleRelode()
 {
 	
-	if (EquiptGun->ExtraAmmo > 0)
+	if (EquiptGun->ExtraAmmo > 0 && !bIsUsingAbility)
 	{
 		GetWorldTimerManager().SetTimer(RelodeTimerHandle, this, &ASPCharacter::RelodeFinish, EquiptGun->RelodeTime, false);
 	}
@@ -252,7 +294,7 @@ void ASPCharacter::HandleRelode()
 void ASPCharacter::HandleUltimateTrigger()
 {
 
-	if (bIsUltimateReady)
+	if (bIsUltimateReady && !bIsUsingAbility && !bIsShooting)
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 		if (AbilityInterface)
@@ -267,7 +309,7 @@ void ASPCharacter::HandleUltimateTrigger()
 
 void ASPCharacter::HandleUltimateRelease()
 {
-	if (bIsUltimateReady)
+	if (bIsUltimateReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ultimate))
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 		if (AbilityInterface)
@@ -280,7 +322,7 @@ void ASPCharacter::HandleUltimateRelease()
 
 void ASPCharacter::HandlePrimaryAbilityTrigger()
 {
-	if (bIsPrimaryAbilityReady)
+	if (bIsPrimaryAbilityReady && !bIsUsingAbility && !bIsShooting)
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 		if (AbilityInterface)
@@ -293,7 +335,7 @@ void ASPCharacter::HandlePrimaryAbilityTrigger()
 
 void ASPCharacter::HandlePrimaryAbilityRelease()
 {
-	if (bIsPrimaryAbilityReady)
+	if (bIsPrimaryAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability1))
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 		if (AbilityInterface)
@@ -306,7 +348,7 @@ void ASPCharacter::HandlePrimaryAbilityRelease()
 
 void ASPCharacter::HandleElementalAbilityTrigger()
 {
-	if (bIsElementalAbilityReady)
+	if (bIsElementalAbilityReady && !bIsUsingAbility && !bIsShooting)
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 		if (AbilityInterface)
@@ -320,7 +362,7 @@ void ASPCharacter::HandleElementalAbilityTrigger()
 
 void ASPCharacter::HandleElementalAbilityRelease()
 {
-	if (bIsElementalAbilityReady)
+	if (bIsElementalAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability2))
 	{
 		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 		if (AbilityInterface)
@@ -333,8 +375,12 @@ void ASPCharacter::HandleElementalAbilityRelease()
 
 void ASPCharacter::HandleWeaponSwitch(const FInputActionValue& value)
 {
-	const float Value = value.Get<float>();
-	SwitchWeaponWithID(Value);
+	if (!bIsUsingAbility)
+	{
+		const float Value = value.Get<float>();
+		SwitchWeaponWithID(Value);
+	}
+	
 }
 
 

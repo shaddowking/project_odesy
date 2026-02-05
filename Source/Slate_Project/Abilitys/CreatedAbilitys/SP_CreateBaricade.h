@@ -31,7 +31,6 @@ public:
 
 	virtual void UpdateUI(float Value) override;
 
-	virtual void InitialiceAbility(ASPCharacter* player) override;
 
 
 private:
@@ -48,5 +47,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AEarthBaricade> placableTemplate;
 	AEarthBaricade* createdBaricade = nullptr;
+
+
+	// Inherited via IAbilityInterface
+	void OnAbilityPrimaryAttack() override;
+
+	void OnAbilityPrimaryAttackRelease() override;
+
+	void OnAbilitySecendaryAttack() override;
+
+	void OnAbilitySecendaryAttackRealese() override;
 
 };

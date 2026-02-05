@@ -1,9 +1,10 @@
 #include "SP_AbilityBase.h"
 #include "SP_AbilityDataAsstet.h"
 
-void AAbilityBase::InitialiceAbility(ASPCharacter* player)
+void AAbilityBase::InitialiceAbility(ASPCharacter* player, ASubclass* OwningSubclass)
 {
 	Caster = player;
+	OwnerSubclass = OwningSubclass;
 	Hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 
 }

@@ -33,7 +33,6 @@ public:
 
 	virtual void UpdateUI(float Value) override;
 
-	virtual void InitialiceAbility(ASPCharacter* player) override;
 
 
 
@@ -51,4 +50,10 @@ public:
 private:
 
 	FVector TargetLocation;
+
+	// Inherited via IAbilityInterface
+	void OnAbilityPrimaryAttack() override;
+	void OnAbilityPrimaryAttackRelease() override;
+	void OnAbilitySecendaryAttack() override;
+	void OnAbilitySecendaryAttackRealese() override;
 };

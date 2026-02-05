@@ -18,4 +18,12 @@ public:
 	virtual void OnAbilityReleas() = 0;
 
 	virtual void ActivateCooldown() = 0;
+
+	virtual void OnAbilityPrimaryAttack() = 0;
+	virtual void OnAbilityPrimaryAttackRelease() = 0;
+
+
+	virtual void OnAbilitySecendaryAttack() = 0;
+	virtual void OnAbilitySecendaryAttackRealese() = 0;
+
 };

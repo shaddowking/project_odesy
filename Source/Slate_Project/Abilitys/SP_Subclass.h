@@ -33,4 +33,7 @@ public:
 
 	void SubclassSelected();
 
+	UPROPERTY()
+	AAbilityBase* ActiveAbility;
+
 };

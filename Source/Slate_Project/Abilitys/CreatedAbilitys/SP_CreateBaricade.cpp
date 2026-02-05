@@ -5,7 +5,7 @@
 #include "../../UI/SP_PlayerHud.h"
 #include "../Projectiles/SP_EearhBaricade.h"
 #include "Kismet/KismetMathLibrary.h"
-
+#include "../SP_Subclass.h"
 AEarthBaricadeAbility::AEarthBaricadeAbility()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -34,6 +34,8 @@ void AEarthBaricadeAbility::LaunchAbility()
 {
 	createdBaricade->Activate(TargetLocation);
 	createdBaricade->SetActorRotation(CurrentTargetRotation);
+	Caster->bIsUsingAbility = true;
+	OwnerSubclass->ActiveAbility = nullptr;
 	ActivateCooldown();
 }
 
@@ -41,6 +43,7 @@ void AEarthBaricadeAbility::LaunchAbility()
 void AEarthBaricadeAbility::OnAbilityPressed()
 {
 	BIsAbilityActive = true;
+	OwnerSubclass->ActiveAbility = this;
 	if (BaricadeTargeting)
 	{
 		BaricadeTargeting->GetRootComponent()->SetVisibility(true, true);
@@ -96,7 +99,20 @@ void AEarthBaricadeAbility::UpdateUI(float Value)
 	Hud->PlayerHudWidget->UpdateElementalAbilityPercent(CooldownPercent);
 }
 
-void AEarthBaricadeAbility::InitialiceAbility(ASPCharacter* player)
+void AEarthBaricadeAbility::OnAbilityPrimaryAttack()
 {
-	Super::InitialiceAbility(player);
 }
+
+void AEarthBaricadeAbility::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void AEarthBaricadeAbility::OnAbilitySecendaryAttack()
+{
+}
+
+void AEarthBaricadeAbility::OnAbilitySecendaryAttackRealese()
+{
+}
+
+

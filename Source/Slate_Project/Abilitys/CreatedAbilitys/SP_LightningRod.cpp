@@ -5,11 +5,13 @@
 
 #include "../../UI/SP_HUD.h"
 #include "../../UI/SP_PlayerHud.h"
-
+#include "../SP_Subclass.h"
 
 void ALightningRod::OnAbilityPressed()
 {
 	Caster->bIsElementalAbilityReady = false;
+	OwnerSubclass->ActiveAbility = this;
+	Caster->bIsUsingAbility = true;
 	FVector SpawnLocation = Caster->GetActorLocation();
 
 	if (LightningTemplate && !SpawndLightning)
@@ -19,6 +21,8 @@ void ALightningRod::OnAbilityPressed()
 	}
 
 	SpawndLightning->Activate(SpawnLocation);
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
 	ActivateCooldown();
 
 
@@ -42,11 +46,7 @@ void ALightningRod::AbilitySelected()
 	
 }
 
-void ALightningRod::InitialiceAbility(ASPCharacter* player)
-{
-	Super::InitialiceAbility(player);
-	Hud->PlayerHudWidget->UpdateElementAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
-}
+
 
 void ALightningRod::CooldownCompleted()
 {
@@ -59,6 +59,22 @@ void ALightningRod::UpdateUI(float Value)
 
 	Super::UpdateUI(Value);
 	Hud->PlayerHudWidget->UpdateElementalAbilityPercent(CooldownPercent);
+}
+
+void ALightningRod::OnAbilityPrimaryAttack()
+{
+}
+
+void ALightningRod::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void ALightningRod::OnAbilitySecendaryAttack()
+{
+}
+
+void ALightningRod::OnAbilitySecendaryAttackRealese()
+{
 }
 
 

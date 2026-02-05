@@ -17,7 +17,7 @@ class UWeaponBaseCompnent;
 class UMeleWeaponComponent;
 class ASP_MeleWeapon;
 class AWeaponBase;
-
+class IAbilityInterface;
 
 
 UCLASS()
@@ -267,6 +267,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	USceneComponent* GetGunpoint();
 	
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsUsingAbility = false;
+
 private:
 
 	
@@ -276,5 +279,7 @@ private:
 	ASP_MeleWeapon* melee = nullptr;
 	AWeaponBase* curentweapon = nullptr;
 
+	IAbilityInterface* ActiveAbility = nullptr;
 
+	
 };

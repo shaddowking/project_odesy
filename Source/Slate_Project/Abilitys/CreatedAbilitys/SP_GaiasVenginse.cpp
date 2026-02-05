@@ -15,3 +15,19 @@ void AGiasVeginse::ActivateCooldown()
 void AGiasVeginse::AbilitySelected()
 {
 }
+
+void AGiasVeginse::OnAbilityPrimaryAttack()
+{
+}
+
+void AGiasVeginse::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void AGiasVeginse::OnAbilitySecendaryAttack()
+{
+}
+
+void AGiasVeginse::OnAbilitySecendaryAttackRealese()
+{
+}

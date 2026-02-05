@@ -6,7 +6,7 @@ class ASPCharacter;
 class ASubclass;
 class AStormWalker;
 class APupeter;
-
+class AAbilityBase;
 
 UENUM(BlueprintType)
 enum class ESubclasses : uint8
@@ -28,6 +28,8 @@ public:
 
 	void InitializeSubclasses(ASPCharacter* Holder);
 	void SelectSubclass(ESubclasses subclass);
+
+	bool IsUsingAbility(AAbilityBase*& ability);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ASubclass* activeSubclass = nullptr;

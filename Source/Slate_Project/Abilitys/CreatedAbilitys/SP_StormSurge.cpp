@@ -2,10 +2,10 @@
 #include "../../SP_Player.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "../Projectiles/SP_VoletileStormProjectile.h"
-
 #include "../SP_AbilityDataAsstet.h"
 #include "../../UI/SP_HUD.h"
 #include "../../UI/SP_PlayerHud.h"
+#include "../SP_Subclass.h"
 
 
 
@@ -15,12 +15,17 @@ void AStormSurge::LanchProjectile()
 
 	projectile->ProjectileActivate(GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
+
 	ActivateCooldown();
 }
 
 void AStormSurge::OnAbilityPressed()
 {
 	Caster->bIsUltimateReady = false;
+	OwnerSubclass->ActiveAbility = this;
+	Caster->bIsUsingAbility = true;
 	spawnDebug(Caster->GetAimPoint(5000));
 	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
 
@@ -57,10 +62,7 @@ void AStormSurge::AbilitySelected()
 {
 }
 
-void AStormSurge::InitialiceAbility(ASPCharacter* player)
-{
-	Super::InitialiceAbility(player);
-}
+
 
 void AStormSurge::CooldownCompleted()
 {
@@ -96,4 +98,20 @@ FVector AStormSurge::GetUltimateSpawnLocation()
 	FVector Result = Caster->GetActorLocation() + ViewUp * 100 + Caster->GetActorForwardVector() * 200;
 
 	return Result;
+}
+
+void AStormSurge::OnAbilityPrimaryAttack()
+{
+}
+
+void AStormSurge::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void AStormSurge::OnAbilitySecendaryAttack()
+{
+}
+
+void AStormSurge::OnAbilitySecendaryAttackRealese()
+{
 }

@@ -33,4 +33,14 @@ void USubclassComponent::SelectSubclass(ESubclasses subclass)
 	}
 }
 
+bool USubclassComponent::IsUsingAbility(AAbilityBase*& ability)
+{
+	if (activeSubclass->ActiveAbility == nullptr)
+	{
+		return false;
+	}
+
+	return ability == activeSubclass->ActiveAbility;
+}
+
 

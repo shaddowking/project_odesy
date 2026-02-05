@@ -15,6 +15,7 @@
 class UAbilityDataAsset;
 class ASPCharacter;
 class ASP_HUD;
+class ASubclass;
 
 UCLASS(abstract)
 class AAbilityBase : public AActor {
@@ -33,9 +34,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UAbilityDataAsset* AbilityBaseStates = nullptr;
 
-	virtual void InitialiceAbility(ASPCharacter* player);
+	virtual void InitialiceAbility(ASPCharacter* player, ASubclass* OwningSubclass);
 
 	virtual void AbilitySelected();
+
+	UPROPERTY(BlueprintReadOnly)
+	ASubclass* OwnerSubclass = nullptr;
 
 	ASPCharacter* Caster = nullptr;
 

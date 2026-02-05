@@ -26,9 +26,18 @@ public:
 	void AbilitySelected() override;
 
 
-	virtual void InitialiceAbility(ASPCharacter* player) override;
 
 	virtual void CooldownCompleted() override;
 	virtual void UpdateUI(float Value) override;
+
+
+	// Inherited via IAbilityInterface
+	void OnAbilityPrimaryAttack() override;
+
+	void OnAbilityPrimaryAttackRelease() override;
+
+	void OnAbilitySecendaryAttack() override;
+
+	void OnAbilitySecendaryAttackRealese() override;
 
 };

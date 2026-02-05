@@ -25,7 +25,7 @@ public:
 
 	void AbilitySelected() override;
 
-	void InitialiceAbility(ASPCharacter* player) override;
+
 
 
 	virtual void CooldownCompleted() override;
@@ -37,4 +37,10 @@ public:
 
 	// Inherited via AAbilityBase
 	FVector GetUltimateSpawnLocation() override;
+
+	// Inherited via IAbilityInterface
+	void OnAbilityPrimaryAttack() override;
+	void OnAbilityPrimaryAttackRelease() override;
+	void OnAbilitySecendaryAttack() override;
+	void OnAbilitySecendaryAttackRealese() override;
 };

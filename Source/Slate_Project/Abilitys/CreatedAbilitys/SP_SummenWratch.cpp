@@ -4,6 +4,7 @@
 #include "../../UI/SP_HUD.h"
 #include "../../UI/SP_PlayerHud.h"
 #include "../Projectiles/SP_Wratch.h"
+#include "../SP_Subclass.h"
 
 ASummonWratch::ASummonWratch()
 {
@@ -22,6 +23,8 @@ void ASummonWratch::Tick(float DeltaTime)
 void ASummonWratch::OnAbilityPressed()
 {
 	BIsAbilityActive = true;
+	OwnerSubclass->ActiveAbility = this;
+	Caster->bIsUsingAbility = true;
 	if (TargetingActor)
 	{
 		TargetingActor->GetRootComponent()->SetVisibility(true, true);
@@ -36,21 +39,7 @@ void ASummonWratch::OnAbilityPressed()
 
 void ASummonWratch::OnAbilityReleas()
 {
-	Caster->bIsPrimaryAbilityReady = false;
-	BIsAbilityActive = false;
-	FRotator Rotation = FRotator::ZeroRotator;
-	TargetingActor->GetRootComponent()->SetVisibility(false, true);
-
-
-	if (!CreatedWratch)
-	{
-		CreatedWratch = GetWorld()->SpawnActor<AWratch>(WratchTemplate, TargetLocation, Rotation);
-		CreatedWratch->InitialicePlaceblecharacter(Caster);
-		CreatedWratch->DeActivate();
-	}
-
-	CreatedWratch->Activate(TargetLocation + GetActorUpVector() * 100);
-	ActivateCooldown();
+	
 }
 
 void ASummonWratch::ActivateCooldown()
@@ -78,7 +67,38 @@ void ASummonWratch::UpdateUI(float Value)
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(CooldownPercent);
 }
 
-void ASummonWratch::InitialiceAbility(ASPCharacter* player)
+void ASummonWratch::OnAbilityPrimaryAttack()
 {
-	Super::InitialiceAbility(player);
+	Caster->bIsPrimaryAbilityReady = false;
+	BIsAbilityActive = false;
+	FRotator Rotation = FRotator::ZeroRotator;
+	TargetingActor->GetRootComponent()->SetVisibility(false, true);
+
+
+	if (!CreatedWratch)
+	{
+		CreatedWratch = GetWorld()->SpawnActor<AWratch>(WratchTemplate, TargetLocation, Rotation);
+		CreatedWratch->InitialicePlaceblecharacter(Caster);
+		CreatedWratch->DeActivate();
+	}
+
+	CreatedWratch->Activate(TargetLocation + GetActorUpVector() * 100);
+	Caster->bIsUsingAbility = false;
+	OwnerSubclass->ActiveAbility = nullptr;
+
+	ActivateCooldown();
 }
+
+void ASummonWratch::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void ASummonWratch::OnAbilitySecendaryAttack()
+{
+}
+
+void ASummonWratch::OnAbilitySecendaryAttackRealese()
+{
+}
+
+

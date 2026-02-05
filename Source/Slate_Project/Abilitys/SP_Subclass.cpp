@@ -11,19 +11,19 @@ void ASubclass::InitializeSubclass(ASPCharacter* Player)
 	if (UltimateTemplate && !Ultimate)
 	{
 		Ultimate = GetWorld()->SpawnActor<AAbilityBase>(UltimateTemplate);
-		Ultimate->InitialiceAbility(Player);
+		Ultimate->InitialiceAbility(Player,this);
 	}
 
 	if (Ability1Template && !Ability1)
 	{
 		Ability1 = GetWorld()->SpawnActor<AAbilityBase>(Ability1Template);
-		Ability1->InitialiceAbility(Player);
+		Ability1->InitialiceAbility(Player,this);
 	}
 
 	if (Ability2Template && ! Ability2)
 	{
 		Ability2 = GetWorld()->SpawnActor<AAbilityBase>(Ability2Template);
-		Ability2->InitialiceAbility(Player);
+		Ability2->InitialiceAbility(Player,this);
 	}
 	
 	

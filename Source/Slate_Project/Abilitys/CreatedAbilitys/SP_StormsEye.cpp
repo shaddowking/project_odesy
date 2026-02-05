@@ -4,7 +4,7 @@
 #include "../Projectiles/SP_StormTurret.h"
 #include "../../UI/SP_HUD.h"
 #include "../../UI/SP_PlayerHud.h"
-
+#include "../SP_Subclass.h"
 
 
 AStormsEye::AStormsEye()
@@ -28,12 +28,16 @@ void AStormsEye::Tick(float DeltaTime)
 void AStormsEye::LanchAbility()
 {
 	CreatedTurret->Activate(TargetLocation);
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
 	ActivateCooldown();
 }
 
 void AStormsEye::OnAbilityPressed()
 {
 	BIsAbilityActive = true;
+	Caster->bIsUsingAbility = true;
+	OwnerSubclass->ActiveAbility = this;
 	if (TargetingActor)
 	{
 		TargetingActor->GetRootComponent()->SetVisibility(true, true);
@@ -94,8 +98,21 @@ void AStormsEye::UpdateUI(float Value)
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityPercent(CooldownPercent);
 }
 
-void AStormsEye::InitialiceAbility(ASPCharacter* player)
+void AStormsEye::OnAbilityPrimaryAttack()
 {
-	Super::InitialiceAbility(player);
 }
+
+void AStormsEye::OnAbilityPrimaryAttackRelease()
+{
+}
+
+void AStormsEye::OnAbilitySecendaryAttack()
+{
+}
+
+void AStormsEye::OnAbilitySecendaryAttackRealese()
+{
+}
+
+
 
