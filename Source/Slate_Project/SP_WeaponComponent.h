@@ -26,12 +26,26 @@ public:
 		OnRealese.Broadcast();
 	}
 
+	void ActivateWeapon() 
+	{
+		OnActivate.Broadcast();
+	}
+
+	void DeactivateWeapon() 
+	{
+		OnDeactivate.Broadcast();
+	}
+
 	UPROPERTY(BlueprintAssignable)
 	FSPWeaponSigniture OnShoot;
-
-
 	UPROPERTY(BlueprintAssignable)
 	FSPWeaponSigniture OnRealese;
+	UPROPERTY(BlueprintAssignable)
+	FSPWeaponSigniture OnActivate;
+	UPROPERTY(BlueprintAssignable)
+	FSPWeaponSigniture OnDeactivate;
+
+
 
 	UPROPERTY(BlueprintReadOnly)
 	FVector ViewOrigin;

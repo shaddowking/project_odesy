@@ -18,13 +18,16 @@ ASP_Gun::ASP_Gun()
 	GunComponent = CreateDefaultSubobject<USP_GunComponent>("GunComponent");
 	GunComponent->OnShoot.AddDynamic(this, &ASP_Gun::GunFire);
 	GunComponent->OnRealese.AddDynamic(this, &ASP_Gun::GunRealese);
+	GunComponent->OnActivate.AddDynamic(this, &ASP_Gun::Activate);
+	GunComponent->OnDeactivate.AddDynamic(this, &ASP_Gun::DeActivate);
+	GunComponent->OwningGun = this;
+
 }
 
 void ASP_Gun::BeginPlay()
 {
 	Super::BeginPlay();
 	GunComponent->CurrentAmmo = GunComponent->MaxAmmo;
-	GunComponent->OwningGun = this;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 
 }
@@ -74,6 +77,16 @@ void ASP_Gun::GunRealese()
 	default:
 		break;
 	}
+}
+
+void ASP_Gun::Activate()
+{
+	SetActorHiddenInGame(false);
+}
+
+void ASP_Gun::DeActivate()
+{
+	SetActorHiddenInGame(true);
 }
 
 void ASP_Gun::SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint, float DamageModefire)

@@ -42,6 +42,11 @@ public:
 
 	UFUNCTION()
 	void GunRealese();
+	UFUNCTION()
+	void Activate();
+	UFUNCTION()
+	void DeActivate();
+
 
 	void SpawnBullet(FVector AimPoint, USceneComponent* GunFirePoint,float DamageModefire = 1);
 

@@ -174,19 +174,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerJump(float Force);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UWeaponBaseCompnent* CurrentWeapon = nullptr;
 
 	
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
-	ASP_Gun* CurrentGun = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	ASP_MeleWeapon* currentMeleeWeapon = nullptr;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<AWeaponBase*> CreatedWeaponList;
+	TArray<UWeaponBaseCompnent*> CreatedWeaponList;
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void EquipGun(ASP_Gun* NewGun);
@@ -207,11 +201,12 @@ public:
 	UFUNCTION()
 	void CreateWeapons();
 
+	UWeaponBaseCompnent* GetWeaponCompenent(AWeaponBase*& weapon);
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void AnimateWeapon();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void AttachWeaponToPlayer(AWeaponBase* weapon);
+	
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWeaponBase> primaryWeaponTemplate;
@@ -268,12 +263,18 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartRelode(float RelodeSpeed);
-	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	USceneComponent* GetGunpoint();
 	
 private:
 
-	ASP_MeleWeapon* Melee = nullptr;
-	ASP_Gun* gun = nullptr;
-	AWeaponBase* newWeapon = nullptr;
+	
+	UWeaponBaseCompnent* newWeapon = nullptr;
+
+	ASP_Gun* Gun = nullptr;
+	ASP_MeleWeapon* melee = nullptr;
+	AWeaponBase* curentweapon = nullptr;
+
 
 };

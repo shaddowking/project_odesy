@@ -30,12 +30,18 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	ASPCharacter* player = nullptr;
 
+
+
 	UFUNCTION()
 	void UseMele();
 
 	UFUNCTION()
 	void ReleaseMele();
 
+	UFUNCTION()
+	void Activate();
+	UFUNCTION()
+	void Deactivate();
 
 
 	UFUNCTION()

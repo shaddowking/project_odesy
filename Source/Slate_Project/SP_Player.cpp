@@ -584,33 +584,31 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 	}
 	newWeapon = CreatedWeaponList[NewID];
 
-	if (currentMeleeWeapon)
+	if (EquiptGun)
 	{
-		currentMeleeWeapon->SetActorHiddenInGame(true);
+		EquiptGun->DeactivateWeapon();
 	}
-	if (CurrentGun)
+	if (EquiptMeleWeapon)
 	{
-		CurrentGun->SetActorHiddenInGame(true);
+		EquiptMeleWeapon->DeactivateWeapon();
 	}
 	ResetGun();
-	gun = Cast<ASP_Gun>(newWeapon);
-	Melee = Cast<ASP_MeleWeapon>(newWeapon);
-	if (gun)
+	EquiptGun = Cast<USP_GunComponent>(newWeapon);
+	EquiptMeleWeapon = Cast<UMeleWeaponComponent>(newWeapon);
+	if (EquiptGun)
 	{
-		CurrentGun = gun;
-		EquiptGun = gun->GunComponent;
+		
 		EquiptGun->Owner = this;
-		AttachWeaponToPlayer(CurrentGun);
+		EquiptGun->ActivateWeapon();
+		curentweapon = EquiptGun->OwningGun;
 		hud->PlayerHudWidget->UpdateAmmoText(EquiptGun->CurrentAmmo, EquiptGun->ExtraAmmo);
-		CurrentGun->SetActorHiddenInGame(false);
 	}
-	else if (Melee)
+	else if (EquiptMeleWeapon)
 	{
-		currentMeleeWeapon = Melee;
-		EquiptMeleWeapon = Melee->WeaponComponent;
+		
 		EquiptMeleWeapon->Owner = this;
-		AttachWeaponToPlayer(currentMeleeWeapon);
-		currentMeleeWeapon->SetActorHiddenInGame(false);
+		EquiptMeleWeapon->ActivateWeapon();
+		curentweapon = EquiptMeleWeapon->OwningWeapon;
 	}
 	
 	
@@ -618,12 +616,36 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 
 void ASPCharacter::CreateWeapons()
 {
-	CreatedWeaponList.Add(GetWorld()->SpawnActor<AWeaponBase>(primaryWeaponTemplate));
-	CreatedWeaponList.Add(GetWorld()->SpawnActor<AWeaponBase>(SecendaryWeaponTemplate));
-	CreatedWeaponList[0]->SetActorHiddenInGame(true);
-	CreatedWeaponList[1]->SetActorHiddenInGame(true);
+	AWeaponBase* CreatedWeapon = nullptr;
+	CreatedWeapon = GetWorld()->SpawnActor<AWeaponBase>(primaryWeaponTemplate);
+	CreatedWeapon->AttachToComponent(GetGunpoint(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	CreatedWeaponList.Add(GetWeaponCompenent(CreatedWeapon));
+	CreatedWeapon = GetWorld()->SpawnActor<AWeaponBase>(SecendaryWeaponTemplate);
+	CreatedWeapon->AttachToComponent(GetGunpoint(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	CreatedWeaponList.Add(GetWeaponCompenent(CreatedWeapon));
+	CreatedWeaponList[0]->DeactivateWeapon();
+	CreatedWeaponList[1]->DeactivateWeapon();
 
 	SwitchWeaponWithID(0);
 }
+
+UWeaponBaseCompnent* ASPCharacter::GetWeaponCompenent(AWeaponBase*& weapon)
+{
+	melee = Cast<ASP_MeleWeapon>(weapon);
+	Gun = Cast<ASP_Gun>(weapon);
+	if (Gun)
+	{
+		return Gun->GunComponent;
+	}
+	else if (melee)
+	{
+		return melee->WeaponComponent;
+	}
+	return nullptr;
+}
+
+
+
+
 
 
