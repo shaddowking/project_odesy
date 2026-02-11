@@ -2,6 +2,7 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 
+#include "SP_BuffUI.h"
 
 class SPlayerHud : public SCompoundWidget
 {
@@ -17,6 +18,8 @@ public:
 	void Construct(const FArguments& InArgs);
 	
 	TWeakObjectPtr<class ASP_HUD> OwningHUD;
+
+	
 
 
 
@@ -48,7 +51,7 @@ private:
 
 	EVisibility GetChargeSliderVisibility() const { return ChargeSliderVisibility; }
 
-	
+
  
 	UMaterialInterface* HealthBarMaterial = nullptr;
 	UMaterialInstanceDynamic* HPMaterialInstance = nullptr;

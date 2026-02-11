@@ -18,7 +18,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "SP_Gun.h"
 #include "Abilitys/SP_AbilityBase.h"
-
+#include "Buffes/SP_BuffeBase.h"
+#include "Buffes/SP_BuffDataAsset.h"
 
 ASPCharacter::ASPCharacter()
 {
@@ -198,7 +199,7 @@ void ASPCharacter::HandleStopAim()
 
 void ASPCharacter::HandleShoot()
 {
-	if (!bIsUsingAbility)
+	if (!bIsUsingAbility && bIsFireReleas)
 	{
 		if (EquiptMeleWeapon)
 		{
@@ -249,8 +250,9 @@ void ASPCharacter::HandleShoot()
 
 		}
 	}
-	else
+	else if (bIsUsingAbility)
 	{
+		bIsFireReleas = false;
 		Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttack();
 	}
 	
@@ -264,7 +266,7 @@ void ASPCharacter::HandleShoot()
 
 void ASPCharacter::HandleShootRealese()
 {
-	if (bIsAiming && !bIsUsingAbility)
+	if (bIsAiming && !bIsUsingAbility && bIsFireReleas)
 	{
 		EquiptGun->RealeseWeapon();
 
@@ -276,6 +278,11 @@ void ASPCharacter::HandleShootRealese()
 			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttackRelease();
 		}
 
+	}
+
+	if (bIsFireReleas == false)
+	{
+		bIsFireReleas = true;
 	}
 }
 
@@ -449,6 +456,34 @@ void ASPCharacter::OnDamage()
 	hud->PlayerHudWidget->UpdateHPPercent(HPPercent);
 }
 
+void ASPCharacter::RemoveBuff(UBuffBase* buff)
+{
+	if (PlayerBuffs.Contains(buff))
+	{
+		buff->OnBuffDepleted();
+		PlayerBuffs.Remove(buff);
+		buff = nullptr;
+	}
+}
+
+void ASPCharacter::AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset)
+{
+	for (UBuffBase* currentBuff : PlayerBuffs)
+	{
+		if (currentBuff->GetClass() == buff->GetClass())
+		{
+			currentBuff->ResetDuration();
+			Bhasbuff = true;
+		}
+	}
+	if(Bhasbuff == false)
+	{
+		buff->InitializeBuff(dataasset->HasDuration, dataasset->Duration,dataasset->BuffBrush,dataasset->buffUITemplate,this,dataasset->Name);
+		PlayerBuffs.Add(buff);
+	}
+	Bhasbuff = false;
+}
+
 FVector ASPCharacter::GetCameraForward()
 {
 	FVector ViewOrigin;
@@ -577,6 +612,26 @@ void ASPCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GroundCheck();
+
+	for (UBuffBase* buff : PlayerBuffs) 
+	{
+		if (buff->Duration > 0)
+		{
+			buff->Duration -= DeltaTime;
+			buff->UI->UpdateTimerText(buff->Duration);
+
+		}
+		else if (buff->Duration <= 0)
+		{
+			buffsToRemove.Add(buff);
+		}
+	}
+
+	for (UBuffBase* buff : buffsToRemove) 
+	{
+		RemoveBuff(buff);
+	}
+	buffsToRemove.Empty();
 
 }
 

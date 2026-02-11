@@ -16,6 +16,7 @@ class UAbilityDataAsset;
 class ASPCharacter;
 class ASP_HUD;
 class ASubclass;
+class UBuffDataAsset;
 
 UCLASS(abstract)
 class AAbilityBase : public AActor {
@@ -23,6 +24,8 @@ class AAbilityBase : public AActor {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	UBuffDataAsset* BuffToApply = nullptr;
 
 	bool BIsAbilityActive = false;
 

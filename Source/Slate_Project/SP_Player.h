@@ -2,6 +2,8 @@
 
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/SP_BuffUI.h"
 #include "SP_Player.generated.h"
 
 
@@ -18,7 +20,9 @@ class UMeleWeaponComponent;
 class ASP_MeleWeapon;
 class AWeaponBase;
 class IAbilityInterface;
-
+class UBuffBase;
+class UBuffDataAsset;
+class UBuffUI;
 
 UCLASS()
 class ASPCharacter : public ACharacter {
@@ -26,10 +30,10 @@ class ASPCharacter : public ACharacter {
 	GENERATED_BODY()
 public:
 	ASPCharacter();
-
+	ASP_HUD* hud = nullptr;
 protected:
 
-	ASP_HUD* hud = nullptr;
+	
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputMappingContext* PlayerContext;
@@ -112,7 +116,23 @@ protected:
 	USubclassComponent* SCcomponent = nullptr;
 
 public:
+	// Buff-------
 
+	bool Bhasbuff = false;
+
+	UBuffUI* CreateBuffUI(TSubclassOf<UBuffUI> bufftemplate) 
+	{
+		return CreateWidget<UBuffUI>(GetWorld(), bufftemplate);
+	}
+
+	TArray<UBuffBase*> PlayerBuffs;
+	TArray<UBuffBase*> buffsToRemove;
+
+	void RemoveBuff(UBuffBase* buff);
+
+	void AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset);
+
+	//------------
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Aimpoint = nullptr;
 
@@ -280,6 +300,8 @@ private:
 	AWeaponBase* curentweapon = nullptr;
 
 	IAbilityInterface* ActiveAbility = nullptr;
+
+	bool bIsFireReleas = true;;
 
 	
 };

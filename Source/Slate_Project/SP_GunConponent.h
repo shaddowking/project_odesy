@@ -22,6 +22,11 @@ class USP_GunComponent : public UWeaponBaseCompnent {
 	GENERATED_BODY()
 public:
 
+	float CalculateRelodeSpeed() 
+	{
+		return RelodeTime;
+	}
+	
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gun Stats")

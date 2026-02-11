@@ -1,12 +1,13 @@
 #pragma once
 #include "Components/ActorComponent.h"
+#include "SP_Player.h"
+#include "Buffes/SP_BuffeBase.h"
 #include "SP_WeaponComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSPWeaponSigniture);
 
 class ASPCharacter;
-
-
+class UBuffBase;
 UCLASS()
 class UWeaponBaseCompnent : public UActorComponent 
 {
@@ -34,6 +35,16 @@ public:
 	void DeactivateWeapon() 
 	{
 		OnDeactivate.Broadcast();
+	}
+
+	int CalculateDamage()
+	{
+		int damage = Damage;
+		for(UBuffBase* buff : Owner->PlayerBuffs)
+		{
+			damage += buff->BuffDamageCalculation(Owner);
+		}
+		return damage;
 	}
 
 	UPROPERTY(BlueprintAssignable)

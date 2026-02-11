@@ -6,6 +6,8 @@
 #include "../../UI/SP_HUD.h"
 #include "../../UI/SP_PlayerHud.h"
 #include "../SP_Subclass.h"
+#include "../../Buffes/SP_BuffDataAsset.h"
+#include "../../Buffes/SP_Amplifide.h"
 
 void ALightningRod::OnAbilityPressed()
 {
@@ -21,6 +23,11 @@ void ALightningRod::OnAbilityPressed()
 	}
 
 	SpawndLightning->Activate(SpawnLocation);
+	if (BuffToApply)
+	{
+		UAmplifide* newBuff = NewObject<UAmplifide>(BuffToApply);
+		Caster->AddBuff(newBuff,BuffToApply);
+	}
 	OwnerSubclass->ActiveAbility = nullptr;
 	Caster->bIsUsingAbility = false;
 	ActivateCooldown();

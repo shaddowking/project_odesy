@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+
 #include "SP_Subclass.generated.h"
 
 class AAbilityBase;

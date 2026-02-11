@@ -8,12 +8,12 @@ public class Slate_Project : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule", "Slate", "SlateCore","UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
-		 PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		 PrivateDependencyModuleNames.AddRange(new string[] {  });
 		
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");

@@ -36,12 +36,12 @@ public:
 
 	// Subclasses
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ASubclass> StormsEya_Template;
+	TSubclassOf<AStormWalker> StormsEya_Template;
 	UPROPERTY(BlueprintReadOnly)
 	AStormWalker* StormsEya = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ASubclass> pupeterTemplate;
+	TSubclassOf<APupeter> pupeterTemplate;
 
 	UPROPERTY(BlueprintReadOnly)
 	APupeter* pupeter = nullptr;

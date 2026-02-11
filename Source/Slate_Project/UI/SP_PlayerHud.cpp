@@ -94,6 +94,7 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 				SNew(SImage)
 			]
 			
+			
 
 		];
 
@@ -177,6 +178,10 @@ void SPlayerHud::ChageChargeSliderVisibility(bool IsVisible)
 
 
 }
+
+
+
+
 
 void SPlayerHud::SetSlateBrushes()
 {

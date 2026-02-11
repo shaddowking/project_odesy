@@ -4,6 +4,7 @@
 #include "SP_HUD.generated.h"
 
 class ASP_GameMode;
+class UBuffList;
 
 UCLASS()
 class ASP_HUD : public AHUD {
@@ -15,6 +16,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UBuffList* buffList = nullptr;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> buffListTemplate;
 	TSharedPtr<class SPlayerHud> PlayerHudWidget;
 	TSharedPtr<class SWidget> PHudWidgetContainer;
 
