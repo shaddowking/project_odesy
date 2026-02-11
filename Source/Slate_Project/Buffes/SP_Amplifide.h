@@ -10,13 +10,13 @@ GENERATED_BODY()
 
 public:
 
-	 float BuffDamageCalculation(ASPCharacter*& Owner) override;
+	 float BuffDamageCalculation(ASPCharacter* Owner) override;
 
-	 float BuffMoveSpeedCalculation(ASPCharacter*& Owner)override;
+	 float BuffMoveSpeedCalculation(ASPCharacter* Owner)override;
 
-	 float BuffRelodeSpeedCalculation(ASPCharacter*& Owner)override;
+	 float BuffRelodeSpeedCalculation(ASPCharacter* Owner)override;
 
-	 float BuffDefenceCalculation(ASPCharacter*& Owner)override;
+	 float BuffDefenceCalculation(ASPCharacter* Owner)override;
 
 	 
 

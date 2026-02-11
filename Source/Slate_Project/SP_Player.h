@@ -178,9 +178,11 @@ public:
 	//-------------
 	//movement 
 	UPROPERTY(EditDefaultsOnly, Category = "Movment")
-	float MaxRunSpeed = 1000.0;
+	float MaxRunSpeed = 1200.0;
 	UPROPERTY(EditDefaultsOnly, Category = "Movment")
 	float MaxWalkSpeed = 600.0;
+
+	float currentMoveSpeed;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movment")
 	float JumpForce = 500;
@@ -195,9 +197,9 @@ public:
 	void PlayerJump(float Force);
 
 
-	
+	void UpdateMoveSpeed();
 
-
+	float HandleMoveSpeedCalculation();
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UWeaponBaseCompnent*> CreatedWeaponList;

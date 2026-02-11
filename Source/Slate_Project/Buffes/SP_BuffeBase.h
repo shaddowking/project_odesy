@@ -20,13 +20,13 @@ public:
 	
 
 
-	virtual float BuffDamageCalculation(ASPCharacter*& Owner);
+	virtual float BuffDamageCalculation(ASPCharacter* Owner);
 
-	virtual float BuffMoveSpeedCalculation(ASPCharacter*& Owner);
+	virtual float BuffMoveSpeedCalculation(ASPCharacter* Owner);
 
-	virtual float BuffRelodeSpeedCalculation(ASPCharacter*& Owner);
+	virtual float BuffRelodeSpeedCalculation(ASPCharacter* Owner);
 
-	virtual float BuffDefenceCalculation(ASPCharacter*& Owner);
+	virtual float BuffDefenceCalculation(ASPCharacter* Owner);
 
 	virtual void ResetDuration();
 

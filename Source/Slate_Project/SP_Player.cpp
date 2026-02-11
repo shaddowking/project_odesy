@@ -143,14 +143,16 @@ void ASPCharacter::HandleLook(const FInputActionValue& value)
 
 void ASPCharacter::HandleRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = MaxRunSpeed;
+	currentMoveSpeed = MaxRunSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
 
 
 }
 
 void ASPCharacter::HandleStopRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+	currentMoveSpeed = MaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
 }
 
 void ASPCharacter::HandleStartAim()
@@ -460,8 +462,9 @@ void ASPCharacter::RemoveBuff(UBuffBase* buff)
 {
 	if (PlayerBuffs.Contains(buff))
 	{
-		buff->OnBuffDepleted();
+		
 		PlayerBuffs.Remove(buff);
+		buff->OnBuffDepleted();
 		buff = nullptr;
 	}
 }
@@ -478,8 +481,8 @@ void ASPCharacter::AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset)
 	}
 	if(Bhasbuff == false)
 	{
-		buff->InitializeBuff(dataasset->HasDuration, dataasset->Duration,dataasset->BuffBrush,dataasset->buffUITemplate,this,dataasset->Name);
 		PlayerBuffs.Add(buff);
+		buff->InitializeBuff(dataasset->HasDuration, dataasset->Duration,dataasset->BuffBrush,dataasset->buffUITemplate,this,dataasset->Name);
 	}
 	Bhasbuff = false;
 }
@@ -670,6 +673,26 @@ void ASPCharacter::SetIdleRotationOn()
 
 
 }
+
+void ASPCharacter::UpdateMoveSpeed()
+{
+	float test = HandleMoveSpeedCalculation();
+	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + test;
+}
+
+float ASPCharacter::HandleMoveSpeedCalculation()
+{
+	float value = 0;
+
+	for(UBuffBase* buff : PlayerBuffs)
+	{
+		value += buff->BuffMoveSpeedCalculation(this);
+	}
+
+	return value;
+}
+
+
 
 void ASPCharacter::SwitchWeaponWithID(float ID)
 {

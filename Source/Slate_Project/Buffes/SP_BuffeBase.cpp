@@ -24,18 +24,19 @@ void UBuffBase::InitializeBuff(bool hasduration, float duration, FSlateBrush ico
 		UI->Name = B_name;
 		
 		Player->hud->buffList->AddBuffUIToList(UI);
+		player->UpdateMoveSpeed();
 	}
 
 	
 }
 
 
-float UBuffBase::BuffDamageCalculation(ASPCharacter*& Owner)
+float UBuffBase::BuffDamageCalculation(ASPCharacter* Owner)
 {
 	return 0.0f;
 }
 
-float UBuffBase::BuffDefenceCalculation(ASPCharacter*& Owner)
+float UBuffBase::BuffDefenceCalculation(ASPCharacter* Owner)
 {
 	return 0.0f;
 }
@@ -51,12 +52,12 @@ void UBuffBase::OnBuffDepleted()
 
 }
 
-float UBuffBase::BuffMoveSpeedCalculation(ASPCharacter*& Owner)
+float UBuffBase::BuffMoveSpeedCalculation(ASPCharacter* Owner)
 {
 	return 0.0f;
 }
 
-float UBuffBase::BuffRelodeSpeedCalculation(ASPCharacter*& Owner)
+float UBuffBase::BuffRelodeSpeedCalculation(ASPCharacter* Owner)
 {
 	return 0.0f;
 }
