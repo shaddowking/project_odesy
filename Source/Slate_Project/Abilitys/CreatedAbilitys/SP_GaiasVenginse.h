@@ -16,6 +16,9 @@ public:
 
 	void AbilitySelected() override;
 
+	virtual void CooldownCompleted() override;
+	virtual void UpdateUI(float Value) override;
+
 
 	// Inherited via IAbilityInterface
 	void OnAbilityPrimaryAttack() override;

@@ -53,7 +53,9 @@ void ALightningRodStrike::OnEnemyenter(UPrimitiveComponent* OverlappedComp, AAct
 {
 	ASPCharacter* player = Cast<ASPCharacter>(OtherActor);
 
-	if (!player)
+	
+
+	if (!player && IsActive)
 	{
 		ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
 		if (FoundTarget)
@@ -70,7 +72,7 @@ void ALightningRodStrike::OnEnemyexit(UPrimitiveComponent* OverlappedComp, AActo
 {
 	ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
 
-	if (FoundTarget)
+	if (FoundTarget && IsActive)
 	{
 		if (ListOfTargets.Contains(FoundTarget))
 		{

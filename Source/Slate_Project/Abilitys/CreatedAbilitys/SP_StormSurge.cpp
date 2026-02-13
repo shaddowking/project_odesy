@@ -55,6 +55,8 @@ void AStormSurge::ActivateCooldown()
 {
 
 	ActiveCooldown = 0;
+	Hud->PlayerHudWidget->UpdateUlitmateSliderColor(false);
+
 	CooldownTimer();
 }
 
@@ -66,8 +68,9 @@ void AStormSurge::AbilitySelected()
 
 void AStormSurge::CooldownCompleted()
 {
-	Hud->PlayerHudWidget->UpdateUltimatePercent(0);
 	Caster->bIsUltimateReady = true;
+	Hud->PlayerHudWidget->UpdateUlitmateSliderColor(Caster->bIsUltimateReady);
+	
 }
 
 void AStormSurge::UpdateUI(float Value)

@@ -28,6 +28,8 @@ public:
 	void UpdateHPPercent(float percent);
 
 	void UpdateUltimatePercent(float percent);
+	void UpdateUltimateIcon(UTexture2D* icon);
+	void UpdateUlitmateSliderColor(bool finished);
 
 	void UpdatePrimaryAbilityPercent(float percent);
 	void UpdatePrimaryAbilityIcon(UTexture2D* icon);
@@ -76,6 +78,9 @@ private:
 	FSlateBrush UltimateSliderBrush;
 	FSlateBrush PrimaryAbilitySliderBrush;
 	FSlateBrush ElementalAbilitySliderBrush;
+
+	FVector4 Ultimatesliderfinish;
+	FVector4 Ultimateslidercolor;
 
 	FText CurrntAmmoText;
 	FText ExtraAmmoText;

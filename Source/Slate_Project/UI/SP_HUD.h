@@ -38,6 +38,15 @@ public:
 	FSlateBrush UISliderBrush;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush UltimateSliderBrush;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FVector4 UltimateSliderFinish;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FVector4 UltimateSlidercollor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
 	FSlateBrush ShargeWeaponSlider;
 
 	

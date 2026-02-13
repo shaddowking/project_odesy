@@ -52,7 +52,7 @@ void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AA
 
 		}
 		
-		ProjectileDeActivate();
+		
 
 			if (Cast<AAbilityPlacable>(OtherActor) == nullptr && Cast<AAbilityPlacableCharacter>(OtherActor) == nullptr)
 			{
@@ -60,6 +60,7 @@ void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AA
 	
 
 	}
+	ProjectileDeActivate();
 }
 
 void AAbilityProjectile::ProjectileActivate(FVector location, FRotator Rotation)
@@ -75,8 +76,8 @@ void AAbilityProjectile::ProjectileMove(FVector location, FRotator Rotation)
 {
 	SetActorLocationAndRotation(location, Rotation);
 	BPMove(location);
-	Sphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	SetActorHiddenInGame(false);
 
@@ -86,8 +87,7 @@ void AAbilityProjectile::ProjectileDeActivate()
 {
 	bIsActive = false;
 	SetActorHiddenInGame(true);
-	Sphere->SetCollisionProfileName(TEXT("NoCollision"));
-	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
 }

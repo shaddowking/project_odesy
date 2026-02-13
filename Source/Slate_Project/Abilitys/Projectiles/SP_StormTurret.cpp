@@ -26,7 +26,7 @@ void AStormTurret::Tick(float DeltaTime)
 
 		if (AttackTimer >= AttackInterval)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Turret Attack"));
+			//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Turret Attack"));
 
 			PerformAttack();
 			AttackTimer = 0;

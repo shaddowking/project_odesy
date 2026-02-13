@@ -10,6 +10,8 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
 
+	
+
 	SetSlateBrushes();
 
 	FSlateFontInfo CurrentAmmoTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
@@ -44,6 +46,14 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 			.HAlign(HAlign_Left)
 			[
 				SNew(SImage).Image(&HPBrush)
+			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(250.f, 150.f))
+			.VAlign(VAlign_Bottom)
+			.HAlign(HAlign_Left)
+			[
+				SNew(SImage)
+					.Image(&UltimateSliderBrush)
 			]
 			+ SOverlay::Slot()
 			.Padding(FMargin(250.f, 40.f))
@@ -124,6 +134,32 @@ void SPlayerHud::UpdateUltimatePercent(float percent)
 
 }
 
+void SPlayerHud::UpdateUltimateIcon(UTexture2D* icon)
+{
+	UltimateBrush.SetResourceObject(icon);
+}
+
+void SPlayerHud::UpdateUlitmateSliderColor(bool finished)
+{
+	if (finished)
+	{
+		if (UltimateMaterialInstance)
+		{
+			
+			UltimateMaterialInstance->SetVectorParameterValue("SliderCollor", Ultimatesliderfinish);
+
+		}
+	}
+	else
+	{
+		if (UltimateMaterialInstance)
+		{
+			UltimateMaterialInstance->SetVectorParameterValue("SliderCollor",Ultimateslidercolor);
+
+		}
+	}
+}
+
 void SPlayerHud::UpdatePrimaryAbilityPercent(float percent)
 {
 	PrimaryAbilityPercent = percent;
@@ -193,8 +229,12 @@ void SPlayerHud::SetSlateBrushes()
 	HPBrush.SetResourceObject(HPMaterialInstance);
 	//---------
 	//Abilitys-
+
+	Ultimateslidercolor = OwningHUD->UltimateSlidercollor;
+	Ultimatesliderfinish = OwningHUD->UltimateSliderFinish;
+
 	UltimateBrush = OwningHUD->UltimateImageBrush;
-	UltimateSliderBrush = OwningHUD->UISliderBrush;
+	UltimateSliderBrush = OwningHUD->UltimateSliderBrush;
 
 	UltimateMaterial = Cast<UMaterialInterface>(UltimateSliderBrush.GetResourceObject());
 	UltimateMaterialInstance = UMaterialInstanceDynamic::Create(UltimateMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());

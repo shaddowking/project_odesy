@@ -9,11 +9,14 @@ void ASP_HUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	if (GEngine && GEngine->GameViewport)
 	{
+		// ERROR HAPPENING HERE
 		PlayerHudWidget = SNew(SPlayerHud).OwningHUD(this);
 		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(PHudWidgetContainer, SWeakWidget).PossiblyNullContent(PlayerHudWidget.ToSharedRef()));
-
+		//___________________
+		
 		if (buffListTemplate)
 		{
 			buffList = CreateWidget<UBuffList>(GetWorld(), buffListTemplate);
@@ -22,6 +25,7 @@ void ASP_HUD::BeginPlay()
 				buffList->AddToViewport();
 			}
 		}
+		
 	}
 
 
