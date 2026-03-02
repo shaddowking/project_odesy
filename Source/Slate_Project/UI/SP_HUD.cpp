@@ -1,5 +1,6 @@
 #include "SP_HUD.h"
 #include "SP_PlayerHud.h"
+#include "SP_SubclassMenu.h"
 #include "Widgets/SWeakWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "SP_BuffList.h"
@@ -12,9 +13,10 @@ void ASP_HUD::BeginPlay()
 
 	if (GEngine && GEngine->GameViewport)
 	{
-		// ERROR HAPPENING HERE
+		
 		PlayerHudWidget = SNew(SPlayerHud).OwningHUD(this);
 		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(PHudWidgetContainer, SWeakWidget).PossiblyNullContent(PlayerHudWidget.ToSharedRef()));
+		
 		//___________________
 		
 		if (buffListTemplate)
@@ -25,11 +27,46 @@ void ASP_HUD::BeginPlay()
 				buffList->AddToViewport();
 			}
 		}
+
+		PlayerHudWidget->SetSlateBrushes();
 		
 	}
 
 
 
+}
+
+
+
+void ASP_HUD::CreateSubclassMenu(ASPCharacter* player)
+{
+
+	if (Player == nullptr)
+	{
+		Player = player;
+	}
+
+	if (GEngine && GEngine->GameViewport)
+	{
+		SubclassMenu = SNew(SSubclassMenu).OwningHUD(this).OwningCharacter(player);
+		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(PSubclassMenuContainer, SWeakWidget).PossiblyNullContent(SubclassMenu.ToSharedRef()));
+		SubclassMenu->SetVisibility(EVisibility::Collapsed);
+	}
+}
+
+void ASP_HUD::ShowSubclassMenu()
+{
+	SubclassMenu->SetVisibility(EVisibility::Visible);
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
+
+}
+
+void ASP_HUD::HideSubclassMenu()
+{
+	SubclassMenu->SetVisibility(EVisibility::Collapsed);
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
 }
 
 void ASP_HUD::EditorUpdateAmmoTexts(int current, int extra)

@@ -1,6 +1,12 @@
 #include "SP_Amplifide.h"
 #include "../SP_Player.h"
 
+void UAmplifide::OnBuffBegin()
+{
+	Player->UpdateMoveSpeed();
+
+}
+
 float UAmplifide::BuffDamageCalculation(ASPCharacter* Owner)
 {
 	return 10;
@@ -18,7 +24,7 @@ float UAmplifide::BuffRelodeSpeedCalculation(ASPCharacter* Owner)
 
 float UAmplifide::BuffDefenceCalculation(ASPCharacter* Owner)
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 void UAmplifide::OnBuffDepleted()

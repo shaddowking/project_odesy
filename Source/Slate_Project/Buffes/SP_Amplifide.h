@@ -10,6 +10,8 @@ GENERATED_BODY()
 
 public:
 
+	void OnBuffBegin() override;
+
 	 float BuffDamageCalculation(ASPCharacter* Owner) override;
 
 	 float BuffMoveSpeedCalculation(ASPCharacter* Owner)override;

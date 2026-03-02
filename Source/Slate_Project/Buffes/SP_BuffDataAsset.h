@@ -21,6 +21,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBuffUI> buffUITemplate;
 
+	UPROPERTY()
+	UBuffUI* createdUI = nullptr;
+
+	UPROPERTY()
+	UBuffBase* CreatedBuff = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	FString Name;
 	

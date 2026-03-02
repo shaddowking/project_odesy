@@ -5,6 +5,7 @@
 
 class ASP_GameMode;
 class UBuffList;
+class ASPCharacter;
 
 UCLASS()
 class ASP_HUD : public AHUD {
@@ -16,12 +17,25 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	ASPCharacter* Player;
+
 	UBuffList* buffList = nullptr;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> buffListTemplate;
 	TSharedPtr<class SPlayerHud> PlayerHudWidget;
 	TSharedPtr<class SWidget> PHudWidgetContainer;
 
+	TSharedPtr<class SSubclassMenu> SubclassMenu;
+	TSharedPtr<class SWidget> PSubclassMenuContainer;
+
+	void CreateSubclassMenu(ASPCharacter* player);
+
+	void ShowSubclassMenu();
+	void HideSubclassMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UMaterialInstanceDynamic* MakeMaterialInstance(UMaterialInterface* MInterface);
 	UFUNCTION(BlueprintCallable)
 	void EditorUpdateAmmoTexts(int current, int extra);
 
@@ -49,5 +63,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Brush")
 	FSlateBrush ShargeWeaponSlider;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Brush")
+	FSlateBrush beseTeleportSlider;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* HPMaterialInstance = nullptr;
+	UPROPERTY()
+	UMaterialInstanceDynamic* UltimateMaterialInstance = nullptr;
+	UPROPERTY()
+	UMaterialInstanceDynamic* PrimaryAbilityMaterialInstance = nullptr;
+	UPROPERTY()
+	UMaterialInstanceDynamic* ElementalAbilityMaterialInstance = nullptr;
+	UPROPERTY()
+	UMaterialInstanceDynamic* ChargeSliderMaterialInstance = nullptr;
+	UPROPERTY()
+	UMaterialInstanceDynamic* BaseTeleportMaterialInstance = nullptr;
 };

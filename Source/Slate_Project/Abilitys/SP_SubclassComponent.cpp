@@ -12,25 +12,39 @@ void USubclassComponent::InitializeSubclasses(ASPCharacter* Holder)
 
 	pupeter = Cast<APupeter>(GetWorld()->SpawnActor<ASubclass>(pupeterTemplate));
 	pupeter->InitializeSubclass(Owner);
-	
-	SelectSubclass(activeSublcassEnum);
+	activeSublcassEnum = ESubclasses::NoClass;
+	SelectSubclass(StartSublcassEnum);
 }
 
 void USubclassComponent::SelectSubclass(ESubclasses subclass)
 {
-	switch (subclass)
+	if (activeSublcassEnum != subclass)
 	{
-	case ESubclasses::StormWalker:
-		activeSubclass = StormsEya;
-		StormsEya->SubclassSelected();
-		break;
-	case ESubclasses::Pupeter:
-		activeSubclass = pupeter;
-		pupeter->SubclassSelected();
-		break;
-	default:
-		break;
+		switch (subclass)
+		{
+		case ESubclasses::StormWalker:
+			if (activeSubclass)
+			{
+				activeSubclass->DeselectSubclass();
+			}
+			activeSubclass = StormsEya;
+			activeSublcassEnum = subclass;
+			StormsEya->SubclassSelected();
+			break;
+		case ESubclasses::Pupeter:
+			if (activeSubclass)
+			{
+				activeSubclass->DeselectSubclass();
+			}
+			activeSubclass = pupeter;
+			activeSublcassEnum = subclass;
+			pupeter->SubclassSelected();
+			break;
+		default:
+			break;
+		}
 	}
+	
 }
 
 bool USubclassComponent::IsUsingAbility(AAbilityBase*& ability)

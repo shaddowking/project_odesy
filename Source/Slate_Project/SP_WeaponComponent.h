@@ -15,7 +15,7 @@ GENERATED_BODY()
 
 public:
 
-	virtual void UseWeapon(FVector origin, FVector Forward)
+	virtual void UseWeapon(FVector origin = FVector::Zero(), FVector Forward = FVector::Zero())
 	{
 		ViewOrigin = origin;
 		ViewForward = Forward;

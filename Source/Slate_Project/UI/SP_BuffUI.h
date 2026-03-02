@@ -2,6 +2,7 @@
 #include "Blueprint/UserWidget.h"
 #include "SP_BuffUI.generated.h"
 
+
 UCLASS()
 class UBuffUI : public UUserWidget 
 {
@@ -22,8 +23,16 @@ public:
 	{
 		return Name;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	bool GetTimerVisibility() 
+	{
+		return isTimerVisible;
+	}
 	
 	FString Name;
 
 	FSlateBrush Icon;
+
+	bool isTimerVisible;
 };

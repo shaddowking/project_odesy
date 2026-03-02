@@ -4,30 +4,44 @@
 #include "../UI/SP_BuffUI.h"
 #include "../UI/SP_BuffList.h"
 #include "../SP_Player.h"
+#include "SP_BuffDataAsset.h"
 
 UBuffBase::UBuffBase()
 {
 }
 
-void UBuffBase::InitializeBuff(bool hasduration, float duration, FSlateBrush icon,TSubclassOf<UBuffUI> buffUITemplate, ASPCharacter* player, FString B_name)
+void UBuffBase::InitializeBuff(ASPCharacter* player, UBuffDataAsset* dataasset)
 {
-	HasDuration = hasduration;
-	MaxDuration = duration;
-	Icon = icon;
+	HasDuration = dataasset->HasDuration;
+	MaxDuration = dataasset->Duration;
+	Icon = dataasset->BuffBrush;
 	Duration = MaxDuration;
-	if (buffUITemplate)
+	
+	if (dataasset->buffUITemplate)
 	{
 		Player = player;
-		UI = Player->CreateBuffUI(buffUITemplate);
-		//UI = Cast<UBuffUI>();
-		UI->Icon = icon;
-		UI->Name = B_name;
+		if (dataasset->createdUI)
+		{
+			UI = dataasset->createdUI;
+		}
+		else
+		{
+			UI = Player->CreateBuffUI(dataasset->buffUITemplate);
+			dataasset->createdUI = UI;
+		}
+		UI->Icon = Icon;
+		UI->Name = dataasset->Name;
+		UI->isTimerVisible = dataasset->HasDuration;
 		
 		Player->hud->buffList->AddBuffUIToList(UI);
-		player->UpdateMoveSpeed();
+		OnBuffBegin();
 	}
 
 	
+}
+
+void UBuffBase::OnBuffBegin()
+{
 }
 
 
@@ -38,7 +52,7 @@ float UBuffBase::BuffDamageCalculation(ASPCharacter* Owner)
 
 float UBuffBase::BuffDefenceCalculation(ASPCharacter* Owner)
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 void UBuffBase::ResetDuration()

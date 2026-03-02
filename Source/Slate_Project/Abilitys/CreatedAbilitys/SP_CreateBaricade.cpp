@@ -34,7 +34,7 @@ void AEarthBaricadeAbility::LaunchAbility()
 {
 	createdBaricade->Activate(TargetLocation);
 	createdBaricade->SetActorRotation(CurrentTargetRotation);
-	Caster->bIsUsingAbility = true;
+	Caster->bIsUsingAbility = false;
 	OwnerSubclass->ActiveAbility = nullptr;
 	ActivateCooldown();
 }
@@ -83,8 +83,12 @@ void AEarthBaricadeAbility::ActivateCooldown()
 
 void AEarthBaricadeAbility::AbilitySelected()
 {
+	Caster->bIsElementalAbilityReady = false;
+	BIsAbilityActive = false;
+	OwnerSubclass->ActiveAbility = nullptr;
+	IsInChosenSubclass = true;
 	Hud->PlayerHudWidget->UpdateElementAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
-
+	ActivateCooldown();
 }
 
 void AEarthBaricadeAbility::CooldownCompleted()

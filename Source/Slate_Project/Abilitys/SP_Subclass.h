@@ -34,6 +34,8 @@ public:
 
 	void SubclassSelected();
 
+	void DeselectSubclass();
+
 	UPROPERTY()
 	AAbilityBase* ActiveAbility;
 

@@ -21,19 +21,23 @@ FVector AAbilityBase::GetUltimateSpawnLocation() {
 
 void AAbilityBase::CooldownTimer()
 {
-	if (ActiveCooldown <= AbilityBaseStates->AbilityInfo.Cooldown)
+	if (IsInChosenSubclass)
 	{
-		ActiveCooldown += 0.1f;
-		UpdateUI(ActiveCooldown);
-		CooldownPercent = ActiveCooldown / AbilityBaseStates->AbilityInfo.Cooldown;
-		FTimerHandle AbilityTimerHandle;
+		if (ActiveCooldown <= AbilityBaseStates->AbilityInfo.Cooldown)
+		{
+			ActiveCooldown += 0.1f;
+			UpdateUI(ActiveCooldown);
+			CooldownPercent = ActiveCooldown / AbilityBaseStates->AbilityInfo.Cooldown;
+			FTimerHandle AbilityTimerHandle;
 
-		GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &AAbilityBase::CooldownTimer, 0.1f, false);
+			GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &AAbilityBase::CooldownTimer, 0.1f, false);
+		}
+		else
+		{
+			CooldownCompleted();
+		}
 	}
-	else
-	{
-		CooldownCompleted();
-	}
+	
 	
 }
 

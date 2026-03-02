@@ -25,7 +25,18 @@ void ALightningRod::OnAbilityPressed()
 	SpawndLightning->Activate(SpawnLocation);
 	if (BuffToApply)
 	{
-		UAmplifide* newBuff = NewObject<UAmplifide>(BuffToApply);
+		UBuffBase* newBuff = nullptr;
+
+		if (BuffToApply->CreatedBuff)
+		{
+			newBuff = BuffToApply->CreatedBuff;
+		}
+		else
+		{
+			newBuff = NewObject<UAmplifide>(BuffToApply);
+			BuffToApply->CreatedBuff = newBuff;
+
+		}
 		Caster->AddBuff(newBuff,BuffToApply);
 	}
 	OwnerSubclass->ActiveAbility = nullptr;
@@ -49,8 +60,12 @@ void ALightningRod::ActivateCooldown()
 
 void ALightningRod::AbilitySelected()
 {
+	Caster->bIsElementalAbilityReady = false;
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
+	IsInChosenSubclass = true;
 	Hud->PlayerHudWidget->UpdateElementAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
-	
+	ActivateCooldown();
 }
 
 

@@ -8,6 +8,7 @@
 class ASPCharacter;
 class ASP_HUD;
 class UBuffUI;
+class UBuffDataAsset;
 UCLASS()
 class UBuffBase : public UObject 
 {
@@ -16,9 +17,9 @@ class UBuffBase : public UObject
 public:
 	UBuffBase();
 
-	void InitializeBuff(bool hasduration, float duration, FSlateBrush icon, TSubclassOf<UBuffUI> buffUITemplate,ASPCharacter* player, FString B_name);
+	void InitializeBuff(ASPCharacter* player,UBuffDataAsset* dataasset);
 	
-
+	virtual void OnBuffBegin();
 
 	virtual float BuffDamageCalculation(ASPCharacter* Owner);
 

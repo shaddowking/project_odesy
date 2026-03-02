@@ -49,8 +49,8 @@ void AStormSurge::OnAbilityPressed()
 
 void AStormSurge::OnAbilityReleas()
 {
-}
 
+}
 void AStormSurge::ActivateCooldown()
 {
 
@@ -62,6 +62,13 @@ void AStormSurge::ActivateCooldown()
 
 void AStormSurge::AbilitySelected()
 {
+	Caster->bIsUltimateReady = false;
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
+	IsInChosenSubclass = true;
+	Hud->PlayerHudWidget->UpdateUltimateIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
+	ActivateCooldown();
+
 }
 
 

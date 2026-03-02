@@ -2,6 +2,8 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 
+#include "SP_HUD.h"
+
 #include "SP_BuffUI.h"
 
 class SPlayerHud : public SCompoundWidget
@@ -40,35 +42,41 @@ public:
 	void UpdateChargeSlider(float percent);
 	void ChageChargeSliderVisibility(bool IsVisible);
 
+	void UpdateBaseTeleportVisibility(bool IsVisible)
+	{
+		if (IsVisible)
+		{
+			BaseTeleportVisibility = EVisibility::HitTestInvisible;
+		}
+		else
+		{
+			BaseTeleportVisibility = EVisibility::Collapsed;
+		}
+	}
+	void UpdateBaseTelebortSlider(float percent);
+
 	virtual bool SupportsKeyboardFocus() const override { return true; }
+
+	void SetSlateBrushes();
+
 
 private:
 
-	void SetSlateBrushes();
 
 	FText GetCurrntAmmoText() const { return CurrntAmmoText; }
 	FText GetExtraAmmoText() const { return ExtraAmmoText; }
 
-	FSlateBrush GetHPBrush() const { return HPBrush; }
 
 	EVisibility GetChargeSliderVisibility() const { return ChargeSliderVisibility; }
+	EVisibility GetBaseTeleportVisibility() const { return BaseTeleportVisibility; }
+	UMaterialInstanceDynamic* CreateMateralInstance(UMaterialInterface* materialInterface) 
+	{
+		return OwningHUD->MakeMaterialInstance(materialInterface);
 
+	}
 
  
-	UMaterialInterface* HealthBarMaterial = nullptr;
-	UMaterialInstanceDynamic* HPMaterialInstance = nullptr;
-
-	UMaterialInterface* UltimateMaterial = nullptr;
-	UMaterialInstanceDynamic* UltimateMaterialInstance = nullptr;
-
-	UMaterialInterface* PrimaryAbilityMaterial = nullptr;
-	UMaterialInstanceDynamic* PrimaryAbilityMaterialInstance = nullptr;
-
-	UMaterialInterface* ElementalAbilityMaterial = nullptr;
-	UMaterialInstanceDynamic* ElementalAbilityMaterialInstance = nullptr;
-
-	UMaterialInterface* ChargeSliderMaterial = nullptr;
-	UMaterialInstanceDynamic* ChargeSliderMaterialInstance = nullptr;
+	
 
 	FSlateBrush HPBrush;
 	FSlateBrush UltimateBrush;
@@ -87,6 +95,9 @@ private:
 	FSlateBrush ChargeSliderBrush;
 
 	EVisibility ChargeSliderVisibility;
+
+	FSlateBrush BaseTeleportBrush;
+	EVisibility BaseTeleportVisibility = EVisibility::Collapsed;
 
 	float UltimatePercent;
 	float PrimaryAbilityPercent;

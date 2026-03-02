@@ -50,9 +50,13 @@ void ASummonWratch::ActivateCooldown()
 
 void ASummonWratch::AbilitySelected()
 {
-
+	Caster->bIsPrimaryAbilityReady = false;
+	BIsAbilityActive = false;
+	Caster->bIsUsingAbility = false;
+	OwnerSubclass->ActiveAbility = nullptr;
+	IsInChosenSubclass = true;
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
-
+	ActivateCooldown();
 }
 
 void ASummonWratch::CooldownCompleted()

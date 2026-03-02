@@ -4,6 +4,7 @@
 #include "InputActionValue.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/SP_BuffUI.h"
+#include "Inventory/SP_ItemStruct.h"
 #include "SP_Player.generated.h"
 
 
@@ -23,6 +24,26 @@ class IAbilityInterface;
 class UBuffBase;
 class UBuffDataAsset;
 class UBuffUI;
+class UBuildSystemComponent;
+class USP_Resorse;
+class UInventoryComponent;
+class UBoxComponent;
+class UInteractionComponent;
+
+
+
+
+UENUM(BlueprintType)
+enum class EPlayerWorldState : uint8
+{
+	Combat,
+	base,
+	buildMode
+};
+
+
+
+
 
 UCLASS()
 class ASPCharacter : public ACharacter {
@@ -74,6 +95,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* SwitchWeaponAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* OpenSubclassMenuAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* BaseTeleportAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* OpenBuildMode;
+
 	void BeginPlay()override;
 
 	void SetupPlayerInputComponent(UInputComponent* playerInputComponent) override;
@@ -104,7 +134,18 @@ protected:
 
 	void HandleWeaponSwitch(const FInputActionValue& value);
 
-	
+	void HandleOpenSubclassMenu();
+
+	void HandleBaseTeleport();
+	void HandleBaseTeleportRelease();
+
+	void HandleToggleBuildMode();
+
+	void StartBuildMode();
+	void ExitBuildMode();
+
+	void HandleInteraction();
+
 
 
 	UFUNCTION()
@@ -112,10 +153,56 @@ protected:
 
 	UFUNCTION()
 	void OnDamage();
-	UPROPERTY(EditDefaultsOnly)
-	USubclassComponent* SCcomponent = nullptr;
+
+
+	
+private:
+
+	float BaseTeleportcountdownCount = 0;
+
+
+
 
 public:
+
+	//Interaction
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* InteractionColider = nullptr;
+
+	UFUNCTION()
+	void OnInteractEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnInteractExit(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	//------------
+	//Inventory
+	UPROPERTY(EditAnywhere)
+	UInventoryComponent* invertoryComponent = nullptr;
+
+	//-----------------------
+	//Build/Base
+	UFUNCTION(BlueprintCallable)
+	void ChageWorldState(EPlayerWorldState state);
+
+	UPROPERTY(EditDefaultsOnly)
+	UBuildSystemComponent* BuildSystemCompenent = nullptr;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void TeleportToBase();
+
+	UPROPERTY(EditDefaultsOnly)
+	float MaxBaseTeleportCountdown = 2;
+
+	//--------------------------
+
+	UPROPERTY(EditDefaultsOnly)
+	EPlayerWorldState playerworldState = EPlayerWorldState::Combat;
+
+	
+	
+
 	// Buff-------
 
 	bool Bhasbuff = false;
@@ -133,30 +220,17 @@ public:
 	void AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset);
 
 	//------------
-	UPROPERTY(EditAnywhere)
-	USceneComponent* Aimpoint = nullptr;
+	
 
-	UPROPERTY(EditAnywhere)
-	int ProjectilePoolsice = 200;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AProjectile> ProjectileClass;
-
-	UPROPERTY(BlueprintReadOnly)
-	TArray<AProjectile*> ProjectilePool;
-
-	UFUNCTION()
-	AProjectile* GetNextAvalableProjectile();
-
-	AProjectile* AddProjectileTooPool();
-
-	void CreateProjectilePool();
-
-
+	//Ability system
+	UPROPERTY(EditDefaultsOnly)
+	USubclassComponent* SCcomponent = nullptr;
 
 	bool bIsUltimateReady = true;
 	bool bIsPrimaryAbilityReady = true;
 	bool bIsElementalAbilityReady = true;
+
+	//----------
 
 	FVector GetAimPoint(float Range);
 	FVector GetPlacablePoint(float Range);
@@ -201,6 +275,27 @@ public:
 
 	float HandleMoveSpeedCalculation();
 
+	// weapons----------
+
+	UPROPERTY(EditAnywhere)
+	USceneComponent* Aimpoint = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	int ProjectilePoolsice = 200;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<AProjectile*> ProjectilePool;
+
+	UFUNCTION()
+	AProjectile* GetNextAvalableProjectile();
+
+	AProjectile* AddProjectileTooPool();
+
+	void CreateProjectilePool();
+
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UWeaponBaseCompnent*> CreatedWeaponList;
 
@@ -219,6 +314,8 @@ public:
 		EquiptGun = nullptr;
 		EquiptMeleWeapon = nullptr;
 	};
+
+	void UnEquipGun();
 
 	UFUNCTION()
 	void CreateWeapons();
@@ -294,6 +391,9 @@ public:
 
 private:
 
+	UPROPERTY()
+	UInteractionComponent* CurrentInteractedObject = nullptr;
+
 	
 	UWeaponBaseCompnent* newWeapon = nullptr;
 
@@ -303,7 +403,13 @@ private:
 
 	IAbilityInterface* ActiveAbility = nullptr;
 
-	bool bIsFireReleas = true;;
+	bool bIsFireReleased = true;;
 
-	
+	UPROPERTY()
+	AProjectile* AvalableProjectile = nullptr;
+
+	UPROPERTY()
+	AProjectile* createdprojectile = nullptr;
+
+
 };

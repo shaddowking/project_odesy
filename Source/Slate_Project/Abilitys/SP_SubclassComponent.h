@@ -12,7 +12,8 @@ UENUM(BlueprintType)
 enum class ESubclasses : uint8
 {
 StormWalker,
-Pupeter
+Pupeter,
+NoClass
 };
 
 UCLASS(meta = (BlueprintSpawnableComponent))
@@ -22,9 +23,12 @@ class USubclassComponent : public UActorComponent {
 public:
 
 	ASPCharacter* Owner;
+	
+	UPROPERTY()
+	ESubclasses activeSublcassEnum = ESubclasses::NoClass;
 
 	UPROPERTY(EditAnywhere)
-	ESubclasses activeSublcassEnum = ESubclasses::StormWalker;
+	ESubclasses StartSublcassEnum = ESubclasses::NoClass;
 
 	void InitializeSubclasses(ASPCharacter* Holder);
 	void SelectSubclass(ESubclasses subclass);

@@ -10,10 +10,26 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
 
+	//HPBrush = OwningHUD->HPImageBrush;
+
+	Ultimateslidercolor = OwningHUD->UltimateSlidercollor;
+	Ultimatesliderfinish = OwningHUD->UltimateSliderFinish;
+
+	UltimateBrush = OwningHUD->UltimateImageBrush;
+	//UltimateSliderBrush = OwningHUD->UltimateSliderBrush;
+
+	PrimaryAbilityBrush = OwningHUD->PrimaryAbilityImageBrush;
+	//PrimaryAbilitySliderBrush = OwningHUD->UISliderBrush;
+
+	ElementalAbilityBrush = OwningHUD->ElementalAbilityImageBrush;
+	//ElementalAbilitySliderBrush = OwningHUD->UISliderBrush;
+
+	//ChargeSliderBrush = OwningHUD->ShargeWeaponSlider;
+
 	
-
-	SetSlateBrushes();
-
+	//ERROR IN FUNCTION
+	//SetSlateBrushes();
+	//__________________
 	FSlateFontInfo CurrentAmmoTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
 	CurrentAmmoTextStyle.Size = 30.f;
 
@@ -25,7 +41,9 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 
 	ChildSlot
 		[
+			
 			SNew(SOverlay) 
+			
 			+ SOverlay::Slot()
 			.Padding(FMargin(80.f,100.f))
 			.VAlign(VAlign_Bottom)
@@ -55,6 +73,7 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 				SNew(SImage)
 					.Image(&UltimateSliderBrush)
 			]
+			
 			+ SOverlay::Slot()
 			.Padding(FMargin(250.f, 40.f))
 			.VAlign(VAlign_Bottom)
@@ -64,6 +83,7 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 					.Image(&PrimaryAbilityBrush)
 					
 			]
+				
 			+ SOverlay::Slot()
 			.Padding(FMargin(250.f, 40.f))
 			.VAlign(VAlign_Bottom)
@@ -89,13 +109,15 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 				SNew(SImage)
 					.Image(&ElementalAbilitySliderBrush)
 			]
+			
 			+ SOverlay::Slot()
-			.Padding(FMargin(400.f, 0.f))
+			.Padding(FMargin(400.f, 400.f))
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Bottom)
 			[
 				SNew(SImage).Image(&ChargeSliderBrush).Visibility(this, &SPlayerHud::GetChargeSliderVisibility)
 			]
+			
 			+ SOverlay::Slot()
 			.Padding(FMargin(0.f, 0.f))
 			.HAlign(HAlign_Center)
@@ -103,9 +125,16 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 			[
 				SNew(SImage)
 			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(0.f, 0.f))
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+			[
+				SNew(SImage).Image(&BaseTeleportBrush).Visibility(this, &SPlayerHud::GetBaseTeleportVisibility)
+			]
 			
 			
-
+			
 		];
 
 }
@@ -120,15 +149,19 @@ void SPlayerHud::UpdateAmmoText(int current, int Extra)
 
 void SPlayerHud::UpdateHPPercent(float percent)
 {
-	HPMaterialInstance->SetScalarParameterValue("Percentage", percent);
+	if (OwningHUD->HPMaterialInstance)
+	{
+		OwningHUD->HPMaterialInstance->SetScalarParameterValue("Percentage", percent);
+	}
+	
 }
 
 void SPlayerHud::UpdateUltimatePercent(float percent)
 {
 	UltimatePercent = percent;
-	if (UltimateMaterialInstance)
+	if (OwningHUD->UltimateMaterialInstance)
 	{
-		UltimateMaterialInstance->SetScalarParameterValue("Percent", percent);
+		OwningHUD->UltimateMaterialInstance->SetScalarParameterValue("Percent", percent);
 
 	}
 
@@ -136,6 +169,7 @@ void SPlayerHud::UpdateUltimatePercent(float percent)
 
 void SPlayerHud::UpdateUltimateIcon(UTexture2D* icon)
 {
+	
 	UltimateBrush.SetResourceObject(icon);
 }
 
@@ -143,18 +177,18 @@ void SPlayerHud::UpdateUlitmateSliderColor(bool finished)
 {
 	if (finished)
 	{
-		if (UltimateMaterialInstance)
+		if (OwningHUD->UltimateMaterialInstance)
 		{
 			
-			UltimateMaterialInstance->SetVectorParameterValue("SliderCollor", Ultimatesliderfinish);
+			OwningHUD->UltimateMaterialInstance->SetVectorParameterValue("SliderCollor", Ultimatesliderfinish);
 
 		}
 	}
 	else
 	{
-		if (UltimateMaterialInstance)
+		if (OwningHUD->UltimateMaterialInstance)
 		{
-			UltimateMaterialInstance->SetVectorParameterValue("SliderCollor",Ultimateslidercolor);
+			OwningHUD->UltimateMaterialInstance->SetVectorParameterValue("SliderCollor",Ultimateslidercolor);
 
 		}
 	}
@@ -163,9 +197,9 @@ void SPlayerHud::UpdateUlitmateSliderColor(bool finished)
 void SPlayerHud::UpdatePrimaryAbilityPercent(float percent)
 {
 	PrimaryAbilityPercent = percent;
-	if (PrimaryAbilityMaterialInstance)
+	if (OwningHUD->PrimaryAbilityMaterialInstance)
 	{
-		PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+		OwningHUD->PrimaryAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
 
 	}
 }
@@ -178,9 +212,9 @@ void SPlayerHud::UpdatePrimaryAbilityIcon(UTexture2D* icon)
 void SPlayerHud::UpdateElementalAbilityPercent(float percent)
 {
 	ElementalAbilityPercent = percent;
-	if (ElementalAbilityMaterialInstance)
+	if (OwningHUD->ElementalAbilityMaterialInstance)
 	{
-		ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
+		OwningHUD->ElementalAbilityMaterialInstance->SetScalarParameterValue("Percent", percent);
 
 	}
 }
@@ -192,9 +226,9 @@ void SPlayerHud::UpdateElementAbilityIcon(UTexture2D* icon)
 
 void SPlayerHud::UpdateChargeSlider(float percent)
 {
-	if (ChargeSliderMaterialInstance)
+	if (OwningHUD->ChargeSliderMaterialInstance)
 	{
-		ChargeSliderMaterialInstance->SetScalarParameterValue("Percent", percent);
+		OwningHUD->ChargeSliderMaterialInstance->SetScalarParameterValue("Percent", percent);
 	}
 }
 
@@ -218,54 +252,72 @@ void SPlayerHud::ChageChargeSliderVisibility(bool IsVisible)
 
 
 
+void SPlayerHud::UpdateBaseTelebortSlider(float percent)
+{
+	if (OwningHUD->BaseTeleportMaterialInstance)
+	{
+		OwningHUD->BaseTeleportMaterialInstance->SetScalarParameterValue("Percentage", percent);
+	}
+}
 
+//ERROR HAPENING IN MATERIAL INSTANCE CREATION
 void SPlayerHud::SetSlateBrushes()
 {
+	UMaterialInterface* MInterface = nullptr;
+	
 	//HP-------
-	HPBrush = OwningHUD->HPImageBrush;
 
-	HealthBarMaterial = Cast<UMaterialInterface>(HPBrush.GetResourceObject());
-	HPMaterialInstance = UMaterialInstanceDynamic::Create(HealthBarMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-	HPBrush.SetResourceObject(HPMaterialInstance);
+	MInterface = Cast<UMaterialInterface>(OwningHUD->HPImageBrush.GetResourceObject());
+	OwningHUD->HPMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	HPBrush.SetResourceObject(OwningHUD->HPMaterialInstance);
+	HPBrush.ImageSize = OwningHUD->HPImageBrush.ImageSize;
+	HPBrush.TintColor = OwningHUD->HPImageBrush.TintColor;
+
+	MInterface = Cast<UMaterialInterface>(OwningHUD->beseTeleportSlider.GetResourceObject());
+	OwningHUD->BaseTeleportMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	BaseTeleportBrush.SetResourceObject(OwningHUD->BaseTeleportMaterialInstance);
+	BaseTeleportBrush.ImageSize = OwningHUD->beseTeleportSlider.ImageSize;
+	BaseTeleportBrush.TintColor = OwningHUD->beseTeleportSlider.TintColor;
 	//---------
 	//Abilitys-
+	
+	
 
-	Ultimateslidercolor = OwningHUD->UltimateSlidercollor;
-	Ultimatesliderfinish = OwningHUD->UltimateSliderFinish;
-
-	UltimateBrush = OwningHUD->UltimateImageBrush;
-	UltimateSliderBrush = OwningHUD->UltimateSliderBrush;
-
-	UltimateMaterial = Cast<UMaterialInterface>(UltimateSliderBrush.GetResourceObject());
-	UltimateMaterialInstance = UMaterialInstanceDynamic::Create(UltimateMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-	UltimateSliderBrush.SetResourceObject(UltimateMaterialInstance);
+	MInterface = Cast<UMaterialInterface>(OwningHUD->UltimateSliderBrush.GetResourceObject());
+	OwningHUD->UltimateMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	UltimateSliderBrush.SetResourceObject(OwningHUD->UltimateMaterialInstance);
+	UltimateSliderBrush.ImageSize = OwningHUD->UltimateSliderBrush.ImageSize;
 
 	
-	PrimaryAbilityBrush = OwningHUD->PrimaryAbilityImageBrush;
-	PrimaryAbilitySliderBrush = OwningHUD->UISliderBrush;
+	
 
-	PrimaryAbilityMaterial = Cast<UMaterialInterface>(PrimaryAbilitySliderBrush.GetResourceObject());
-	PrimaryAbilityMaterialInstance = UMaterialInstanceDynamic::Create(PrimaryAbilityMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-	PrimaryAbilitySliderBrush.SetResourceObject(PrimaryAbilityMaterialInstance);
+	MInterface = Cast<UMaterialInterface>(OwningHUD->UISliderBrush.GetResourceObject());
+	OwningHUD->PrimaryAbilityMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	PrimaryAbilitySliderBrush.SetResourceObject(OwningHUD->PrimaryAbilityMaterialInstance);
+	PrimaryAbilitySliderBrush.ImageSize = OwningHUD->UISliderBrush.ImageSize;
+	PrimaryAbilitySliderBrush.TintColor = OwningHUD->UISliderBrush.TintColor;
 
 
-	ElementalAbilityBrush = OwningHUD->ElementalAbilityImageBrush;
-	ElementalAbilitySliderBrush = OwningHUD->UISliderBrush;
+	
 
-	ElementalAbilityMaterial = Cast<UMaterialInterface>(ElementalAbilitySliderBrush.GetResourceObject());
-	ElementalAbilityMaterialInstance = UMaterialInstanceDynamic::Create(ElementalAbilityMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-	ElementalAbilitySliderBrush.SetResourceObject(ElementalAbilityMaterialInstance);
+	MInterface = Cast<UMaterialInterface>(OwningHUD->UISliderBrush.GetResourceObject());
+	OwningHUD->ElementalAbilityMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	ElementalAbilitySliderBrush.SetResourceObject(OwningHUD->ElementalAbilityMaterialInstance);
+	ElementalAbilitySliderBrush.ImageSize = OwningHUD->UISliderBrush.ImageSize;
+	ElementalAbilitySliderBrush.TintColor = OwningHUD->UISliderBrush.TintColor;
 
+	
 	//---------
 	//Weapon
 
-	ChargeSliderBrush = OwningHUD->ShargeWeaponSlider;
 
-	ChargeSliderMaterial = Cast<UMaterialInterface>(ChargeSliderBrush.GetResourceObject());
-	ChargeSliderMaterialInstance = UMaterialInstanceDynamic::Create(ChargeSliderMaterial, OwningHUD->GetWorld()->GetFirstPlayerController());
-	ChargeSliderBrush.SetResourceObject(ChargeSliderMaterialInstance);
+	MInterface = Cast<UMaterialInterface>(OwningHUD->ShargeWeaponSlider.GetResourceObject());
+	OwningHUD->ChargeSliderMaterialInstance = UMaterialInstanceDynamic::Create(MInterface, OwningHUD->GetWorld()->GetFirstPlayerController());
+	ChargeSliderBrush.SetResourceObject(OwningHUD->ChargeSliderMaterialInstance);
+	ChargeSliderBrush.ImageSize = OwningHUD->ShargeWeaponSlider.ImageSize;
+	
 
-
+	
 }
 
 

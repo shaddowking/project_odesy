@@ -20,6 +20,10 @@
 #include "Abilitys/SP_AbilityBase.h"
 #include "Buffes/SP_BuffeBase.h"
 #include "Buffes/SP_BuffDataAsset.h"
+#include "BuildSystem/SP_BuildSystemComponent.h"
+#include "Inventory/SP_InventoryComponent.h"
+#include "OD_InteractionSystemComponent.h"
+#include "Components/BoxComponent.h"
 
 ASPCharacter::ASPCharacter()
 {
@@ -27,9 +31,17 @@ ASPCharacter::ASPCharacter()
 	HPComp = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 	HPComp->OnDamage.AddDynamic(this, &ASPCharacter::OnDamage);
 	HPComp->OnDeath.AddDynamic(this, &ASPCharacter::OnDeath);
+	HPComp->player = this;
 	SCcomponent = CreateDefaultSubobject<USubclassComponent>("SubClassComponent");
 	Aimpoint = CreateDefaultSubobject<USceneComponent>("aimpoint");
 	Aimpoint->SetupAttachment(RootComponent);
+	BuildSystemCompenent = CreateDefaultSubobject<UBuildSystemComponent>("buildComponent");
+	BuildSystemCompenent->Player = this;
+	invertoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
+ 	InteractionColider = CreateDefaultSubobject<UBoxComponent>("interactionColider");
+	InteractionColider->SetupAttachment(RootComponent);
+	InteractionColider->OnComponentBeginOverlap.AddDynamic(this, &ASPCharacter::OnInteractEnter);
+	InteractionColider->OnComponentEndOverlap.AddDynamic(this, &ASPCharacter::OnInteractExit);
 }
 
 void ASPCharacter::BeginPlay()
@@ -48,6 +60,7 @@ void ASPCharacter::BeginPlay()
 	}
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	hud->CreateSubclassMenu(this);
 	CreateProjectilePool();
 	CreateWeapons();
 
@@ -60,7 +73,6 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 	{
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleMovemnt);
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Started, this, &ASPCharacter::HandleSetRotationOff);
-		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Canceled, this, &ASPCharacter::HandleSetRotationOn);
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Completed, this, &ASPCharacter::HandleSetRotationOn);
 
 
@@ -92,6 +104,14 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		
 		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleWeaponSwitch);
 
+		EnhancedInputComponent->BindAction(OpenSubclassMenuAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleOpenSubclassMenu);
+
+		EnhancedInputComponent->BindAction(BaseTeleportAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleBaseTeleport);
+		EnhancedInputComponent->BindAction(BaseTeleportAction, ETriggerEvent::Completed, this, &ASPCharacter::HandleBaseTeleportRelease);
+
+		EnhancedInputComponent->BindAction(OpenBuildMode, ETriggerEvent::Started, this, &ASPCharacter::HandleToggleBuildMode);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ASPCharacter::HandleInteraction);
 
 	}
 }
@@ -104,7 +124,6 @@ void ASPCharacter::HandleJump()
 		PlayerJump(JumpForce);
 	}
 
-	HPComp->TakeDamage(10);
 }
 
 void ASPCharacter::HandleMovemnt(const FInputActionValue& value)
@@ -157,17 +176,31 @@ void ASPCharacter::HandleStopRun()
 
 void ASPCharacter::HandleStartAim()
 {
-
-	if (!bIsUsingAbility)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		bIsAiming = true;
+		if (!bIsUsingAbility)
+		{
+			bIsAiming = true;
 
-		SetIdleRotationOff();
-		StartAimCam();
-	}
-	else
-	{
-		Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttack();
+			SetIdleRotationOff();
+			StartAimCam();
+		}
+		else
+		{
+			if (SCcomponent->activeSubclass->ActiveAbility)
+			{
+				Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttack();
+			}
+			else
+			{
+				bIsUsingAbility = false;
+				bIsAiming = true;
+
+				SetIdleRotationOff();
+				StartAimCam();
+			}
+
+		}
 
 	}
 	
@@ -177,23 +210,27 @@ void ASPCharacter::HandleStartAim()
 
 void ASPCharacter::HandleStopAim()
 {
-	if (!bIsUsingAbility)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		if (bIsShooting == false)
+		if (!bIsUsingAbility)
 		{
-			bIsAiming = false;
-			SetIdleRotationOn();
-			StopAimCam();
+			if (bIsShooting == false)
+			{
+				bIsAiming = false;
+				SetIdleRotationOn();
+				StopAimCam();
+			}
 		}
-	}
-	else
-	{
-		if (SCcomponent->activeSubclass->ActiveAbility)
+		else
 		{
-			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttackRealese();
-		}
+			if (SCcomponent->activeSubclass->ActiveAbility)
+			{
+				Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilitySecendaryAttackRealese();
+			}
 
+		}
 	}
+	
 	
 	
 
@@ -201,100 +238,118 @@ void ASPCharacter::HandleStopAim()
 
 void ASPCharacter::HandleShoot()
 {
-	if (!bIsUsingAbility && bIsFireReleas)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		if (EquiptMeleWeapon)
+		if (!bIsUsingAbility && bIsFireReleased)
 		{
-			if (EquiptMeleWeapon->bIsUsingWeapon == false)
+			if (EquiptMeleWeapon)
 			{
-				EquiptMeleWeapon->UseWeapon(FVector::Zero(), FVector::Zero());
-				EquiptMeleWeapon->bIsUsingWeapon = true;
-			}
-		}
-
-		if (EquiptGun)
-		{
-			if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
-			{
-				return;
-			}
-
-			if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
-			{
-				HandleRelode();
-			}
-
-			if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
-			{
-
-				FVector ViewOrigin;
-				FRotator ViewRotation;
-
-
-
-				GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
-
-				FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
-
-				if (!bIsAiming && bIsShooting == false)
+				if (EquiptMeleWeapon->bIsUsingWeapon == false)
 				{
-					bIsShooting = true;
-					RotatePlayerForward(ViewForward, ViewOrigin);
-				}
-				else if (bIsAiming || bIsFullyTurnd)
-				{
-					Shoot(ViewForward, ViewOrigin);
+					EquiptMeleWeapon->UseWeapon();
+					EquiptMeleWeapon->bIsUsingWeapon = true;
 				}
 			}
 
-			
-			
+			if (EquiptGun)
+			{
+				if (EquiptGun->CurrentAmmo <= 0 && EquiptGun->ExtraAmmo <= 0)
+				{
+					return;
+				}
 
+				if (EquiptGun->CurrentAmmo <= 0 && bIsReloding == false)
+				{
+					HandleRelode();
+				}
+
+				if (bCanShoot && bIsReloding == false && EquiptGun->CurrentAmmo > 0 && bIsAiming)
+				{
+
+					FVector ViewOrigin;
+					FRotator ViewRotation;
+
+
+					GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
+
+					FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
+
+					/*
+					if (!bIsAiming && bIsShooting == false)
+					{
+						bIsShooting = true;
+						RotatePlayerForward(ViewForward, ViewOrigin);
+					}
+					*/
+					if (bIsAiming || bIsFullyTurnd)
+					{
+						Shoot(ViewForward, ViewOrigin);
+					}
+				}
+
+
+
+
+			}
+		}
+		else if (bIsUsingAbility)
+		{
+			bIsFireReleased = false;
+			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttack();
 		}
 	}
-	else if (bIsUsingAbility)
+	else if (playerworldState == EPlayerWorldState::buildMode)
 	{
-		bIsFireReleas = false;
-		Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttack();
+		if (BuildSystemCompenent -> bCanBuild)
+		{
+			BuildSystemCompenent->PlaceBuilding();
+		}
 	}
-	
-
-	
-	
-	
-
-
 }
 
 void ASPCharacter::HandleShootRealese()
 {
-	if (bIsAiming && !bIsUsingAbility && bIsFireReleas)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		EquiptGun->RealeseWeapon();
-
-	}
-	else
-	{
-		if (SCcomponent->activeSubclass->ActiveAbility)
+		if (bIsAiming && !bIsUsingAbility && bIsFireReleased)
 		{
-			Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttackRelease();
+			EquiptGun->RealeseWeapon();
+
+		}
+		else
+		{
+			if (SCcomponent->activeSubclass->ActiveAbility)
+			{
+				Cast<IAbilityInterface>(SCcomponent->activeSubclass->ActiveAbility)->OnAbilityPrimaryAttackRelease();
+			}
+
 		}
 
+		if (bIsFireReleased == false)
+		{
+			bIsFireReleased = true;
+		}
 	}
-
-	if (bIsFireReleas == false)
+	else if (playerworldState == EPlayerWorldState::buildMode)
 	{
-		bIsFireReleas = true;
+		if (BuildSystemCompenent->bCanBuild == false)
+		{
+			BuildSystemCompenent->bCanBuild = true;
+		}
 	}
+	
 }
 
 void ASPCharacter::HandleRelode()
 {
-	
-	if (EquiptGun->ExtraAmmo > 0 && !bIsUsingAbility)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		GetWorldTimerManager().SetTimer(RelodeTimerHandle, this, &ASPCharacter::RelodeFinish, EquiptGun->RelodeTime, false);
+		if (EquiptGun->ExtraAmmo > 0 && !bIsUsingAbility)
+		{
+			GetWorldTimerManager().SetTimer(RelodeTimerHandle, this, &ASPCharacter::RelodeFinish, EquiptGun->RelodeTime, false);
+		}
 	}
+	
 	
 
 
@@ -302,15 +357,18 @@ void ASPCharacter::HandleRelode()
 
 void ASPCharacter::HandleUltimateTrigger()
 {
-
-	if (bIsUltimateReady && !bIsUsingAbility && !bIsShooting)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
-		if (AbilityInterface)
+		if (bIsUltimateReady && !bIsUsingAbility && !bIsShooting)
 		{
-			AbilityInterface->OnAbilityPressed();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityPressed();
+			}
 		}
 	}
+	
 
 	
 	
@@ -318,105 +376,197 @@ void ASPCharacter::HandleUltimateTrigger()
 
 void ASPCharacter::HandleUltimateRelease()
 {
-	if (bIsUltimateReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ultimate))
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
-		if (AbilityInterface)
+		if (bIsUltimateReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ultimate))
 		{
-			AbilityInterface->OnAbilityReleas();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityReleas();
+			}
 		}
 	}
+	
 	
 }
 
 void ASPCharacter::HandlePrimaryAbilityTrigger()
 {
-	if (bIsPrimaryAbilityReady && !bIsUsingAbility && !bIsShooting)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
-		if (AbilityInterface)
+		if (bIsPrimaryAbilityReady && !bIsUsingAbility && !bIsShooting)
 		{
-			AbilityInterface->OnAbilityPressed();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityPressed();
+			}
 		}
 	}
+	
 	
 }
 
 void ASPCharacter::HandlePrimaryAbilityRelease()
 {
-	if (bIsPrimaryAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability1))
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
-		if (AbilityInterface)
+		if (bIsPrimaryAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability1))
 		{
-			AbilityInterface->OnAbilityReleas();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityReleas();
+			}
 		}
 	}
+	
 	
 }
 
 void ASPCharacter::HandleElementalAbilityTrigger()
 {
-	if (bIsElementalAbilityReady && !bIsUsingAbility && !bIsShooting)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
-		if (AbilityInterface)
+		if (bIsElementalAbilityReady && !bIsUsingAbility && !bIsShooting)
 		{
-			AbilityInterface->OnAbilityPressed();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityPressed();
+			}
 		}
 	}
+	
 	
 
 }
 
 void ASPCharacter::HandleElementalAbilityRelease()
 {
-	if (bIsElementalAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability2))
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
-		if (AbilityInterface)
+		if (bIsElementalAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability2))
 		{
-			AbilityInterface->OnAbilityReleas();
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
+			if (AbilityInterface)
+			{
+				AbilityInterface->OnAbilityReleas();
+			}
 		}
 	}
+	
 	
 }
 
 void ASPCharacter::HandleWeaponSwitch(const FInputActionValue& value)
 {
-	if (!bIsUsingAbility)
+	if (playerworldState == EPlayerWorldState::Combat)
 	{
-		const float Value = value.Get<float>();
-		SwitchWeaponWithID(Value);
+		if (!bIsUsingAbility)
+		{
+			const float Value = value.Get<float>();
+			SwitchWeaponWithID(Value);
+		}
+	}
+	else if (playerworldState == EPlayerWorldState::buildMode)
+	{
+		BuildSystemCompenent->SwichBuilding(value.Get<float>());
 	}
 	
+	
+}
+
+void ASPCharacter::HandleOpenSubclassMenu()
+{
+	if (playerworldState == EPlayerWorldState::Combat)
+	{
+		hud->ShowSubclassMenu();
+
+	}
+}
+
+void ASPCharacter::HandleBaseTeleport()
+{
+	if (BaseTeleportcountdownCount < MaxBaseTeleportCountdown)
+	{
+		BaseTeleportcountdownCount += 0.01;
+		hud->PlayerHudWidget->UpdateBaseTelebortSlider(BaseTeleportcountdownCount / MaxBaseTeleportCountdown);
+		hud->PlayerHudWidget->UpdateBaseTeleportVisibility(true);
+	}
+	else
+	{
+		TeleportToBase();
+		hud->PlayerHudWidget->UpdateBaseTelebortSlider(0);
+		hud->PlayerHudWidget->UpdateBaseTeleportVisibility(false);
+	}
+}
+
+void ASPCharacter::HandleBaseTeleportRelease()
+{
+	BaseTeleportcountdownCount = 0;
+	hud->PlayerHudWidget->UpdateBaseTelebortSlider(0);
+	hud->PlayerHudWidget->UpdateBaseTeleportVisibility(false);
+}
+
+void ASPCharacter::HandleToggleBuildMode()
+{
+	if (playerworldState == EPlayerWorldState::base)
+	{
+		StartBuildMode();
+	}
+	else if (playerworldState == EPlayerWorldState::buildMode)
+	{
+		ExitBuildMode();
+	}
+}
+
+void ASPCharacter::StartBuildMode()
+{
+	ChageWorldState(EPlayerWorldState::buildMode);
+	BuildSystemCompenent->ActivateBuildMode();
+}
+
+void ASPCharacter::ExitBuildMode()
+{
+	ChageWorldState(EPlayerWorldState::base);
+	BuildSystemCompenent->DeActivateBuildMode();
+}
+
+void ASPCharacter::HandleInteraction()
+{
+	if (CurrentInteractedObject)
+	{
+		CurrentInteractedObject->Interact();
+	}
 }
 
 
 
 AProjectile* ASPCharacter::GetNextAvalableProjectile()
 {
-	AProjectile* result = nullptr;
+	AvalableProjectile = nullptr;
 	for (AProjectile* projectile : ProjectilePool)
 	{
 		if (projectile->IsActive == false)
 		{
-			result = projectile;
+			AvalableProjectile = projectile;
 			break;
 		}
 	}
 
-	if (result == nullptr)
+	if (AvalableProjectile == nullptr)
 	{
-		result = AddProjectileTooPool();
+		AvalableProjectile = AddProjectileTooPool();
 	}
 
-	return result;
+	return AvalableProjectile;
 }
 
 AProjectile* ASPCharacter::AddProjectileTooPool()
 {
-	AProjectile* createdprojectile = nullptr;
+	createdprojectile = nullptr;
 
 	createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, FVector::ZeroVector, GetActorRotation());
 	ProjectilePool.Add(createdprojectile);
@@ -425,24 +575,15 @@ AProjectile* ASPCharacter::AddProjectileTooPool()
 	return createdprojectile;
 }
 
-
-
-
-
-
-	
-
-
-
 void ASPCharacter::CreateProjectilePool()
 {
-	AProjectile* createdprojectile = nullptr;
+	AProjectile* Currentprojectile = nullptr;
 	for (size_t i = 0; i < ProjectilePoolsice; i++)
 	{
 
-		 createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), GetActorRotation());
+		Currentprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), GetActorRotation());
 		 ProjectilePool.Add(createdprojectile);
-		 createdprojectile->DeActivate();
+		 Currentprojectile->DeActivate();
 
 	}
 
@@ -458,19 +599,57 @@ void ASPCharacter::OnDamage()
 	hud->PlayerHudWidget->UpdateHPPercent(HPPercent);
 }
 
+
+
+
+
+void ASPCharacter::OnInteractEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	CurrentInteractedObject = OtherActor->FindComponentByClass<UInteractionComponent>();
+}
+
+void ASPCharacter::OnInteractExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (CurrentInteractedObject)
+	{
+		CurrentInteractedObject = nullptr;
+	}
+}
+
+void ASPCharacter::ChageWorldState(EPlayerWorldState state)
+{
+	switch (state)
+	{
+	case EPlayerWorldState::Combat:
+		playerworldState = state;
+		hud->PlayerHudWidget->SetVisibility(EVisibility::HitTestInvisible);
+		break;
+	case EPlayerWorldState::base:
+		playerworldState = state;
+		hud->PlayerHudWidget->SetVisibility(EVisibility::Collapsed);
+		break;
+	case EPlayerWorldState::buildMode:
+		playerworldState = state;
+		break;
+	default:
+		break;
+	}
+}
+
+
+
 void ASPCharacter::RemoveBuff(UBuffBase* buff)
 {
 	if (PlayerBuffs.Contains(buff))
 	{
-		
 		PlayerBuffs.Remove(buff);
 		buff->OnBuffDepleted();
-		buff = nullptr;
 	}
 }
 
 void ASPCharacter::AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset)
 {
+	//Check if player has buff
 	for (UBuffBase* currentBuff : PlayerBuffs)
 	{
 		if (currentBuff->GetClass() == buff->GetClass())
@@ -481,8 +660,9 @@ void ASPCharacter::AddBuff(UBuffBase* buff, UBuffDataAsset* dataasset)
 	}
 	if(Bhasbuff == false)
 	{
+		buff->InitializeBuff(this,dataasset);
+
 		PlayerBuffs.Add(buff);
-		buff->InitializeBuff(dataasset->HasDuration, dataasset->Duration,dataasset->BuffBrush,dataasset->buffUITemplate,this,dataasset->Name);
 	}
 	Bhasbuff = false;
 }
@@ -577,34 +757,21 @@ FVector ASPCharacter::GetAimPoint(float Range)
 FVector ASPCharacter::GetPlacablePoint(float Range)
 {
 	FHitResult AimHit;
-	FHitResult AimHit2;
-
-	FVector ViewOrigin;
-	FRotator ViewRotation;
-
 	FVector Result;
-
-
-
-	GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
-
-	FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
 
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	GetWorld()->LineTraceSingleByChannel(AimHit, ViewOrigin, ViewOrigin + ViewForward * Range, ECollisionChannel::ECC_Visibility, QueryParams);
-
-	FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
+	FVector AimPoint = GetAimPoint(Range);
 
 	if (AimHit.bBlockingHit == false)
 	{
-		GetWorld()->LineTraceSingleByChannel(AimHit2, AimHit.TraceEnd, FVector::DownVector * Range, ECollisionChannel::ECC_Visibility, QueryParams);
-		Result = AimHit2.bBlockingHit ? AimHit2.Location : AimHit2.TraceEnd;
+		GetWorld()->LineTraceSingleByChannel(AimHit, AimPoint, FVector::DownVector * Range, ECollisionChannel::ECC_Visibility, QueryParams);
+		Result = AimHit.bBlockingHit ? AimHit.Location : AimHit.TraceEnd;
 	}
 	else
 	{
-		Result = AimHit.Location;
+		Result = AimPoint;
 	}
 
 	return Result;
@@ -615,27 +782,42 @@ void ASPCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GroundCheck();
-
-	for (UBuffBase* buff : PlayerBuffs) 
+	
+	//Current iteration of Handeling duration for buffs and debuffs
+	if (PlayerBuffs.Num() > 0)
 	{
-		if (buff->Duration > 0)
+		for (UBuffBase* buff : PlayerBuffs)
 		{
-			buff->Duration -= DeltaTime;
-			buff->UI->UpdateTimerText(buff->Duration);
+			if (buff->HasDuration)
+			{
+				if (buff->Duration > 0)
+				{
+					buff->Duration -= DeltaTime;
+					buff->UI->UpdateTimerText(buff->Duration);
+
+				}
+				else if (buff->Duration <= 0)
+				{
+					buffsToRemove.Add(buff);
+				}
+			}
 
 		}
-		else if (buff->Duration <= 0)
+		for (UBuffBase* buff : buffsToRemove)
 		{
-			buffsToRemove.Add(buff);
+			RemoveBuff(buff);
 		}
+		buffsToRemove.Empty();
 	}
-
-	for (UBuffBase* buff : buffsToRemove) 
+	// "Tick" for the build system
+	if (playerworldState == EPlayerWorldState::buildMode)
 	{
-		RemoveBuff(buff);
+		BuildSystemCompenent->BuildModeCycle();
 	}
-	buffsToRemove.Empty();
+	
 
+	
+	
 }
 
 void ASPCharacter::RelodeFinish()
@@ -660,6 +842,7 @@ void ASPCharacter::RelodeFinish()
 
 }
 
+
 void ASPCharacter::SetIdleRotationOff()
 {
 
@@ -676,37 +859,35 @@ void ASPCharacter::SetIdleRotationOn()
 
 void ASPCharacter::UpdateMoveSpeed()
 {
-	float test = HandleMoveSpeedCalculation();
-	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + test;
+	
+	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
 }
 
 float ASPCharacter::HandleMoveSpeedCalculation()
 {
-	float value = 0;
+	float Speed = 0;
 
 	for(UBuffBase* buff : PlayerBuffs)
 	{
-		value += buff->BuffMoveSpeedCalculation(this);
+		Speed += buff->BuffMoveSpeedCalculation(this);
 	}
 
-	return value;
+	return Speed;
 }
-
-
 
 void ASPCharacter::SwitchWeaponWithID(float ID)
 {
-	int NewID = ID;
+	int WeaponID = ID;
 
-	if (NewID > CreatedWeaponList.Num()-1)
+	if (WeaponID > CreatedWeaponList.Num()-1)
 	{
-		NewID = CreatedWeaponList.Num() - 1;
+		WeaponID = CreatedWeaponList.Num() - 1;
 	}
-	if (NewID < 0)
+	if (WeaponID < 0)
 	{
-		NewID = 0;
+		WeaponID = 0;
 	}
-	newWeapon = CreatedWeaponList[NewID];
+	newWeapon = CreatedWeaponList[WeaponID];
 
 	if (EquiptGun)
 	{
@@ -724,7 +905,6 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 		
 		EquiptGun->Owner = this;
 		EquiptGun->ActivateWeapon();
-		curentweapon = EquiptGun->OwningGun;
 		hud->PlayerHudWidget->UpdateAmmoText(EquiptGun->CurrentAmmo, EquiptGun->ExtraAmmo);
 	}
 	else if (EquiptMeleWeapon)
@@ -732,10 +912,20 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 		
 		EquiptMeleWeapon->Owner = this;
 		EquiptMeleWeapon->ActivateWeapon();
-		curentweapon = EquiptMeleWeapon->OwningWeapon;
 	}
-	
-	
+}
+
+void ASPCharacter::UnEquipGun()
+{
+	if (EquiptGun)
+	{
+		EquiptGun->DeactivateWeapon();
+	}
+	if (EquiptMeleWeapon)
+	{
+		EquiptMeleWeapon->DeactivateWeapon();
+	}
+	ResetGun();
 }
 
 void ASPCharacter::CreateWeapons()
@@ -747,9 +937,10 @@ void ASPCharacter::CreateWeapons()
 	CreatedWeapon = GetWorld()->SpawnActor<AWeaponBase>(SecendaryWeaponTemplate);
 	CreatedWeapon->AttachToComponent(GetGunpoint(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	CreatedWeaponList.Add(GetWeaponCompenent(CreatedWeapon));
-	CreatedWeaponList[0]->DeactivateWeapon();
-	CreatedWeaponList[1]->DeactivateWeapon();
-
+	for (UWeaponBaseCompnent* weapon : CreatedWeaponList)
+	{
+		weapon->DeactivateWeapon();
+	}
 	SwitchWeaponWithID(0);
 }
 
@@ -767,9 +958,3 @@ UWeaponBaseCompnent* ASPCharacter::GetWeaponCompenent(AWeaponBase*& weapon)
 	}
 	return nullptr;
 }
-
-
-
-
-
-

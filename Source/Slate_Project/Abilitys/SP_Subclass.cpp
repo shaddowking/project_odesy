@@ -39,3 +39,11 @@ void ASubclass::SubclassSelected()
 	Ability1->AbilitySelected();
 	Ability2->AbilitySelected();
 }
+
+void ASubclass::DeselectSubclass()
+{
+	Ultimate->IsInChosenSubclass = false;
+	Ability1->IsInChosenSubclass = false;
+	Ability2->IsInChosenSubclass = false;
+
+}

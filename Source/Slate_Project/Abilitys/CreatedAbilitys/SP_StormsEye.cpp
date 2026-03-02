@@ -83,7 +83,13 @@ void AStormsEye::ActivateCooldown()
 
 void AStormsEye::AbilitySelected()
 {	
+	OwnerSubclass->ActiveAbility = nullptr;
+	Caster->bIsUsingAbility = false;
+	Caster->bIsPrimaryAbilityReady = false;
+	BIsAbilityActive = false;
+	IsInChosenSubclass = true;
 	Hud->PlayerHudWidget->UpdatePrimaryAbilityIcon(AbilityBaseStates->AbilityInfo.AbilityIcon);
+	ActivateCooldown();
 }
 
 void AStormsEye::CooldownCompleted()

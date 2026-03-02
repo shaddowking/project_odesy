@@ -18,12 +18,15 @@ class ASP_HUD;
 class ASubclass;
 class UBuffDataAsset;
 
-UCLASS(abstract)
+UCLASS(Abstract)
 class AAbilityBase : public AActor {
 
 	GENERATED_BODY()
 
 public:
+
+	bool IsInChosenSubclass = false;
+
 	UPROPERTY(EditDefaultsOnly)
 	UBuffDataAsset* BuffToApply = nullptr;
 
