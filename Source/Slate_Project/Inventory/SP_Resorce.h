@@ -8,9 +8,9 @@ class USP_Resorse : public UDataAsset
 
 public:
 
-	UPROPERTY(EditAnywhere, Category = "Item")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Item")
 	FString Name;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	FSlateBrush BuffBrush;
 };

@@ -24,10 +24,26 @@
 #include "Inventory/SP_InventoryComponent.h"
 #include "OD_InteractionSystemComponent.h"
 #include "Components/BoxComponent.h"
+#include "BuildSystem/OD_BuildingManager.h"
+
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 ASPCharacter::ASPCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	CameraSpingArm = CreateDefaultSubobject<USpringArmComponent>("PlayerSpringarm");
+	CameraSpingArm->SetupAttachment(RootComponent);
+	CameraSpingArm->TargetArmLength = 250.f;
+	CameraSpingArm->bUsePawnControlRotation = true;
+	CameraSpingArm->SocketOffset = FVector(0, 50, 70);
+
+	PlayerCam = CreateDefaultSubobject<UCameraComponent>("PlayerCam");
+	PlayerCam->SetupAttachment(CameraSpingArm, USpringArmComponent::SocketName);
+	PlayerCam->bUsePawnControlRotation = false;
+
+
 	HPComp = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 	HPComp->OnDamage.AddDynamic(this, &ASPCharacter::OnDamage);
 	HPComp->OnDeath.AddDynamic(this, &ASPCharacter::OnDeath);
@@ -47,6 +63,8 @@ ASPCharacter::ASPCharacter()
 void ASPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	invertoryComponent->CreateInventoryUI();
+
 	if (SCcomponent)
 	{
 		SCcomponent->InitializeSubclasses(this);
@@ -63,6 +81,16 @@ void ASPCharacter::BeginPlay()
 	hud->CreateSubclassMenu(this);
 	CreateProjectilePool();
 	CreateWeapons();
+	if (BuildSystemCompenent)
+	{
+		BuildSystemCompenent->InitialiceBuildSystem();
+	}
+
+	if (PlayerCam)
+	{
+		CurrentFOV = CamDefoultFOV;
+		PlayerCam->SetFieldOfView(CurrentFOV);
+	}
 
 }
 
@@ -112,6 +140,9 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(OpenBuildMode, ETriggerEvent::Started, this, &ASPCharacter::HandleToggleBuildMode);
 
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ASPCharacter::HandleInteraction);
+
+		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &ASPCharacter::HandleOpenInventory);
+
 
 	}
 }
@@ -183,7 +214,6 @@ void ASPCharacter::HandleStartAim()
 			bIsAiming = true;
 
 			SetIdleRotationOff();
-			StartAimCam();
 		}
 		else
 		{
@@ -218,7 +248,6 @@ void ASPCharacter::HandleStopAim()
 			{
 				bIsAiming = false;
 				SetIdleRotationOn();
-				StopAimCam();
 			}
 		}
 		else
@@ -410,6 +439,10 @@ void ASPCharacter::HandlePrimaryAbilityTrigger()
 
 void ASPCharacter::HandlePrimaryAbilityRelease()
 {
+	if (playerworldState == EPlayerWorldState::base)
+	{
+		teleportToExplormap();
+	}
 	if (playerworldState == EPlayerWorldState::Combat)
 	{
 		if (bIsPrimaryAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability1))
@@ -495,8 +528,10 @@ void ASPCharacter::HandleBaseTeleport()
 		hud->PlayerHudWidget->UpdateBaseTelebortSlider(BaseTeleportcountdownCount / MaxBaseTeleportCountdown);
 		hud->PlayerHudWidget->UpdateBaseTeleportVisibility(true);
 	}
-	else
+	else if(!bHasTeleportedToBase)
 	{
+		bHasTeleportedToBase = true;
+
 		TeleportToBase();
 		hud->PlayerHudWidget->UpdateBaseTelebortSlider(0);
 		hud->PlayerHudWidget->UpdateBaseTeleportVisibility(false);
@@ -505,6 +540,7 @@ void ASPCharacter::HandleBaseTeleport()
 
 void ASPCharacter::HandleBaseTeleportRelease()
 {
+	bHasTeleportedToBase = false;
 	BaseTeleportcountdownCount = 0;
 	hud->PlayerHudWidget->UpdateBaseTelebortSlider(0);
 	hud->PlayerHudWidget->UpdateBaseTeleportVisibility(false);
@@ -542,6 +578,11 @@ void ASPCharacter::HandleInteraction()
 	}
 }
 
+void ASPCharacter::HandleOpenInventory()
+{
+	invertoryComponent->OpenInventory();
+}
+
 
 
 AProjectile* ASPCharacter::GetNextAvalableProjectile()
@@ -570,6 +611,7 @@ AProjectile* ASPCharacter::AddProjectileTooPool()
 
 	createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, FVector::ZeroVector, GetActorRotation());
 	ProjectilePool.Add(createdprojectile);
+	createdprojectile->Owningplayer = this;
 	createdprojectile->DeActivate();
 
 	return createdprojectile;
@@ -582,7 +624,8 @@ void ASPCharacter::CreateProjectilePool()
 	{
 
 		Currentprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), GetActorRotation());
-		 ProjectilePool.Add(createdprojectile);
+		 ProjectilePool.Add(Currentprojectile);
+		 Currentprojectile->Owningplayer = this;
 		 Currentprojectile->DeActivate();
 
 	}
@@ -623,10 +666,14 @@ void ASPCharacter::ChageWorldState(EPlayerWorldState state)
 	case EPlayerWorldState::Combat:
 		playerworldState = state;
 		hud->PlayerHudWidget->SetVisibility(EVisibility::HitTestInvisible);
+		BuildSystemCompenent->buildingManager->DeactivateAllBuildings();
+		ReEquipLastUsedWeapon();
 		break;
 	case EPlayerWorldState::base:
 		playerworldState = state;
 		hud->PlayerHudWidget->SetVisibility(EVisibility::Collapsed);
+		UnequipWeapon();
+		BuildSystemCompenent->buildingManager->ActivateAllBuildings();
 		break;
 	case EPlayerWorldState::buildMode:
 		playerworldState = state;
@@ -781,6 +828,15 @@ void ASPCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!PlayerCam)
+	{
+		return;
+	}
+
+	const float TargetFOV = bIsAiming ? AimFOV : CamDefoultFOV;
+	CurrentFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, FOVInterlerpSpeed);
+	PlayerCam->SetFieldOfView(CurrentFOV);
+
 	GroundCheck();
 	
 	//Current iteration of Handeling duration for buffs and debuffs
@@ -875,6 +931,40 @@ float ASPCharacter::HandleMoveSpeedCalculation()
 	return Speed;
 }
 
+void ASPCharacter::ReEquipLastUsedWeapon()
+{
+	newWeapon = CreatedWeaponList[lastWeaponID];
+	ResetGun();
+	EquiptGun = Cast<USP_GunComponent>(newWeapon);
+	EquiptMeleWeapon = Cast<UMeleWeaponComponent>(newWeapon);
+	if (EquiptGun)
+	{
+
+		EquiptGun->Owner = this;
+		EquiptGun->ActivateWeapon();
+		hud->PlayerHudWidget->UpdateAmmoText(EquiptGun->CurrentAmmo, EquiptGun->ExtraAmmo);
+	}
+	else if (EquiptMeleWeapon)
+	{
+
+		EquiptMeleWeapon->Owner = this;
+		EquiptMeleWeapon->ActivateWeapon();
+	}
+}
+
+void ASPCharacter::UnequipWeapon()
+{
+	if (EquiptGun)
+	{
+		EquiptGun->DeactivateWeapon();
+	}
+	if (EquiptMeleWeapon)
+	{
+		EquiptMeleWeapon->DeactivateWeapon();
+	}
+	ResetGun();
+}
+
 void ASPCharacter::SwitchWeaponWithID(float ID)
 {
 	int WeaponID = ID;
@@ -888,7 +978,7 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 		WeaponID = 0;
 	}
 	newWeapon = CreatedWeaponList[WeaponID];
-
+	lastWeaponID = WeaponID;
 	if (EquiptGun)
 	{
 		EquiptGun->DeactivateWeapon();
@@ -915,18 +1005,6 @@ void ASPCharacter::SwitchWeaponWithID(float ID)
 	}
 }
 
-void ASPCharacter::UnEquipGun()
-{
-	if (EquiptGun)
-	{
-		EquiptGun->DeactivateWeapon();
-	}
-	if (EquiptMeleWeapon)
-	{
-		EquiptMeleWeapon->DeactivateWeapon();
-	}
-	ResetGun();
-}
 
 void ASPCharacter::CreateWeapons()
 {

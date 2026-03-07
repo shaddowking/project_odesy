@@ -7,7 +7,7 @@ class ABuildingbase;
 class ASPCharacter;
 class USPGameInstance;
 class ABuildGridManager;
-
+class ABuildingManager;
 
 
 
@@ -18,6 +18,15 @@ class UBuildSystemComponent : public UActorComponent
 GENERATED_BODY()
 
 public:
+
+	UFUNCTION()
+	void InitialiceBuildSystem();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABuildingManager> buildingManagerTemplate;
+
+	UPROPERTY()
+	ABuildingManager* buildingManager = nullptr;
 
 	bool bCanBuild = true;
 
@@ -55,6 +64,9 @@ private:
 
 	UPROPERTY()
 	ULevelStreaming* BuildLevel = nullptr;
+
+	UPROPERTY()
+	ULevel* selectedLevel = nullptr;
 
 	int BuildingID = 0;
 

@@ -8,9 +8,10 @@ struct FItem
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USP_Resorse* ItemInfo = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int ResorceAmount = 0;
 };

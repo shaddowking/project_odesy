@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/SP_BuffUI.h"
 #include "Inventory/SP_ItemStruct.h"
+#include "Camera/CameraComponent.h"
 #include "SP_Player.generated.h"
 
 
@@ -29,6 +30,8 @@ class USP_Resorse;
 class UInventoryComponent;
 class UBoxComponent;
 class UInteractionComponent;
+class UCameraComponent;
+class USpringArmComponent;
 
 
 
@@ -104,6 +107,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* OpenBuildMode;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* InventoryAction;
+
 	void BeginPlay()override;
 
 	void SetupPlayerInputComponent(UInputComponent* playerInputComponent) override;
@@ -146,6 +152,8 @@ protected:
 
 	void HandleInteraction();
 
+	void HandleOpenInventory();
+
 
 
 	UFUNCTION()
@@ -155,7 +163,24 @@ protected:
 	void OnDamage();
 
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivate = "true"))
+	float CamDefoultFOV = 90.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivate = "true"))
+	float AimFOV = 60.f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivate = "true"))
+	float FOVInterlerpSpeed = 20.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivate = "true"))
+	float CurrentFOV;
+
+
+
+	void Tick(float DeltaTime) override;
+
+
 private:
 
 	float BaseTeleportcountdownCount = 0;
@@ -164,6 +189,16 @@ private:
 
 
 public:
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	USpringArmComponent* CameraSpingArm = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCameraComponent* PlayerCam = nullptr;
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void teleportToExplormap();
 
 	//Interaction
 
@@ -236,7 +271,6 @@ public:
 	FVector GetPlacablePoint(float Range);
 
 
-	void Tick(float DeltaTime) override;
 	void GroundCheck();
 
 	FVector GetCameraForward();
@@ -277,6 +311,12 @@ public:
 
 	// weapons----------
 
+	int lastWeaponID = 0;
+
+	void ReEquipLastUsedWeapon();
+
+	void UnequipWeapon();
+
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Aimpoint = nullptr;
 
@@ -315,7 +355,6 @@ public:
 		EquiptMeleWeapon = nullptr;
 	};
 
-	void UnEquipGun();
 
 	UFUNCTION()
 	void CreateWeapons();
@@ -374,11 +413,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RelodeFinish();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartAimCam();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void StopAimCam();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartRelode(float RelodeSpeed);
@@ -411,5 +445,6 @@ private:
 	UPROPERTY()
 	AProjectile* createdprojectile = nullptr;
 
+	bool bHasTeleportedToBase = false;
 
 };

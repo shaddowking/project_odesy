@@ -7,7 +7,7 @@
 class UInteractionComponent;
 class UBoxComponent;
 class UBuildingUI;
-
+class ASPCharacter;
 
 UCLASS()
 class ABuildingbase : public AActor 
@@ -16,13 +16,20 @@ GENERATED_BODY()
 
 private:
 
+	
+protected:
 	UPROPERTY()
 	UBuildingUI* createdUI = nullptr;
 
 public:
 
+
 	void BeginPlay()override;
 
+	virtual void createUI();
+
+	UPROPERTY()
+	ASPCharacter* player = nullptr;
 
 	ABuildingbase();
 

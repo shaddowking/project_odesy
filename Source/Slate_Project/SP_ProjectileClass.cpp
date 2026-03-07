@@ -58,7 +58,7 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 	{
 		AActor* HitActor = OtherActor;
 		AProjectile* hitprojectile = Cast<AProjectile>(HitActor);
-		if (HitActor && hitprojectile == nullptr)
+		if (HitActor && hitprojectile == nullptr && HitActor != Owningplayer)
 		{
 
 			UHealthComponent* healthComponent = HitActor->FindComponentByClass<UHealthComponent>();
@@ -68,7 +68,11 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 			}
 
 		}
-		DeActivate();
+
+		if (HitActor != Owningplayer)
+		{
+			DeActivate();
+		}
 		
 	}
 	

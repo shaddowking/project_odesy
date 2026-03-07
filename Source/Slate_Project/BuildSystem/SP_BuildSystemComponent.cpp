@@ -5,37 +5,18 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Inventory/SP_InventoryComponent.h"
 #include "BuildGridManager.h"
+#include "OD_BuildingManager.h"
 
 
-void UBuildSystemComponent::ActivateBuildMode()
+void UBuildSystemComponent::InitialiceBuildSystem()
 {
-	//Most things here are Initializations of variables for the build systems and is only done once
-	if (!BuildLevel)
-	{
-		// Geting the corect sublevel for the buildings to spawn in
-		for(ULevelStreaming* level : GetWorld()->GetStreamingLevels())
-		{
-			if (level && level->GetWorldAssetPackageFName() == BuildLevelName)
-			{
-				BuildLevel = level;
-				BuildParams.OverrideLevel = BuildLevel->GetLoadedLevel();
-				break;
-			}
-		}
-		
-	}
-	//Geting the building grid system
-	if (!BuildGridSystem)
-	{
-		BuildGridSystem = Cast<USPGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->BaseGridManager;
-	}
 	//Spawning in the Ghost/Hologram buildings
 	if (BuildingList.Num() == 0)
 	{
 		ABuildingbase* newBuilding = nullptr;
-		for(TSubclassOf<ABuildingbase> building : BuildingTemplateList)
+		for (TSubclassOf<ABuildingbase> building : BuildingTemplateList)
 		{
-			newBuilding = GetWorld()->SpawnActor<ABuildingbase>(building, BuildParams);
+			newBuilding = GetWorld()->SpawnActor<ABuildingbase>(building);
 			newBuilding->SetGhostMaterial();
 			newBuilding->BIsGhost = true;
 			newBuilding->DeActivateBuilding();
@@ -43,6 +24,22 @@ void UBuildSystemComponent::ActivateBuildMode()
 
 		}
 	}
+	if (!buildingManager && buildingManagerTemplate)
+	{
+		buildingManager = GetWorld()->SpawnActor<ABuildingManager>(buildingManagerTemplate);
+	}
+}
+
+void UBuildSystemComponent::ActivateBuildMode()
+{
+	//Geting the building grid system
+
+	if (!BuildGridSystem)
+	{
+		BuildGridSystem = Cast<USPGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->BaseGridManager;
+	}
+	
+	
 	//Set the current selected to the last selected building or the first building
 	SwichBuilding(BuildingID);
 }
@@ -50,7 +47,7 @@ void UBuildSystemComponent::ActivateBuildMode()
 void UBuildSystemComponent::BuildModeCycle()
 {
 	
-	if (BIsUsingBuildGrid)
+	if (BIsUsingBuildGrid && BuildGridSystem)
 	{
 		//If using the grid for building
 		TargetBuildLocation = BuildGridSystem->GetClosestNode(Player->GetAimPoint(BuildModeRange)).Location;
@@ -104,10 +101,13 @@ void UBuildSystemComponent::PlaceBuilding()
 	bCanBuild = false;
 	if (bHasEnoughResorces)
 	{
-		ABuildingbase* createdBuilding = GetWorld()->SpawnActor<ABuildingbase>(CurrentBuilding, TargetBuildLocation, FRotator::ZeroRotator, BuildParams);
+		ABuildingbase* createdBuilding = GetWorld()->SpawnActor<ABuildingbase>(CurrentBuilding, TargetBuildLocation, FRotator::ZeroRotator);
 		FNode node = BuildGridSystem->GetClosestNode(TargetBuildLocation);
 		BuildGridSystem->BuildGrid[node.ID].IsOcupide = true;
 		createdBuilding->BuildingCreated();
+		createdBuilding->player = Player;
+		createdBuilding->createUI();
+		buildingManager->createdbuildings.Add(createdBuilding);
 		Player->invertoryComponent->UseItemInInventory(createdBuilding->cost, createdBuilding->cost.ResorceAmount);
 	}
 

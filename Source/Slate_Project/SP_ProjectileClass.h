@@ -14,6 +14,9 @@ public:
 
 	void Tick(float DeltaTime) override;
 
+	UPROPERTY()
+	ASPCharacter* Owningplayer = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	float Speed = 2000.f;
 

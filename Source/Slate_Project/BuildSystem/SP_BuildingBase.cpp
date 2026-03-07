@@ -13,12 +13,12 @@
 void ABuildingbase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (BuildingUITemplate && BIsGhost == false)
-	{
-		createdUI = CreateWidget<UBuildingUI>(GetWorld(), BuildingUITemplate);
-		createdUI->AddToViewport();
-		createdUI->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	
+	
+}
+
+void ABuildingbase::createUI()
+{
 }
 
 ABuildingbase::ABuildingbase()
@@ -33,12 +33,7 @@ ABuildingbase::ABuildingbase()
 
 void ABuildingbase::OnInteract()
 {
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		5.0f,
-		FColor::Green,
-		TEXT("Interact")
-	);
+
 	//Make UI visible
 	createdUI->SetVisibility(ESlateVisibility::Visible);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;

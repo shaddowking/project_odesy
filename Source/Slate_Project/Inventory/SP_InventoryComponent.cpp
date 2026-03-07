@@ -1,8 +1,20 @@
 #include "SP_InventoryComponent.h"
 #include "SP_ItemStruct.h"
 #include "SP_Resorce.h"
+#include "Widgets/SWeakWidget.h"
+#include "Engine/Engine.h"
+#include "Blueprint/UserWidget.h"
+#include "../UI/OD_InvetoryUI.h"
 
 
+void UInventoryComponent::CreateInventoryUI()
+{
+	createdUI = CreateWidget<UInventoryUI>(GetWorld(), UITemplate);
+	createdUI->AddToViewport();
+	createdUI->SetVisibility(ESlateVisibility::Collapsed);
+	createdUI->onwingInventory = this;
+	createdUI->CreateInventorySlots();
+}
 
 int UInventoryComponent::AddItemInInventory(FItem item, int UseAmount)
 {
@@ -15,6 +27,8 @@ int UInventoryComponent::AddItemInInventory(FItem item, int UseAmount)
 			if (PlayerInventory[id].ItemInfo == item.ItemInfo)
 			{
 				PlayerInventory[id].ResorceAmount += UseAmount;
+				createdUI->UpdateInventorySlot(PlayerInventory[id].ResorceAmount, PlayerInventory[id]);
+
 			}
 
 		}
@@ -25,10 +39,9 @@ int UInventoryComponent::AddItemInInventory(FItem item, int UseAmount)
 		newItem.ItemInfo = item.ItemInfo;
 		newItem.ResorceAmount = UseAmount;
 		PlayerInventory.Add(newItem);
+		createdUI->UpdateInventorySlot(newItem.ResorceAmount, newItem);
+
 	}
-
-	
-
 
 
 	return UseAmount;
@@ -45,14 +58,20 @@ int UInventoryComponent::UseItemInInventory(FItem item, int UseAmount)
 			{
 				PlayerInventory[id].ResorceAmount -= UseAmount;
 				value = UseAmount;
+				createdUI->UpdateInventorySlot(PlayerInventory[id].ResorceAmount, PlayerInventory[id]);
+
 				break;
 			}
 			else if (PlayerInventory[id].ResorceAmount < UseAmount)
 			{
 				value = PlayerInventory[id].ResorceAmount;
 				PlayerInventory[id].ResorceAmount = 0;
+				createdUI->UpdateInventorySlot(PlayerInventory[id].ResorceAmount, PlayerInventory[id]);
+
 				break;
 			}
+
+
 		}
 	}
 	return value;
@@ -70,6 +89,13 @@ bool UInventoryComponent::HasEnoughtOfItemInInventory(FItem item, int desierdAmo
 		}
 	}
 	return result;
+}
+
+void UInventoryComponent::OpenInventory()
+{
+	createdUI->SetVisibility(ESlateVisibility::Visible);
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
 }
 
 bool UInventoryComponent::HasInventoryEntry(FItem item)
