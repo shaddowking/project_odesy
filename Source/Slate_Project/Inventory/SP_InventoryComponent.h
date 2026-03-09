@@ -21,6 +21,14 @@ public:
 	int InventorySize = 20;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int InventoryX = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	int InventoryY = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	int NodeOffset = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	FVector2D NodeStartPos;
+	
 
 	void CreateInventoryUI();
 

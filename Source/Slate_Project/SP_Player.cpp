@@ -227,7 +227,6 @@ void ASPCharacter::HandleStartAim()
 				bIsAiming = true;
 
 				SetIdleRotationOff();
-				StartAimCam();
 			}
 
 		}
