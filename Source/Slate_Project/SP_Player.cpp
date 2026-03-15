@@ -74,7 +74,10 @@ void ASPCharacter::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(PlayerContext, 0);
+			Subsystem = nullptr;
 		}
+		PlayerController = nullptr;
+		
 	}
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
@@ -389,11 +392,13 @@ void ASPCharacter::HandleUltimateTrigger()
 	{
 		if (bIsUltimateReady && !bIsUsingAbility && !bIsShooting)
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityPressed();
+				
 			}
+
 		}
 	}
 	
@@ -408,7 +413,7 @@ void ASPCharacter::HandleUltimateRelease()
 	{
 		if (bIsUltimateReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ultimate))
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ultimate);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityReleas();
@@ -425,7 +430,7 @@ void ASPCharacter::HandlePrimaryAbilityTrigger()
 	{
 		if (bIsPrimaryAbilityReady && !bIsUsingAbility && !bIsShooting)
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityPressed();
@@ -446,7 +451,7 @@ void ASPCharacter::HandlePrimaryAbilityRelease()
 	{
 		if (bIsPrimaryAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability1))
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability1);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityReleas();
@@ -463,7 +468,7 @@ void ASPCharacter::HandleElementalAbilityTrigger()
 	{
 		if (bIsElementalAbilityReady && !bIsUsingAbility && !bIsShooting)
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityPressed();
@@ -481,7 +486,7 @@ void ASPCharacter::HandleElementalAbilityRelease()
 	{
 		if (bIsElementalAbilityReady && SCcomponent->IsUsingAbility(SCcomponent->activeSubclass->Ability2))
 		{
-			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
+			AbilityInterface = Cast<IAbilityInterface>(SCcomponent->activeSubclass->Ability2);
 			if (AbilityInterface)
 			{
 				AbilityInterface->OnAbilityReleas();
@@ -628,6 +633,7 @@ void ASPCharacter::CreateProjectilePool()
 		 Currentprojectile->DeActivate();
 
 	}
+	Currentprojectile = nullptr;
 
 }
 
@@ -1019,6 +1025,7 @@ void ASPCharacter::CreateWeapons()
 		weapon->DeactivateWeapon();
 	}
 	SwitchWeaponWithID(0);
+	CreatedWeapon = nullptr;
 }
 
 UWeaponBaseCompnent* ASPCharacter::GetWeaponCompenent(AWeaponBase*& weapon)

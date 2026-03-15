@@ -69,7 +69,9 @@ private:
 
 	FVector ShootDirection;
 	FVector RotateDirection;
-
+	AProjectile* result = nullptr;
+	AProjectile* createdprojectile = nullptr;
+	AProjectile* CurentBullet = nullptr;
 	
 
 };

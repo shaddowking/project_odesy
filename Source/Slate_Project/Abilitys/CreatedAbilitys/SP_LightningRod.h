@@ -5,6 +5,7 @@
 #include "SP_LightningRod.generated.h"
 
 class ALightningRodStrike;
+class UBuffBase;
 
 UCLASS()
 class ALightningRod : public AAbilityBase , public IAbilityInterface {
@@ -16,6 +17,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ALightningRodStrike> LightningTemplate;
 
+	UPROPERTY()
 	ALightningRodStrike* SpawndLightning = nullptr;
 
 	// Inherited via IAbilityInterface
@@ -40,4 +42,9 @@ public:
 
 	void OnAbilitySecendaryAttackRealese() override;
 
+
+protected:
+
+	UPROPERTY()
+	UBuffBase* newBuff = nullptr;
 };

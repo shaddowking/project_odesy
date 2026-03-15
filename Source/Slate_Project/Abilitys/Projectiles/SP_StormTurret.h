@@ -3,7 +3,7 @@
 #include "SP_StormTurret.generated.h"
 
 class USphereComponent;
-
+class UHealthComponent;
 
 UCLASS()
 class AStormTurret : public AAbilityPlacable 
@@ -43,5 +43,7 @@ private:
 	void PerformAttack();
 
 	float AttackTimer = 0.0f;
+
+	UHealthComponent* healthComponent = nullptr;
 
 };

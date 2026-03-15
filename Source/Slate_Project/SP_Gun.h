@@ -59,6 +59,9 @@ public:
 
 private:
 
+	UPROPERTY();
+	AProjectile* CurentBullet = nullptr;
+
 	ASP_HUD* hud = nullptr;
 
 	void Burst();

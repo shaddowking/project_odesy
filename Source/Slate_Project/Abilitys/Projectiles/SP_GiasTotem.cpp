@@ -1,6 +1,7 @@
 #include "SP_GiasTotem.h"
 #include "../../SP_Player.h"
 #include "../../Buffes/SP_GiasBlesing.h"
+
 #include "../../Buffes/SP_BuffDataAsset.h"
 
 #include "Components/SphereComponent.h"
@@ -24,9 +25,20 @@ void AGiasTotem::OnPlayerEnter(UPrimitiveComponent* OverlappedComp, AActor* Othe
 			player->RemoveBuff(OnExitnewBuff);
 
 		}
-		OnEnternewBuff = NewObject<UGiasBlesing>(OnEnterBuffToApply);
+		if (OnEnterBuffToApply->CreatedBuff)
+		{
+			OnEnternewBuff = OnEnterBuffToApply->CreatedBuff;
+		}
+		else
+		{
+			OnEnternewBuff = NewObject<UGiasBlesing>(OnEnterBuffToApply);
+			OnEnterBuffToApply->CreatedBuff = OnEnternewBuff;
+
+
+		}
 		playerList.Add(player);
 		player->AddBuff(OnEnternewBuff, OnEnterBuffToApply);
+		player = nullptr;
 	}
 }
 
@@ -39,10 +51,22 @@ void AGiasTotem::OnPlayerExit(UPrimitiveComponent* OverlappedComp, AActor* Other
 		if (playerList.Contains(player))
 		{
 			player->RemoveBuff(OnEnternewBuff);
-			OnExitnewBuff = NewObject<UGiasBlesing>(OnExitBuffToApply);
+			if (OnExitBuffToApply->CreatedBuff)
+			{
+				OnExitnewBuff = OnExitBuffToApply->CreatedBuff;
+			}
+			else
+			{
+				OnExitnewBuff = NewObject<UGiasBlesing>(OnExitBuffToApply);
+				OnExitBuffToApply->CreatedBuff = OnExitnewBuff;
+
+			}
+
 			player->AddBuff(OnExitnewBuff, OnExitBuffToApply);
 		}
+		player = nullptr;
 	}
+
 
 	
 }
@@ -61,5 +85,6 @@ void AGiasTotem::Activate(FVector Location)
 void AGiasTotem::DeActivate()
 {
 	Super::DeActivate();
+	BPDeactivate();
 	AouraBorder->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

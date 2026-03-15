@@ -22,7 +22,7 @@ public:
 
 	AAbilityPlacableCharacter();
 
-	void InitialicePlaceblecharacter(ASPCharacter* player) 
+	void InitialicePlaceblecharacter(ASPCharacter*& player) 
 	{ 
 		Caster = player;
 		Spawned();

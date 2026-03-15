@@ -6,12 +6,11 @@
 
 void USubclassComponent::InitializeSubclasses(ASPCharacter* Holder)
 {
-	Owner = Holder;
 	StormsEya = Cast<AStormWalker>(GetWorld()->SpawnActor<ASubclass>(StormsEya_Template));
-	StormsEya->InitializeSubclass(Owner);
+	StormsEya->InitializeSubclass(Holder);
 
 	pupeter = Cast<APupeter>(GetWorld()->SpawnActor<ASubclass>(pupeterTemplate));
-	pupeter->InitializeSubclass(Owner);
+	pupeter->InitializeSubclass(Holder);
 	activeSublcassEnum = ESubclasses::NoClass;
 	SelectSubclass(StartSublcassEnum);
 }

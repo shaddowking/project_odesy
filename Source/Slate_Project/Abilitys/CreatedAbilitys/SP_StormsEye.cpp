@@ -56,13 +56,12 @@ void AStormsEye::OnAbilityReleas()
 {
 	Caster->bIsPrimaryAbilityReady = false;
 	BIsAbilityActive = false;
-	FRotator Rotation = FRotator::ZeroRotator;
 	TargetingActor->GetRootComponent()->SetVisibility(false, true);
 
 
 	if (!CreatedTurret)
 	{
-		CreatedTurret = GetWorld()->SpawnActor<AStormTurret>(TurretRefrence, TargetLocation, Rotation);
+		CreatedTurret = GetWorld()->SpawnActor<AStormTurret>(TurretRefrence, TargetLocation, FRotator::ZeroRotator);
 		CreatedTurret->InitialicePlaceble(Caster);
 		CreatedTurret->DeActivate();
 	}

@@ -2,7 +2,7 @@
 #include "../SP_Player.h"
 #include "SP_AbilityBase.h"
 
-void ASubclass::InitializeSubclass(ASPCharacter* Player)
+void ASubclass::InitializeSubclass(ASPCharacter*& Player)
 {
 	Caster = Player;
 	FVector Location = FVector::ZeroVector;

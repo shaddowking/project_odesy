@@ -46,6 +46,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AEarthBaricade> placableTemplate;
+	UPROPERTY()
 	AEarthBaricade* createdBaricade = nullptr;
 
 

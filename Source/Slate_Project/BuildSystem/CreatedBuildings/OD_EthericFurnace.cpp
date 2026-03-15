@@ -54,8 +54,4 @@ void AEthericFurnace::OnCraftingFinished()
 	createdUI->CraftingFinished();
 }
 
-bool AEthericFurnace::CanCraft(UCraftingRecepie*& recepie)
-{
-	bool result = !bIsCrafting && player->invertoryComponent->HasEnoughtOfItemInInventory(recepie->recepie.Input, recepie->recepie.Input.ResorceAmount);
-	return result;
-}
+

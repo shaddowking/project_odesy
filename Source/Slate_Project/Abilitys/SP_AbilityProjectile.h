@@ -4,6 +4,7 @@
 
 class USphereComponent;
 class ASPCharacter;
+class UHealthComponent;
 
 USTRUCT(BlueprintType)
 struct FAbilityprojectileStats 
@@ -43,7 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "BaseValue")
 	float MaxDuration = 10;
 
-	ASPCharacter* owner = nullptr;
+	UPROPERTY()
+	ASPCharacter* playerowner = nullptr;
 
 	UFUNCTION()
 	void OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -65,6 +67,11 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere = nullptr;
+
+protected:
+
+	UPROPERTY()
+	UHealthComponent* healthComponent = nullptr;
 
 
 

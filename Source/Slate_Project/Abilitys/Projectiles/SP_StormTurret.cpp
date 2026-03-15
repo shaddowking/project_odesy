@@ -48,6 +48,7 @@ void AStormTurret::OnEnemyEnter(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	if (FoundTarget)
 	{
 		ListOfTargets.Add(FoundTarget);
+		FoundTarget = nullptr;
 	}
 }
 
@@ -60,6 +61,7 @@ void AStormTurret::OnEnemyExit(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		if (ListOfTargets.Contains(FoundTarget))
 		{
 			ListOfTargets.Remove(FoundTarget);
+			FoundTarget = nullptr;
 		}
 	}
 }
@@ -84,10 +86,11 @@ void AStormTurret::Activate(FVector Location)
 void AStormTurret::PerformAttack()
 {
 	for (ACharacter* CurrentCharacter : ListOfTargets) {
-		UHealthComponent* healthComponent = CurrentCharacter->FindComponentByClass<UHealthComponent>();
+		healthComponent = CurrentCharacter->FindComponentByClass<UHealthComponent>();
 		if (healthComponent)
 		{
 			healthComponent->TakeDamage(Damage);
+			healthComponent = nullptr;
 		}
 		
 	}

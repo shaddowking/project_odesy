@@ -45,24 +45,26 @@ void ALightningRodStrike::LightningStrike()
 		if (healthComponent)
 		{
 			healthComponent->TakeDamage(Damage);
+			healthComponent = nullptr;
 		}
 	}
 }
 
 void ALightningRodStrike::OnEnemyenter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASPCharacter* player = Cast<ASPCharacter>(OtherActor);
 
 	
 
-	if (!player && IsActive)
+	if (Cast<ASPCharacter>(OtherActor) == nullptr && IsActive)
 	{
 		ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
 		if (FoundTarget)
 		{
 
 			ListOfTargets.Add(FoundTarget);
+			FoundTarget = nullptr;
 		}
+		
 	}
 
 	
@@ -79,4 +81,5 @@ void ALightningRodStrike::OnEnemyexit(UPrimitiveComponent* OverlappedComp, AActo
 			ListOfTargets.Remove(FoundTarget);
 		}
 	}
+	FoundTarget = nullptr;
 }

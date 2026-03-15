@@ -82,4 +82,9 @@ private:
 	TSubclassOf<ABuildingbase> CurrentBuilding;
 
 	FVector TargetBuildLocation;
+
+	UPROPERTY()
+	ABuildingbase* createdBuilding = nullptr;
+
+
 };

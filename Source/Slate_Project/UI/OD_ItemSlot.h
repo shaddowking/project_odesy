@@ -4,6 +4,8 @@
 
 #include "OD_ItemSlot.generated.h"
 
+class UBuildingUI;
+
 UCLASS()
 class UItemSlot : public UUserWidget
 {
@@ -14,5 +16,6 @@ public:
 	int SlotAmount= 0;
 	UPROPERTY(BlueprintReadWrite)
 	FItem item;
+	
 
 };

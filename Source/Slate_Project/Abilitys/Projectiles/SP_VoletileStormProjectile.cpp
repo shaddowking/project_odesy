@@ -16,20 +16,17 @@ ASPVoletileStormProjectile::ASPVoletileStormProjectile()
 
 void ASPVoletileStormProjectile::OnEnemyEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASPCharacter* target = Cast<ASPCharacter>(OtherActor);
-	if (!target)
+	ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
+	if (FoundTarget && playerowner != FoundTarget)
 	{
-
-		ACharacter* FoundTarget = Cast<ACharacter>(OtherActor);
-		if (FoundTarget)
+		StartLightningVFX(FoundTarget->GetActorLocation());
+		healthComponent = FoundTarget->FindComponentByClass<UHealthComponent>();
+		if (healthComponent)
 		{
-			StartLightningVFX(FoundTarget->GetActorLocation());
-			UHealthComponent* healthComponent = FoundTarget->FindComponentByClass<UHealthComponent>();
-			if (healthComponent)
-			{
-				healthComponent->TakeDamage(ShockDamage);
-			}
+			healthComponent->TakeDamage(ShockDamage);
 		}
+		FoundTarget = nullptr;
+		healthComponent = nullptr;
 	}
 
 	

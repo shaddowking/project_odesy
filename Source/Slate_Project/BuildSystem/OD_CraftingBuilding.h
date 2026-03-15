@@ -40,4 +40,9 @@ public:
 	virtual void OnCraftingFinished();
 
 	virtual bool CanCraft(UCraftingRecepie*& recepie);
+
+private:
+
+	FTimerHandle CraftTimerHandle;
+
 };

@@ -447,4 +447,6 @@ private:
 
 	bool bHasTeleportedToBase = false;
 
+	IAbilityInterface* AbilityInterface = nullptr;
+
 };

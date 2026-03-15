@@ -29,6 +29,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWratch> WratchTemplate;
 
+	UPROPERTY()
 	AWratch* CreatedWratch = nullptr;
 
 	virtual void CooldownCompleted() override;
@@ -40,6 +41,7 @@ public:
 
 	FVector TargetLocation;
 
+	UPROPERTY()
 	AActor* TargetingActor = nullptr;
 
 
@@ -53,5 +55,7 @@ public:
 	void OnAbilitySecendaryAttack() override;
 
 	void OnAbilitySecendaryAttackRealese() override;
+
+
 
 };

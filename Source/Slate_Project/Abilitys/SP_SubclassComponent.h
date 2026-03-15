@@ -22,7 +22,7 @@ class USubclassComponent : public UActorComponent {
 
 public:
 
-	ASPCharacter* Owner;
+
 	
 	UPROPERTY()
 	ESubclasses activeSublcassEnum = ESubclasses::NoClass;

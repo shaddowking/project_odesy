@@ -40,11 +40,13 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> TargetingTemplate;
 
+	UPROPERTY()
 	AActor* TargetingActor = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AStormTurret> TurretRefrence;
 
+	UPROPERTY()
 	AStormTurret* CreatedTurret = nullptr;
 
 private:

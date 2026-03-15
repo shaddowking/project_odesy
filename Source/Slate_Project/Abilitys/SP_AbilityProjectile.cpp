@@ -18,6 +18,8 @@ AAbilityProjectile::AAbilityProjectile()
 
 void AAbilityProjectile::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	if (bIsActive)
 	{
 		FHitResult SweepHit;
@@ -37,28 +39,20 @@ void AAbilityProjectile::Tick(float DeltaTime)
 
 void AAbilityProjectile::InitialiceProjectile(ASPCharacter* caster)
 {
-	owner = caster;
+	playerowner = caster;
 }
 
 void AAbilityProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && bIsActive == true)
 	{
-		UHealthComponent* healthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
+		healthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
 		if (healthComponent)
 		{
 			healthComponent->TakeDamage(Stats.ImpactDamage);
 			ProjectileDeActivate();
 
 		}
-		
-		
-
-			if (Cast<AAbilityPlacable>(OtherActor) == nullptr && Cast<AAbilityPlacableCharacter>(OtherActor) == nullptr)
-			{
-			}
-	
-
 	}
 	ProjectileDeActivate();
 }

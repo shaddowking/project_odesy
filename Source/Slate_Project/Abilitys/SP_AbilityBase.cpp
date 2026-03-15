@@ -1,7 +1,7 @@
 #include "SP_AbilityBase.h"
 #include "SP_AbilityDataAsstet.h"
 
-void AAbilityBase::InitialiceAbility(ASPCharacter* player, ASubclass* OwningSubclass)
+void AAbilityBase::InitialiceAbility(ASPCharacter*& player, ASubclass* OwningSubclass)
 {
 	Caster = player;
 	OwnerSubclass = OwningSubclass;

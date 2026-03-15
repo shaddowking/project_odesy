@@ -40,7 +40,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UAbilityDataAsset* AbilityBaseStates = nullptr;
 
-	virtual void InitialiceAbility(ASPCharacter* player, ASubclass* OwningSubclass);
+	virtual void InitialiceAbility(ASPCharacter*& player, ASubclass* OwningSubclass);
 
 	virtual void AbilitySelected();
 
@@ -52,6 +52,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void spawnDebug(FVector position);
 
+	UPROPERTY();
 	ASP_HUD* Hud = nullptr;
 
 	float CooldownPercent = 0;

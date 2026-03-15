@@ -58,7 +58,7 @@ void AGiasVeginse::AbilitySelected()
 
 void AGiasVeginse::CooldownCompleted()
 {
-	Hud->PlayerHudWidget->UpdateUltimatePercent(0);
+	Hud->PlayerHudWidget->UpdateUlitmateSliderColor(Caster->bIsUltimateReady);
 	Caster->bIsUltimateReady = true;
 }
 
@@ -109,23 +109,20 @@ void AGiasVeginse::OnAbilitySecendaryAttackRealese()
 void AGiasVeginse::CreateTotem()
 {
 	
-	FVector SpawnLocation = GetUltimateSpawnLocation();
 	
-	spawnDebug(SpawnLocation);
 
 
 	if (!CreatedTotem && totamTemplate)
 	{
-		FRotator Rotation = FRotator::ZeroRotator;
 
-		CreatedTotem = GetWorld()->SpawnActor<AGiasTotem>(totamTemplate, SpawnLocation, Rotation);
+		CreatedTotem = GetWorld()->SpawnActor<AGiasTotem>(totamTemplate);
 		CreatedTotem->InitialicePlaceble(Caster);
 		CreatedTotem->DeActivate();
 	}
 
 	if (CreatedTotem)
 	{
-		CreatedTotem->Activate(SpawnLocation);
+		CreatedTotem->Activate(GetUltimateSpawnLocation());
 	}
 	
 	//PrimaryActorTick.bCanEverTick = false;

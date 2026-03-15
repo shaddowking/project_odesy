@@ -30,7 +30,7 @@ public:
 	ASPCharacter* Caster = nullptr;
 
 	UFUNCTION(BlueprintCallable)
-	void InitializeSubclass(ASPCharacter* Player);
+	void InitializeSubclass(ASPCharacter*& Player);
 
 	void SubclassSelected();
 

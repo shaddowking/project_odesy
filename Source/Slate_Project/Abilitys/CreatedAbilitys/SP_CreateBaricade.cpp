@@ -60,12 +60,11 @@ void AEarthBaricadeAbility::OnAbilityReleas()
 {
 	Caster->bIsElementalAbilityReady = false;
 	BIsAbilityActive = false;
-	FRotator Rotation = FRotator::ZeroRotator;
 	BaricadeTargeting->GetRootComponent()->SetVisibility(false, true);
 
 	if (!createdBaricade)
 	{
-		createdBaricade = GetWorld()->SpawnActor<AEarthBaricade>(placableTemplate, TargetLocation, Rotation);
+		createdBaricade = GetWorld()->SpawnActor<AEarthBaricade>(placableTemplate);
 		createdBaricade->InitialicePlaceble(Caster);
 		createdBaricade->DeActivate();
 	}

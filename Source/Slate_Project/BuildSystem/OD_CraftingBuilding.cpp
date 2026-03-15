@@ -19,9 +19,8 @@ void ACraftingBuilding::StartCrafting(float MaxDuration)
 	MaxCraftingDuration = MaxDuration;
 	bIsCrafting = true;
 	BPStartCraft();
-	FTimerHandle AbilityTimerHandle;
 
-	GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.01f, false);
+	GetWorldTimerManager().SetTimer(CraftTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.01f, false);
 }
 
 void ACraftingBuilding::CraftingCycle()
@@ -30,9 +29,9 @@ void ACraftingBuilding::CraftingCycle()
 	{
 		CurrantCraftDuration -= 0.1f;
 		UpdateCraftingDration();
-		FTimerHandle AbilityTimerHandle;
+		
 
-		GetWorldTimerManager().SetTimer(AbilityTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.1f, false);
+		GetWorldTimerManager().SetTimer(CraftTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.1f, false);
 	}
 	else
 	{
@@ -55,5 +54,6 @@ void ACraftingBuilding::OnCraftingFinished()
 
 bool ACraftingBuilding::CanCraft(UCraftingRecepie*& recepie)
 {
-	return false;
+	bool result = !bIsCrafting && player->invertoryComponent->HasEnoughtOfItemInInventory(recepie->recepie.Input, recepie->recepie.Input.ResorceAmount);
+	return result;
 }

@@ -14,7 +14,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASPVoletileStormProjectile> ProjectileRefrence;
-	ASPVoletileStormProjectile* projectile;
+	UPROPERTY()
+	ASPVoletileStormProjectile* projectile = nullptr;
 
 	void LanchProjectile();
 

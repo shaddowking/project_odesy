@@ -52,6 +52,7 @@ void ASP_MeleWeapon::OnMeleeHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		if (healthComponent)
 		{
 			healthComponent->TakeDamage(WeaponComponent->CalculateDamage());
+			healthComponent = nullptr;
 		}
 	}
 }

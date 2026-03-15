@@ -10,7 +10,7 @@ class AAbilityPlacable : public AActor {
 
 public:
 	
-	void InitialicePlaceble(ASPCharacter* player) { Caster = player; }
+	void InitialicePlaceble(ASPCharacter*& player) { Caster = player; }
 
 
 	AAbilityPlacable();

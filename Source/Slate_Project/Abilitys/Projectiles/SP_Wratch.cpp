@@ -98,7 +98,7 @@ void AWratch::DeActivate()
 
 AProjectile* AWratch::GetNextAvalableWratchProjectile()
 {
-	AProjectile* result = nullptr;
+	result = nullptr;
 	for (AProjectile* projectile : WratchProjectilePool)
 	{
 		if (projectile->IsActive == false)
@@ -120,7 +120,7 @@ AProjectile* AWratch::AddWratchProjectileTooPool()
 {
 
 
-	AProjectile* createdprojectile = nullptr;
+	createdprojectile = nullptr;
 
 	createdprojectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, FVector::ZeroVector, GetActorRotation());
 	WratchProjectilePool.Add(createdprojectile);
@@ -131,7 +131,7 @@ AProjectile* AWratch::AddWratchProjectileTooPool()
 
 void AWratch::CreateWratchProjectilePool()
 {
-	AProjectile* createdprojectile = nullptr;
+	createdprojectile = nullptr;
 	for (size_t i = 0; i < ProjectilePoolsice; i++)
 	{
 
@@ -140,12 +140,14 @@ void AWratch::CreateWratchProjectilePool()
 		createdprojectile->DeActivate();
 
 	}
+	createdprojectile = nullptr;
+
 }
 
 void AWratch::performAttack()
 {
 
-	AProjectile* CurentBullet = GetNextAvalableWratchProjectile();
+	CurentBullet = GetNextAvalableWratchProjectile();
 
 	CurentBullet->SetActorLocationAndRotation(FirePoint->GetComponentLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
 
@@ -153,7 +155,6 @@ void AWratch::performAttack()
 	CurentBullet->Damage = 20;
 	CurentBullet->Activate();
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Turret Attack"));
 }
 
 AEnemyBase* AWratch::GetClosestTarget()

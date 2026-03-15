@@ -65,6 +65,7 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 			if (healthComponent)
 			{
 				healthComponent->TakeDamage(Damage);
+				healthComponent = nullptr;
 			}
 
 		}
@@ -73,6 +74,9 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* OverlappedComp, AActor* O
 		{
 			DeActivate();
 		}
+
+		HitActor = nullptr;
+		hitprojectile = nullptr;
 		
 	}
 	

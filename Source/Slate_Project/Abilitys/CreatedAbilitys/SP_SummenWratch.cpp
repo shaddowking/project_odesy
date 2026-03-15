@@ -75,13 +75,12 @@ void ASummonWratch::OnAbilityPrimaryAttack()
 {
 	Caster->bIsPrimaryAbilityReady = false;
 	BIsAbilityActive = false;
-	FRotator Rotation = FRotator::ZeroRotator;
 	TargetingActor->GetRootComponent()->SetVisibility(false, true);
 
 
 	if (!CreatedWratch)
 	{
-		CreatedWratch = GetWorld()->SpawnActor<AWratch>(WratchTemplate, TargetLocation, Rotation);
+		CreatedWratch = GetWorld()->SpawnActor<AWratch>(WratchTemplate, TargetLocation, FRotator::ZeroRotator);
 		CreatedWratch->InitialicePlaceblecharacter(Caster);
 		CreatedWratch->DeActivate();
 	}

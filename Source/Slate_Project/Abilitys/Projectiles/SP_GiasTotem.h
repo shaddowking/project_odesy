@@ -6,6 +6,7 @@ class USphereComponent;
 class ASPCharacter;
 class UBuffDataAsset;
 class UGiasBlesing;
+class UBuffBase;
 
 
 UCLASS()
@@ -40,7 +41,7 @@ private:
 
 	TArray<ASPCharacter*> playerList;
 
-	UGiasBlesing* OnEnternewBuff = nullptr;
+	UBuffBase* OnEnternewBuff = nullptr;
 
-	UGiasBlesing* OnExitnewBuff = nullptr;
+	UBuffBase* OnExitnewBuff = nullptr;
 };

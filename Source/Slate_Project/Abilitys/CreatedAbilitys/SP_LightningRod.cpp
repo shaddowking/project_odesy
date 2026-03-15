@@ -25,7 +25,7 @@ void ALightningRod::OnAbilityPressed()
 	SpawndLightning->Activate(SpawnLocation);
 	if (BuffToApply)
 	{
-		UBuffBase* newBuff = nullptr;
+		
 
 		if (BuffToApply->CreatedBuff)
 		{
@@ -38,11 +38,12 @@ void ALightningRod::OnAbilityPressed()
 
 		}
 		Caster->AddBuff(newBuff,BuffToApply);
+
 	}
 	OwnerSubclass->ActiveAbility = nullptr;
 	Caster->bIsUsingAbility = false;
 	ActivateCooldown();
-
+	newBuff = nullptr;
 
 
 }

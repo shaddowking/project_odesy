@@ -23,6 +23,7 @@ void UBuildSystemComponent::InitialiceBuildSystem()
 			BuildingList.Add(newBuilding);
 
 		}
+		newBuilding = nullptr;
 	}
 	if (!buildingManager && buildingManagerTemplate)
 	{
@@ -101,7 +102,7 @@ void UBuildSystemComponent::PlaceBuilding()
 	bCanBuild = false;
 	if (bHasEnoughResorces)
 	{
-		ABuildingbase* createdBuilding = GetWorld()->SpawnActor<ABuildingbase>(CurrentBuilding, TargetBuildLocation, FRotator::ZeroRotator);
+		createdBuilding = GetWorld()->SpawnActor<ABuildingbase>(CurrentBuilding, TargetBuildLocation, FRotator::ZeroRotator);
 		FNode node = BuildGridSystem->GetClosestNode(TargetBuildLocation);
 		BuildGridSystem->BuildGrid[node.ID].IsOcupide = true;
 		createdBuilding->BuildingCreated();

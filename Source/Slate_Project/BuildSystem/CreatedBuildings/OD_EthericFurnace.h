@@ -32,7 +32,6 @@ public:
 
 	void OnCraftingFinished() override;
 
-	bool CanCraft(UCraftingRecepie*& recepie) override;
 
 
 };

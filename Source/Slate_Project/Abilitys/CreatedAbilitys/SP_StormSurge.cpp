@@ -26,12 +26,11 @@ void AStormSurge::OnAbilityPressed()
 	Caster->bIsUltimateReady = false;
 	OwnerSubclass->ActiveAbility = this;
 	Caster->bIsUsingAbility = true;
-	spawnDebug(Caster->GetAimPoint(5000));
 	FVector ShootDirection = Caster->GetAimPoint(5000) - GetUltimateSpawnLocation();
 
 	if (ProjectileRefrence && !projectile)
 	{
-		projectile = GetWorld()->SpawnActor<ASPVoletileStormProjectile>(ProjectileRefrence, GetUltimateSpawnLocation(), UKismetMathLibrary::MakeRotFromX(ShootDirection));
+		projectile = GetWorld()->SpawnActor<ASPVoletileStormProjectile>(ProjectileRefrence);
 		projectile->InitialiceProjectile(Caster);
 	}
 
