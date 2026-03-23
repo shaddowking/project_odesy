@@ -132,6 +132,13 @@ void SPlayerHud::Construct(const FArguments& InArgs)
 			[
 				SNew(SImage).Image(&BaseTeleportBrush).Visibility(this, &SPlayerHud::GetBaseTeleportVisibility)
 			]
+			+ SOverlay::Slot()
+			.Padding(FMargin(0.f, 0.f))
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+			[
+				SNew(SImage).Image(&BaseTeleportBrush).Visibility(this, &SPlayerHud::GetBaseTeleportVisibility)
+			]
 			
 			
 			

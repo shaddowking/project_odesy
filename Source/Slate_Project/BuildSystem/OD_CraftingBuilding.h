@@ -2,8 +2,11 @@
 
 #include "SP_BuildingBase.h"
 #include "OD_RecepieStruct.h"
+#include "../Inventory/SP_ItemStruct.h"
 
 #include "OD_CraftingBuilding.generated.h"
+
+class URecepieCraft;
 
 UCLASS()
 class ACraftingBuilding : public ABuildingbase
@@ -12,13 +15,17 @@ class ACraftingBuilding : public ABuildingbase
 
 public:
 
+	UPROPERTY(BlueprintReadOnly)
+	int MaxCraftAmount = 6;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<UCraftingRecepie*> recepieList;
 
 	UPROPERTY(BlueprintReadWrite)
-	UCraftingRecepie* activeRecepie = nullptr;
+	URecepieCraft* activeRecepie = nullptr;
 
-	virtual void UseRecepie(UCraftingRecepie* recepie);
+	virtual void UseRecepie(URecepieCraft* recepie);
+
 	UPROPERTY(BlueprintReadOnly)
 	float CurrantCraftDuration = 0;
 	float MaxCraftingDuration = 10;
@@ -31,18 +38,35 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BPFinishCraft();
 
-	void StartCrafting(float MaxDuration);
 
-	void CraftingCycle();
+	void CraftingCycle(float deltatime);
 
-	virtual void UpdateCraftingDration();
+	virtual void UpdateCraftingDration(URecepieCraft* recepie);
 
-	virtual void OnCraftingFinished();
+	virtual void OnCraftingFinished(URecepieCraft* recepie);
 
-	virtual bool CanCraft(UCraftingRecepie*& recepie);
+	virtual bool CanCraft(URecepieCraft*& recepie);
+
+
+	void addItemToInventory(FItem item, int UseAmount);
+
+	UFUNCTION(BlueprintCallable)
+	void GivePlayerCraftedItems();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddCraftingUI(URecepieCraft* recepie);
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<URecepieCraft*> ActiveCrafts;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<URecepieCraft*> craftsToRemove;
 
 private:
 
 	FTimerHandle CraftTimerHandle;
+
+	TArray<FItem> BuildingInventory;
+
+	
 
 };

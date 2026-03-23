@@ -5,6 +5,8 @@
 #include "../OD_CraftingBuilding.h"
 #include "OD_EthericFurnace.generated.h"
 
+class UCraftingRecepie;
+
 UCLASS()
 class AEthericFurnace : public ACraftingBuilding
 {
@@ -26,11 +28,12 @@ public:
 
 	void OnInteract() override;
 
-	void UseRecepie(UCraftingRecepie* recepie) override;
 
-	void UpdateCraftingDration() override;
+	void UpdateCraftingDration(URecepieCraft* recepie) override;
 
-	void OnCraftingFinished() override;
+	void OnCraftingFinished(URecepieCraft* recepie) override;
+
+	void UseRecepie(URecepieCraft* recepie) override;
 
 
 

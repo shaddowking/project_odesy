@@ -3,7 +3,7 @@
 #include "SP_EnemyBase.generated.h"
 
 class UHealthComponent;
-
+class UCompassIndicator;
 
 UCLASS()
 class AEnemyBase : public ACharacter {
@@ -12,6 +12,9 @@ class AEnemyBase : public ACharacter {
 public:
 
 	AEnemyBase();
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UCompassIndicator* compassIndicator = nullptr;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	UHealthComponent* HPComp = nullptr;
@@ -24,4 +27,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void BPOnDeath();
+
+	UFUNCTION()
+	void BeginPlay()override;
+
 };

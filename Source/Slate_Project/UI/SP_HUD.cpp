@@ -4,6 +4,7 @@
 #include "Widgets/SWeakWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "SP_BuffList.h"
+#include "OD_CompasUI.h"
 #include "Engine/Engine.h"
 
 void ASP_HUD::BeginPlay()
@@ -25,6 +26,14 @@ void ASP_HUD::BeginPlay()
 			if (buffList)
 			{
 				buffList->AddToViewport();
+			}
+		}
+		if (CompassTemplate)
+		{
+			CompassUI = CreateWidget<UCompasUI>(GetWorld(), CompassTemplate);
+			if (CompassUI)
+			{
+				CompassUI->AddToViewport();
 			}
 		}
 

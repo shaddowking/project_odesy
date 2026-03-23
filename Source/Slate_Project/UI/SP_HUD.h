@@ -6,6 +6,7 @@
 class ASP_GameMode;
 class UBuffList;
 class ASPCharacter;
+class UCompasUI;
 
 UCLASS()
 class ASP_HUD : public AHUD {
@@ -19,15 +20,20 @@ protected:
 public:
 
 	ASPCharacter* Player;
-
-	UBuffList* buffList = nullptr;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> buffListTemplate;
+	UBuffList* buffList = nullptr;
+	
 	TSharedPtr<class SPlayerHud> PlayerHudWidget;
 	TSharedPtr<class SWidget> PHudWidgetContainer;
 
 	TSharedPtr<class SSubclassMenu> SubclassMenu;
 	TSharedPtr<class SWidget> PSubclassMenuContainer;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> CompassTemplate;
+	UCompasUI* CompassUI = nullptr;
 
 	void CreateSubclassMenu(ASPCharacter* player);
 

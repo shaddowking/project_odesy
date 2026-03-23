@@ -14,4 +14,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int ResorceAmount = 0;
+
+	inline bool operator==(const FItem& other) const
+	{
+		return other.ItemInfo == ItemInfo;
+	}
 };

@@ -28,6 +28,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "UI/OD_CompasUI.h"
 
 ASPCharacter::ASPCharacter()
 {
@@ -79,7 +80,8 @@ void ASPCharacter::BeginPlay()
 		PlayerController = nullptr;
 		
 	}
-	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+	currentMoveSpeed = MaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	hud->CreateSubclassMenu(this);
 	CreateProjectilePool();
@@ -110,7 +112,7 @@ void ASPCharacter::SetupPlayerInputComponent(UInputComponent* playerInputCompone
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleLook);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleJump);
 
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &ASPCharacter::HandleRun);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &ASPCharacter::HandleRun);
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::None, this, &ASPCharacter::HandleStopRun);
 
 		
@@ -173,6 +175,8 @@ void ASPCharacter::HandleMovemnt(const FInputActionValue& value)
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
 
+	hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+
 }
 
 void ASPCharacter::HandleSetRotationOff(const FInputActionValue& value)
@@ -190,22 +194,38 @@ void ASPCharacter::HandleLook(const FInputActionValue& value)
 	const FVector2d LookVector = value.Get<FVector2D>();
 	AddControllerPitchInput(LookVector.Y);
 	AddControllerYawInput(LookVector.X);
+	hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+
 
 	ClampcameraRotation();
 }
 
 void ASPCharacter::HandleRun()
 {
-	currentMoveSpeed = MaxRunSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
+
+	if (currentMoveSpeed == MaxRunSpeed)
+	{
+		currentMoveSpeed = MaxWalkSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
+	}
+	else if (currentMoveSpeed == MaxWalkSpeed)
+	{
+		currentMoveSpeed = MaxRunSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
+	}
+	
 
 
 }
 
 void ASPCharacter::HandleStopRun()
 {
-	currentMoveSpeed = MaxWalkSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
+	if (GetCharacterMovement()->Velocity.Size() == 0)
+	{
+		currentMoveSpeed = MaxWalkSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed + HandleMoveSpeedCalculation();
+	}
+	
 }
 
 void ASPCharacter::HandleStartAim()
@@ -217,7 +237,7 @@ void ASPCharacter::HandleStartAim()
 			bIsAiming = true;
 
 			SetIdleRotationOff();
-		}
+		}	
 		else
 		{
 			if (SCcomponent->activeSubclass->ActiveAbility)
@@ -879,6 +899,18 @@ void ASPCharacter::Tick(float DeltaTime)
 
 	
 	
+}
+
+float ASPCharacter::GetCompassRotaion()
+{
+	FVector ViewOrigin;
+	FRotator ViewRotation;
+
+
+	GetController()->GetPlayerViewPoint(ViewOrigin, ViewRotation);
+
+	
+	return  ViewRotation.Yaw / 360;
 }
 
 void ASPCharacter::RelodeFinish()

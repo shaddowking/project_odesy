@@ -185,7 +185,7 @@ private:
 
 	float BaseTeleportcountdownCount = 0;
 
-
+	float GetCompassRotaion();
 
 
 public:

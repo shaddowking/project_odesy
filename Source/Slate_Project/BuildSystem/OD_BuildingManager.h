@@ -4,7 +4,7 @@
 #include "OD_BuildingManager.generated.h"
 
 class ABuildingbase;
-
+class ACraftingBuilding;
 UCLASS()
 class ABuildingManager : public AActor	
 {
@@ -12,10 +12,19 @@ class ABuildingManager : public AActor
 
 public:
 
+	ABuildingManager();
+
 	TArray<ABuildingbase*> createdbuildings;
+
+	void Tick(float DeltaTime) override;
+
 
 
 	void DeactivateAllBuildings();
 
 	void ActivateAllBuildings();
+
+private:
+
+	ACraftingBuilding* CurrentCraftBuild = nullptr;
 };

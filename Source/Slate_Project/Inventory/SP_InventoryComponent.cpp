@@ -18,7 +18,7 @@ void UInventoryComponent::CreateInventoryUI()
 
 int UInventoryComponent::AddItemInInventory(FItem item, int UseAmount)
 {
-	if (HasInventoryEntry(item))
+	if (PlayerInventory.Contains(item))
 	{
 		
 		for (int id = 0; id <= PlayerInventory.Num() - 1; id++)

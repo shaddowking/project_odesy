@@ -2,58 +2,126 @@
 #include "../SP_Player.h"
 #include "OD_RecepieStruct.h"
 
+#include "OD_CraftingRecepie.h"
 #include "../Inventory/SP_InventoryComponent.h"
 
-void ACraftingBuilding::UseRecepie(UCraftingRecepie* recepie)
+void ACraftingBuilding::UseRecepie(URecepieCraft* recepie)
 {
-	player->invertoryComponent->UseItemInInventory(recepie->recepie.Input, recepie->recepie.Input.ResorceAmount);
+	player->invertoryComponent->UseItemInInventory(recepie->CraftingRecepie->recepie.Input, recepie->CraftingRecepie->recepie.Input.ResorceAmount);
 	activeRecepie = recepie;
-	StartCrafting(recepie->recepie.Duration);
-
-}
-
-void ACraftingBuilding::StartCrafting(float MaxDuration)
-{
-
-	CurrantCraftDuration = MaxDuration;
-	MaxCraftingDuration = MaxDuration;
+	recepie->CurrentDuration = recepie->CraftingRecepie->recepie.Duration;
 	bIsCrafting = true;
-	BPStartCraft();
+	ActiveCrafts.Add(recepie);
+	if (ActiveCrafts.Num() == 0)
+	{
+		BPStartCraft();
+	}
+	
 
-	GetWorldTimerManager().SetTimer(CraftTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.01f, false);
 }
 
-void ACraftingBuilding::CraftingCycle()
-{
-	if (CurrantCraftDuration > 0)
-	{
-		CurrantCraftDuration -= 0.1f;
-		UpdateCraftingDration();
-		
 
-		GetWorldTimerManager().SetTimer(CraftTimerHandle, this, &ACraftingBuilding::CraftingCycle, 0.1f, false);
+
+void ACraftingBuilding::CraftingCycle(float deltatime)
+{
+
+	if (ActiveCrafts.Num() > 0)
+	{
+		for(URecepieCraft* craft : ActiveCrafts)
+		{
+			if (craft->CurrentDuration > 0)
+			{
+				craft->CurrentDuration -= deltatime;
+				UpdateCraftingDration(craft);
+			}
+			else
+			{
+				addItemToInventory(activeRecepie->CraftingRecepie->recepie.Output, activeRecepie->CraftingRecepie->recepie.Output.ResorceAmount);
+				craftsToRemove.Add(craft);
+				OnCraftingFinished(craft);
+			}
+		}
+	}
+	if (craftsToRemove.Num() > 0)
+	{
+		for (URecepieCraft* craft : craftsToRemove)
+		{
+			if (ActiveCrafts.Contains(craft))
+			{
+				ActiveCrafts.Remove(craft);
+			}
+		}
+		craftsToRemove.Empty();
+
+		if (ActiveCrafts.Num()<=0)
+		{
+			BPFinishCraft();
+			bIsCrafting = true;
+
+		}
+	}
+
+	//Logic For "Animation"
+
+	//------------------
+
+	
+}
+
+void ACraftingBuilding::OnCraftingFinished(URecepieCraft* recepie)
+{
+	
+}
+
+void ACraftingBuilding::UpdateCraftingDration(URecepieCraft* recepie)
+{
+}
+
+
+
+bool ACraftingBuilding::CanCraft(URecepieCraft*& recepie)
+{
+	bool result = player->invertoryComponent->HasEnoughtOfItemInInventory(recepie->CraftingRecepie->recepie.Input, recepie->CraftingRecepie->recepie.Input.ResorceAmount) && ActiveCrafts.Num() < MaxCraftAmount;
+	return result;
+}
+
+
+
+void ACraftingBuilding::addItemToInventory(FItem item, int UseAmount)
+{
+	if (BuildingInventory.Contains(item))
+	{
+		for (int id = 0; id <= BuildingInventory.Num() - 1; id++)
+		{
+
+			if (BuildingInventory[id].ItemInfo == item.ItemInfo)
+			{
+				BuildingInventory[id].ResorceAmount += UseAmount;
+
+			}
+
+		}
 	}
 	else
 	{
-		bIsCrafting = false;
-		player->invertoryComponent->AddItemInInventory(activeRecepie->recepie.Output, activeRecepie->recepie.Output.ResorceAmount);
-		BPFinishCraft();
-		OnCraftingFinished();
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Emerald, "CraftingCompete");
-
+		FItem newItem;
+		newItem.ItemInfo = item.ItemInfo;
+		newItem.ResorceAmount = UseAmount;
+		BuildingInventory.Add(newItem);
 	}
+	
 }
 
-void ACraftingBuilding::UpdateCraftingDration()
+void ACraftingBuilding::GivePlayerCraftedItems()
 {
-}
+	if (BuildingInventory.Num() > 0)
+	{
+		for (FItem item : BuildingInventory)
+		{
+			player->invertoryComponent->AddItemInInventory(item, item.ResorceAmount);
 
-void ACraftingBuilding::OnCraftingFinished()
-{
-}
+		}
+		BuildingInventory.Empty();
+	}
 
-bool ACraftingBuilding::CanCraft(UCraftingRecepie*& recepie)
-{
-	bool result = !bIsCrafting && player->invertoryComponent->HasEnoughtOfItemInInventory(recepie->recepie.Input, recepie->recepie.Input.ResorceAmount);
-	return result;
 }

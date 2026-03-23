@@ -5,7 +5,8 @@
 
 class UCraftingRecepie;
 class ACraftingBuilding;
-
+class UCraftUI;
+class URecepieCraft;
 UCLASS()
 class UBuildingUI : public UUserWidget
 {
@@ -13,11 +14,15 @@ class UBuildingUI : public UUserWidget
 
 public:
 
+	
 	UPROPERTY(BlueprintReadWrite)
-	UCraftingRecepie* CurrentRecepie = nullptr;
+	URecepieCraft* CurrentRecepie = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	ACraftingBuilding* OwningBuilding = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<UCraftUI*> CraftUIList;
 
 	UFUNCTION(BlueprintCallable)
 	void ExitUI();
@@ -27,20 +32,23 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateRecepieUI();
 
-	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	void SetActiveRecepie(UCraftingRecepie* activerecepie);
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateCraft();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateTimerUI(float Timer);
+	void UpdateTimerUI(float Timer, UCraftUI* CUI);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void CraftingFinished();
+	void CraftingFinished(UCraftUI* CUI);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnStartCraft();
+	void OnStartCraft(UCraftUI* CUI);
+
+	UFUNCTION(BlueprintCallable)
+	UCraftUI* GetNextCraftUI();
 	
 	
 };

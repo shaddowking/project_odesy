@@ -6,9 +6,10 @@ void SSubclassMenu::Construct(const FArguments& InArgs)
 {
 
 	FSlateFontInfo SubclassFornt = FCoreStyle::Get().GetFontStyle("EmbossedText");
-	SubclassFornt.Size = 10.f;
+	SubclassFornt.Size = 50.f;
+	FSlateFontInfo ExitFornt = FCoreStyle::Get().GetFontStyle("EmbossedText");
+	ExitFornt.Size = 15.f;
 
-	const FMargin Buttonpad = FMargin(10.f);
 
 	OwningHUD = InArgs._OwningHUD;
 	OwningCharacter = InArgs._OwningCharacter;
@@ -33,28 +34,35 @@ void SSubclassMenu::Construct(const FArguments& InArgs)
 							
 						.Text(FText::FromString(TEXT("HideSubclassMeny")))
 						.Justification(ETextJustify::Center)
-						.Font(SubclassFornt)
+						.Font(ExitFornt)
 					]
 			]
 			+ SOverlay::Slot()
-			.VAlign(VAlign_Fill)
-			.HAlign(HAlign_Fill)
-			.Padding(FMargin(500.f,300.f))
+			.VAlign(VAlign_Center)
+			.HAlign(HAlign_Center)
+			.Padding(FMargin(100.f,0))
 			[
 				SNew(SVerticalBox)
-				+ SVerticalBox::Slot().Padding(Buttonpad)
+				+ SVerticalBox::Slot().Padding(FMargin(100.f, 100.f))
 					[
-						SNew(SButton).OnClicked(this, &SSubclassMenu::SelectStormWalker)
+						SNew(SButton).ButtonColorAndOpacity(FColor::Blue).OnClicked(this, &SSubclassMenu::SelectStormWalker)
 						[
-							SNew(SImage).ColorAndOpacity(FColor::Blue)
+							SNew(STextBlock)
 
+								.Text(FText::FromString(TEXT("StormWalker")))
+								.Justification(ETextJustify::Center)
+								.Font(SubclassFornt)
 						]
 					]
-				+ SVerticalBox::Slot().Padding(Buttonpad)
+				+ SVerticalBox::Slot().Padding(FMargin(100.f, 100.f))
 				[
-					SNew(SButton).OnClicked(this, &SSubclassMenu::SelectPupeter)
+					SNew(SButton).ButtonColorAndOpacity(FColor::Yellow).OnClicked(this, &SSubclassMenu::SelectPupeter)
 						[
-							SNew(SImage).ColorAndOpacity(FColor::Yellow)
+							SNew(STextBlock)
+
+								.Text(FText::FromString(TEXT("Pupeter")))
+								.Justification(ETextJustify::Center)
+								.Font(SubclassFornt)
 
 						]
 				]

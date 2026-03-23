@@ -6,6 +6,8 @@
 #include "../../Inventory/SP_InventoryComponent.h"
 #include "../SP_BuildSystemComponent.h"
 #include "../../UI/OD_BuildingUI.h"
+#include "../../UI/OD_CraftUI.h"
+#include "../OD_CraftingRecepie.h"
 
 void AEthericFurnace::createUI()
 {
@@ -39,19 +41,44 @@ void AEthericFurnace::OnInteract()
 	Super::OnInteract();
 }
 
-void AEthericFurnace::UseRecepie(UCraftingRecepie* recepie)
+
+
+void AEthericFurnace::UpdateCraftingDration(URecepieCraft* recepie)
 {
-	Super::UseRecepie(recepie);
+	recepie->owningUI->UpdateCraftTimer(recepie->CurrentDuration);
 }
 
-void AEthericFurnace::UpdateCraftingDration()
+void AEthericFurnace::OnCraftingFinished(URecepieCraft* recepie)
 {
-	createdUI->UpdateTimerUI(CurrantCraftDuration);
+	recepie->owningUI->bIsTaken = false;
+	createdUI->CraftingFinished(recepie->owningUI);
 }
 
-void AEthericFurnace::OnCraftingFinished()
+void AEthericFurnace::UseRecepie(URecepieCraft* recepie)
 {
-	createdUI->CraftingFinished();
+	UCraftUI* newUI = createdUI->GetNextCraftUI();
+	if (newUI)
+	{
+		recepie->owningUI = newUI;
+		recepie->owningUI->ApplyCraftingRecepie(recepie);
+		recepie->owningUI->bIsTaken = true;
+		newUI = nullptr;
+	}
+
+	// Temp
+	player->invertoryComponent->UseItemInInventory(recepie->CraftingRecepie->recepie.Input, recepie->CraftingRecepie->recepie.Input.ResorceAmount);
+	activeRecepie = recepie;
+	recepie->CurrentDuration = recepie->CraftingRecepie->recepie.Duration;
+	BPStartCraft();
+	bIsCrafting = true;
+	ActiveCrafts.Add(recepie);
+
+	//___________
+	//Super::UseRecepie(recepie);
+
+	createdUI->OnStartCraft(recepie->owningUI);
+	//UpdateUI
+	
 }
 
 

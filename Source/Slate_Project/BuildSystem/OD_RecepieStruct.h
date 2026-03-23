@@ -20,6 +20,8 @@ public:
 
 };
 
+class UCraftUI;
+
 UCLASS()
 class UCraftingRecepie : public UDataAsset
 {
@@ -31,4 +33,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FRecepieStruct recepie;
+
+	
+
 };
