@@ -32,7 +32,7 @@ class UBoxComponent;
 class UInteractionComponent;
 class UCameraComponent;
 class USpringArmComponent;
-
+class USPGameInstance;
 
 
 
@@ -182,6 +182,9 @@ protected:
 
 
 private:
+
+	UPROPERTY()
+	USPGameInstance* GI = nullptr;
 
 	float BaseTeleportcountdownCount = 0;
 

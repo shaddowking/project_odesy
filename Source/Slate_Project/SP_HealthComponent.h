@@ -21,10 +21,15 @@ public:
 	float CalculateDamage(float StartDamage)
 	{
 		float result = StartDamage;
-		for (UBuffBase* buff : player->PlayerBuffs) 
+		if (player)
 		{
-			result = result * buff->BuffDefenceCalculation(player);
+			for (UBuffBase* buff : player->PlayerBuffs)
+			{
+				result = result * buff->BuffDefenceCalculation(player);
+			}
 		}
+		
+		
 
 		return result;
 

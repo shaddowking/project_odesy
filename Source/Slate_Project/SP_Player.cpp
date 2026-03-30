@@ -30,6 +30,10 @@
 #include "Camera/CameraComponent.h"
 #include "UI/OD_CompasUI.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "SP_GameInstance.h"
+#include "WorldPlacables/OD_ExploreManager.h"
+
 ASPCharacter::ASPCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -65,6 +69,7 @@ void ASPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	invertoryComponent->CreateInventoryUI();
+	GI = Cast<USPGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	if (SCcomponent)
 	{
@@ -693,12 +698,14 @@ void ASPCharacter::ChageWorldState(EPlayerWorldState state)
 		hud->PlayerHudWidget->SetVisibility(EVisibility::HitTestInvisible);
 		BuildSystemCompenent->buildingManager->DeactivateAllBuildings();
 		ReEquipLastUsedWeapon();
+		GI->ExploreManager->Activate();
 		break;
 	case EPlayerWorldState::base:
 		playerworldState = state;
 		hud->PlayerHudWidget->SetVisibility(EVisibility::Collapsed);
 		UnequipWeapon();
 		BuildSystemCompenent->buildingManager->ActivateAllBuildings();
+		GI->ExploreManager->Deactivate();
 		break;
 	case EPlayerWorldState::buildMode:
 		playerworldState = state;

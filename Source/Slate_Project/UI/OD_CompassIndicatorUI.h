@@ -13,6 +13,9 @@ GENERATED_BODY()
 public:
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxRange = 1000;
+
 	UPROPERTY(BlueprintReadWrite)
 	AActor* TrackingCharacter = nullptr;
 

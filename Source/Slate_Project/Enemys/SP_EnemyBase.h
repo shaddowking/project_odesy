@@ -13,8 +13,7 @@ public:
 
 	AEnemyBase();
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	UCompassIndicator* compassIndicator = nullptr;
+
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	UHealthComponent* HPComp = nullptr;

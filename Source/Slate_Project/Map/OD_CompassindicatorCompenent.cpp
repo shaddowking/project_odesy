@@ -4,6 +4,27 @@
 
 
 
+void UCompassIndicator::BeginPlay()
+{
+	Super::BeginPlay();
+	SetupUI();
+}
+
+void UCompassIndicator::DeactivateIndicator()
+{
+	
+	CreatedCIndicator->SetVisibility(ESlateVisibility::Collapsed);
+	createdQIndicator->SetVisibility(ESlateVisibility::Collapsed);
+
+}
+
+void UCompassIndicator::ActivateIndicator()
+{
+	createdQIndicator->SetVisibility(ESlateVisibility::HitTestInvisible);
+	CreatedCIndicator->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+}
+
 void UCompassIndicator::SetupUI()
 {
 	if (GEngine && GEngine->GameViewport)

@@ -13,6 +13,9 @@ class UQuestIndicator : public UUserWidget
 
 public:
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	float MaxRange = 1000;
+
 	UPROPERTY(BlueprintReadWrite)
 	AActor* TrackingActor = nullptr;
 
@@ -31,10 +34,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMidpointPosandDirection(float ViewportScale);
 
+
 	
 
 	UPROPERTY(EditAnywhere)
-	float Acuracy = 2;
+	float Acuracy = 0.25;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector2D ScreenPosition;

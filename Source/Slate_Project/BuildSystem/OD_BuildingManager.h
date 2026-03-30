@@ -14,6 +14,8 @@ public:
 
 	ABuildingManager();
 
+
+
 	TArray<ABuildingbase*> createdbuildings;
 
 	void Tick(float DeltaTime) override;

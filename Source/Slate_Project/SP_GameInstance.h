@@ -4,7 +4,7 @@
 #include "SP_GameInstance.generated.h"
 
 class ABuildGridManager;
-
+class AExploreManager;
 UCLASS()
 class USPGameInstance : public UGameInstance
 {
@@ -13,4 +13,7 @@ class USPGameInstance : public UGameInstance
 public:
 	UPROPERTY(BlueprintReadOnly)
 	ABuildGridManager* BaseGridManager = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	AExploreManager* ExploreManager = nullptr;
 };

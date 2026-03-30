@@ -7,6 +7,8 @@
 class UCompassIndicatorUI;
 class UQuestIndicator;
 
+
+
 UCLASS(meta = (BlueprintSpawnableComponent))
 class UCompassIndicator : public UActorComponent 
 {
@@ -14,6 +16,13 @@ class UCompassIndicator : public UActorComponent
 	GENERATED_BODY()
 
 public:
+
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void DeactivateIndicator();
+	UFUNCTION(BlueprintCallable)
+	void ActivateIndicator();
 
 
 	UPROPERTY(EditAnywhere, Category = "Indicator")

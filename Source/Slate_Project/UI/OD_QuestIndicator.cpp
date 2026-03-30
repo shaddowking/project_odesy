@@ -15,7 +15,7 @@ void UQuestIndicator::UpdateWidgetClampValues(FVector2D ViewportSize, FVector2D 
 bool UQuestIndicator::IsTargetLocationWithinScreenClamp(FVector Worldpos, float ViewportScale)
 {
 
-	if (UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), Worldpos, widgetPos, true))
+	if (UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), Worldpos, widgetPos, false))
 	{
 		ScreenPosition = widgetPos / ViewportScale;
 		if (UKismetMathLibrary::InRange_FloatFloat(ScreenPosition.X,ClampMin.X,ClampMax.X))
@@ -48,12 +48,22 @@ void UQuestIndicator::UpdateMidpointPosandDirection(float ViewportScale)
 	 ObjectDirection = UKismetMathLibrary::GetDirectionUnitVector(MiddlePorint, TargetLocation);
 	 MidPointTowardsObject = MiddlePorint + (ObjectDirection * Acuracy);
 
-	 ScreenMiddle2D = (SavedViewportSize / ViewportScale) / 2;
-	 RunAndRise = ScreenMiddle2D - ScreenPosition;
-	 LineLengh = UKismetMathLibrary::GetMin2D(UKismetMathLibrary::GetAbs2D((ScreenMiddle2D - ClampMin) / RunAndRise));
+	 if (IsTargetLocationWithinScreenClamp(MidPointTowardsObject,ViewportScale))
+	 {
+		 ScreenMiddle2D = (SavedViewportSize / ViewportScale) / 2;
+		 RunAndRise = ScreenMiddle2D - ScreenPosition;
+		 LineLengh = UKismetMathLibrary::GetMin2D(UKismetMathLibrary::GetAbs2D((ScreenMiddle2D - ClampMin) / RunAndRise));
 
-	 ScreenPosition = ScreenMiddle2D - RunAndRise * LineLengh;
+		 ScreenPosition = ScreenMiddle2D - RunAndRise * LineLengh;
 
-	 UpdateWidgetLocation(false);
+		 UpdateWidgetLocation(false);
+	 }
+	 else
+	 {
+		 GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Blue, "OutsideScreen");
+	 }
+	
 }
+
+
 
