@@ -1,6 +1,5 @@
 #include "SP_EnemyBase.h"
 #include "../SP_HealthComponent.h"
-#include "../Map/OD_CompassindicatorCompenent.h"
 
 AEnemyBase::AEnemyBase()
 {

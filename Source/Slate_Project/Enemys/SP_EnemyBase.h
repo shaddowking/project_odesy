@@ -3,7 +3,6 @@
 #include "SP_EnemyBase.generated.h"
 
 class UHealthComponent;
-class UCompassIndicator;
 
 UCLASS()
 class AEnemyBase : public ACharacter {

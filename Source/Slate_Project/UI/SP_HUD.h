@@ -7,7 +7,8 @@ class ASP_GameMode;
 class UBuffList;
 class ASPCharacter;
 class UCompasUI;
-
+class UInventoryAdd;
+class UMinimap;
 UCLASS()
 class ASP_HUD : public AHUD {
 	GENERATED_BODY()
@@ -21,6 +22,9 @@ public:
 
 	ASPCharacter* Player;
 	
+	UPROPERTY(BlueprintReadWrite)
+	UMinimap* Minimap = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> buffListTemplate;
 	UBuffList* buffList = nullptr;
@@ -35,10 +39,17 @@ public:
 	TSubclassOf<UUserWidget> CompassTemplate;
 	UCompasUI* CompassUI = nullptr;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> InventoryAddTemplate;
+	UInventoryAdd* InventoryAddUI = nullptr;
+
 	void CreateSubclassMenu(ASPCharacter* player);
 
 	void ShowSubclassMenu();
 	void HideSubclassMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetupMapMarker(FSlateBrush icon,AActor* target,bool HideWhenNotVisible);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	UMaterialInstanceDynamic* MakeMaterialInstance(UMaterialInterface* MInterface);

@@ -89,6 +89,7 @@ void ASPCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = currentMoveSpeed;
 	hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	hud->CreateSubclassMenu(this);
+	invertoryComponent->player = this;
 	CreateProjectilePool();
 	CreateWeapons();
 	if (BuildSystemCompenent)

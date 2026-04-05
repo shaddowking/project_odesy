@@ -1,5 +1,6 @@
 #pragma once
 #include "Blueprint/UserWidget.h"
+#include "../Inventory/SP_ItemStruct.h"
 #include "OD_InventoryAddUI.generated.h"
 
 UCLASS()
@@ -10,5 +11,5 @@ class UInventoryAdd : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddInventoryMessage(int amount);
+	void AddInventoryMessage(FItem item ,int amount);
 };

@@ -1,13 +1,20 @@
 #include "OD_CompassindicatorCompenent.h"
 #include "../UI/OD_CompassIndicatorUI.h"
 #include "../UI/OD_QuestIndicator.h"
-
+#include "../UI/OD_MapMarker.h"
+#include "../UI/SP_HUD.h"
+#include "../UI/OD_Minimap.h"
 
 
 void UCompassIndicator::BeginPlay()
 {
 	Super::BeginPlay();
-	SetupUI();
+	FTimerHandle creationdealy;
+
+	GetOwner()->GetWorldTimerManager().SetTimer(creationdealy, this, &UCompassIndicator::SetupUI, 0.1, false);
+
+	
+	//SetupUI();
 }
 
 void UCompassIndicator::DeactivateIndicator()
@@ -29,6 +36,7 @@ void UCompassIndicator::SetupUI()
 {
 	if (GEngine && GEngine->GameViewport)
 	{
+		target = GetOwner();
 		if (bIsCompassInicator)
 		{
 			if (CompassIconTemplate)
@@ -37,7 +45,7 @@ void UCompassIndicator::SetupUI()
 				if (CreatedCIndicator)
 				{
 					CreatedCIndicator->AddToViewport();
-					CreatedCIndicator->SetupInicator(CompassIcon, GetOwner());
+					CreatedCIndicator->SetupInicator(CompassIcon, target);
 				}
 			}
 		}
@@ -49,13 +57,36 @@ void UCompassIndicator::SetupUI()
 				if (createdQIndicator)
 				{
 					createdQIndicator->AddToViewport();
-					createdQIndicator->SetupInicator(CompassIcon, GetOwner());
+					createdQIndicator->SetupInicator(CompassIcon, target);
 				}
 			}
 		}
 		if (bIsMapInicator)
 		{
 
+			ASP_HUD* hud = Cast<ASP_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+			
+
+			if (hud)
+			{
+				//hud->SetupMapMarker(CompassIcon,GetOwner(), bHidewhenOffScreen);
+				if (hud->Minimap)
+				{
+					hud->Minimap->addMarker(CompassIcon, target, bHidewhenOffScreen);
+				}
+			}
+
+			/*
+			if (MapIconTemplate)
+			{
+				CreatedMIndicator = CreateWidget<UMapMarker>(GetWorld(), MapIconTemplate);
+				if (CreatedMIndicator)
+				{
+					CreatedMIndicator->AddToViewport();
+					CreatedMIndicator->SetupInicator(CompassIcon, GetOwner());
+				}
+			}
+			*/
 		}
 		
 	}

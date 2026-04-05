@@ -6,6 +6,7 @@
 #include "SP_BuffList.h"
 #include "OD_CompasUI.h"
 #include "Engine/Engine.h"
+#include "OD_InventoryAddUI.h"
 
 void ASP_HUD::BeginPlay()
 {
@@ -34,6 +35,14 @@ void ASP_HUD::BeginPlay()
 			if (CompassUI)
 			{
 				CompassUI->AddToViewport();
+			}
+		}
+		if (InventoryAddTemplate)
+		{
+			InventoryAddUI = CreateWidget<UInventoryAdd>(GetWorld(), InventoryAddTemplate);
+			if (InventoryAddUI)
+			{
+				InventoryAddUI->AddToViewport();
 			}
 		}
 

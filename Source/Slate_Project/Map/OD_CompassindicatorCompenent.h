@@ -6,6 +6,7 @@
 
 class UCompassIndicatorUI;
 class UQuestIndicator;
+class UMapMarker;
 
 
 
@@ -17,7 +18,7 @@ class UCompassIndicator : public UActorComponent
 
 public:
 
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
 	void DeactivateIndicator();
@@ -32,22 +33,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Indicator")
 	bool bIsMapInicator = false;
 
+	UPROPERTY()
+	AActor* target = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Icon")
 	FSlateBrush CompassIcon;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Minimap")
+	bool bHidewhenOffScreen = true;
 
 	UPROPERTY(BlueprintReadWrite)
 	UQuestIndicator* createdQIndicator = nullptr;
 	UPROPERTY(BlueprintReadWrite)
 	UCompassIndicatorUI* CreatedCIndicator = nullptr;
+	UPROPERTY(BlueprintReadWrite)
+	UMapMarker* CreatedMIndicator = nullptr;
+
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> CompassIconTemplate;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> QuestIconTemplate;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> MapIconTemplate;
 
 	
 

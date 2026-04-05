@@ -4,6 +4,7 @@
 #include "SP_InventoryComponent.generated.h"
 
 class UInventoryUI;
+class ASPCharacter;
 
 UCLASS()
 class UInventoryComponent : public UActorComponent 
@@ -13,6 +14,8 @@ class UInventoryComponent : public UActorComponent
 
 public:
 
+	UPROPERTY()
+	ASPCharacter* player = nullptr;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<FItem> PlayerInventory;

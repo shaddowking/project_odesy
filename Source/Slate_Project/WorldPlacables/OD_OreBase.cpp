@@ -16,6 +16,7 @@ AOreBase::AOreBase()
 
 void AOreBase::BeginPlay()
 {
+	Super::BeginPlay();
 	GI = Cast<USPGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	
 }

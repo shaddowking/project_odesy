@@ -5,6 +5,9 @@
 #include "Engine/Engine.h"
 #include "Blueprint/UserWidget.h"
 #include "../UI/OD_InvetoryUI.h"
+#include "../SP_Player.h"
+#include "../UI/OD_InventoryAddUI.h"
+#include "../UI/SP_HUD.h"
 
 
 void UInventoryComponent::CreateInventoryUI()
@@ -40,10 +43,11 @@ int UInventoryComponent::AddItemInInventory(FItem item, int UseAmount)
 		newItem.ResorceAmount = UseAmount;
 		PlayerInventory.Add(newItem);
 		createdUI->UpdateInventorySlot(newItem.ResorceAmount, newItem);
+		
 
 	}
 
-
+	player->hud->InventoryAddUI->AddInventoryMessage(item, UseAmount);
 	return UseAmount;
 }
 
