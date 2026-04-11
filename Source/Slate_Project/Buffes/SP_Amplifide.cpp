@@ -7,7 +7,7 @@ void UAmplifide::OnBuffBegin()
 
 }
 
-float UAmplifide::BuffDamageCalculation(ASPCharacter* Owner)
+float UAmplifide::BuffRangeDamageCalculation(ASPCharacter* Owner)
 {
 	return 10;
 }

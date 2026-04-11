@@ -21,7 +21,7 @@ public:
 	
 	virtual void OnBuffBegin();
 
-	virtual float BuffDamageCalculation(ASPCharacter* Owner);
+	virtual float BuffRangeDamageCalculation(ASPCharacter* Owner);
 
 	virtual float BuffMoveSpeedCalculation(ASPCharacter* Owner);
 

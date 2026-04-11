@@ -12,7 +12,7 @@ class UGiasBlesing : public UBuffBase
 
 public:
 
-	float BuffDamageCalculation(ASPCharacter* Owner) override;
+	float BuffRangeDamageCalculation(ASPCharacter* Owner) override;
 
 	float BuffMoveSpeedCalculation(ASPCharacter* Owner)override;
 

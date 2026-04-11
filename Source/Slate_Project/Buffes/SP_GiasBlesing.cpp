@@ -1,6 +1,6 @@
 #include "SP_GiasBlesing.h"
 
-float UGiasBlesing::BuffDamageCalculation(ASPCharacter* Owner)
+float UGiasBlesing::BuffRangeDamageCalculation(ASPCharacter* Owner)
 {
     return 0.0f;
 }

@@ -22,4 +22,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void SetupInicator(FSlateBrush indicator, AActor* tracking);
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite )
+	bool IsActive = false;
+
 };

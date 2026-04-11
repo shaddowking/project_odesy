@@ -45,7 +45,7 @@ void UBuffBase::OnBuffBegin()
 }
 
 
-float UBuffBase::BuffDamageCalculation(ASPCharacter* Owner)
+float UBuffBase::BuffRangeDamageCalculation(ASPCharacter* Owner)
 {
 	return 0.0f;
 }

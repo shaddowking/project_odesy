@@ -13,4 +13,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void addMarker(FSlateBrush icon, AActor* target, bool hidewhenNotVisible);
 
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
+	void RemoveMarker(AActor* target);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ReactivateMarkerMarker(AActor* target);
+
 };

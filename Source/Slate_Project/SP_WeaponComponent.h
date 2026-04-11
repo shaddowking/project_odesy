@@ -42,7 +42,7 @@ public:
 		int damage = Damage;
 		for(UBuffBase* buff : Owner->PlayerBuffs)
 		{
-			damage += buff->BuffDamageCalculation(Owner);
+			damage += buff->BuffRangeDamageCalculation(Owner);
 		}
 		return damage;
 	}
