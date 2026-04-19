@@ -25,9 +25,15 @@ void AEnemyBase::FieldOfViewCheck()
 
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), Radius, objectTypes, ACharacter::StaticClass(), ActorsToIgnore,targetList);
 	bestdistance = Radius * 10;
+	ASPCharacter* player = nullptr;
 
 	for(AActor* target : targetList)
 	{
+		player = Cast<ASPCharacter>(target);
+		if (!player)
+		{
+			continue;
+		}
 		FTransform targetTransform = target->GetActorTransform();
 		FVector directionToTarget = (targetTransform.GetLocation() - GetActorLocation()).GetSafeNormal();
 
@@ -81,11 +87,25 @@ void AEnemyBase::OnDamage()
 
 void AEnemyBase::OnDeath()
 {
+	OnEnemyDeActivate();
+}
+
+void AEnemyBase::OnEnemyDeActivate()
+{
 	bIsDead = true;
 	Cast<AAIController>(GetController())->GetBrainComponent()->StopLogic(TEXT("Stopped by user action"));
-	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	SetActorHiddenInGame(true);
 	BPOnDeath();
+}
+
+void AEnemyBase::ActivateEnemy()
+{
+	bIsDead = false;
+	SetActorHiddenInGame(false);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	Cast<AAIController>(GetController())->RunBehaviorTree(BehaviorTree);
+	BPOnEnemyActivate();
 }
 
 void AEnemyBase::BeginPlay()

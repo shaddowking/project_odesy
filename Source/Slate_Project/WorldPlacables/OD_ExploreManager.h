@@ -5,6 +5,7 @@
 
 class AOreBase;
 class AItemPickup;
+class AEnemySpawner;
 
 UCLASS()
 class AExploreManager : public AActor
@@ -16,8 +17,11 @@ public:
 
 	void BeginPlay()override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TArray<AOreBase*> createdOreList;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AEnemySpawner*> EnemySpawnerList;
 
 	TArray<AItemPickup*> pickupPool;
 

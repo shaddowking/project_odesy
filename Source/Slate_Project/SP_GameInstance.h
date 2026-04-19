@@ -14,6 +14,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	ABuildGridManager* BaseGridManager = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	AExploreManager* ExploreManager = nullptr;
 };

@@ -16,7 +16,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AEnemyBase> enemyTemplate;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	float SpawnAmount = 5;
+	int SpawnAmount = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SpawnDelay = 10;
 	
@@ -31,25 +31,35 @@ GENERATED_BODY()
 
 public: 
 
+	void BeginPlay() override;
+
 	AEnemySpawner();
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	USceneComponent* SpawnAnker = nullptr;
 
-    UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
-    void StartSpawning();
+	UFUNCTION(BlueprintCallable)
+    void StartEnemySpawning();
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TArray<FEnemyData> datalist;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<AEnemyBase*> CreatedEnemys;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	float SpawnRange = 500;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SpawnHight = 300;
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetSpawnPoint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DeactivateSpawner();
+
+	UFUNCTION()
+	void OnSpawnerActivate();
 
 private:
 

@@ -53,6 +53,15 @@ public:
 	UFUNCTION()
 	void OnDeath();
 
+	UFUNCTION()
+	void OnEnemyDeActivate();
+
+	UFUNCTION()
+	void ActivateEnemy();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BPOnEnemyActivate();
+
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void BPOnDeath();
 
@@ -81,7 +90,7 @@ private:
 	FVector MyLocation;
 	FVector TargetLocation;
 
-	float InterpSpeed = 5.0f;
+	float InterpSpeed = 20.0f;
 
 	FRotator TargetRotation;
 

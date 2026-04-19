@@ -181,7 +181,11 @@ void ASPCharacter::HandleMovemnt(const FInputActionValue& value)
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
 
-	hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+	if (hud->CompassUI)
+	{
+		hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+
+	}
 
 }
 
@@ -200,7 +204,10 @@ void ASPCharacter::HandleLook(const FInputActionValue& value)
 	const FVector2d LookVector = value.Get<FVector2D>();
 	AddControllerPitchInput(LookVector.Y);
 	AddControllerYawInput(LookVector.X);
-	hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+	if (hud->CompassUI)
+	{
+		hud->CompassUI->UpdateCompasRotation(GetCompassRotaion());
+	}
 
 
 	ClampcameraRotation();

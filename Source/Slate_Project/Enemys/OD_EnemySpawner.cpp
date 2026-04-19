@@ -1,10 +1,48 @@
 #include "OD_EnemySpawner.h"
+#include "SP_EnemyBase.h"
+
+void AEnemySpawner::BeginPlay()
+{
+    Super::BeginPlay();
+    StartEnemySpawning();
+}
 
 AEnemySpawner::AEnemySpawner()
 {
     SpawnAnker = CreateDefaultSubobject<USceneComponent>("SpawnAnker");
     SpawnAnker->SetupAttachment(RootComponent);
 }
+
+void AEnemySpawner::StartEnemySpawning()
+{
+    if (CreatedEnemys.Num() > 0)
+    {
+        for(AEnemyBase* enemy : CreatedEnemys)
+        {
+            enemy->SetActorLocation(GetSpawnPoint());
+            enemy->ActivateEnemy();
+        }
+    }
+    else
+    {
+        AEnemyBase* newEnemy = nullptr;
+        for (FEnemyData data : datalist)
+        {
+            for (size_t i = 0; i < data.SpawnAmount; i++)
+            {
+                newEnemy = GetWorld()->SpawnActor<AEnemyBase>(data.enemyTemplate, GetSpawnPoint(), FRotator::ZeroRotator);
+                CreatedEnemys.Add(newEnemy);
+            }
+        }
+        newEnemy = nullptr;
+
+    }
+    
+
+}
+
+
+
 
 FVector AEnemySpawner::GetSpawnPoint()
 {
@@ -24,3 +62,12 @@ FVector AEnemySpawner::GetSpawnPoint()
 
     return SpawnPos;
 }
+
+
+
+void AEnemySpawner::OnSpawnerActivate()
+{
+    StartEnemySpawning();
+}
+
+

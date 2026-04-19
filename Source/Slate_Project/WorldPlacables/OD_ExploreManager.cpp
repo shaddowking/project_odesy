@@ -3,6 +3,8 @@
 #include "OD_OreBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "../SP_GameInstance.h"
+#include "../Enemys/OD_EnemySpawner.h"
+#include "../Enemys/SP_EnemyBase.h"
 
 void AExploreManager::BeginPlay()
 {
@@ -52,6 +54,10 @@ void AExploreManager::Activate()
     {
         ore->Activate();
     }
+    for(AEnemySpawner* spawner : EnemySpawnerList)
+    {
+        spawner->OnSpawnerActivate();
+    }
    
 }
 
@@ -64,5 +70,10 @@ void AExploreManager::Deactivate()
     for (AItemPickup* pickup : pickupPool)
     {
         pickup->DeactivatePickup();
+    }
+    for (AEnemySpawner* spawner : EnemySpawnerList)
+    {
+        
+        spawner->DeactivateSpawner();
     }
 }

@@ -29,6 +29,7 @@ void ASP_HUD::BeginPlay()
 				buffList->AddToViewport();
 			}
 		}
+		/*
 		if (CompassTemplate)
 		{
 			CompassUI = CreateWidget<UCompasUI>(GetWorld(), CompassTemplate);
@@ -37,6 +38,7 @@ void ASP_HUD::BeginPlay()
 				CompassUI->AddToViewport();
 			}
 		}
+		*/
 		if (InventoryAddTemplate)
 		{
 			InventoryAddUI = CreateWidget<UInventoryAdd>(GetWorld(), InventoryAddTemplate);
